@@ -1,10 +1,26 @@
-from PyQt5 import QtWidgets
 
-app = QtWidgets.QApplication([])
+import sys
+from PyQt5 import QtWidgets as qtw
+from PyQt5 import QtGui as qtg
+from PyQt5 import QtCore as qtc
 
-window = QtWidgets.QWidget()
-window.setWindowTitle('Hello QT')
+#Derived from page 18 of Mastering GUI Program
 
-window.show()
+class MainWindow(qtw.QMainWindow):
 
-app.exec() 
+    def __init__(self):
+        """MainWindow constructor"""
+        super().__init__()
+        #Main UI code here--
+
+
+
+
+        #End main UI code--
+        self.show()
+
+
+if __name__ == '__main__':
+    app = qtw.QApplication(sys.argv)
+    mw = MainWindow()
+    sys.exit(app.exec())
