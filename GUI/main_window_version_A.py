@@ -188,7 +188,7 @@ class Ui_MainWindow(object):
         self.label_10.setText(_translate("MainWindow", "Motor Temperature"))
         self.label_5.setText(_translate("MainWindow", "Connection with Pod: "))
         self.label_6.setText(_translate("MainWindow", "Pod Status"))
-'''
+
 app = QApplication(sys.argv)
 window = QMainWindow()
 
@@ -197,4 +197,4 @@ ui.setupUi(window)
 
 window.show()
 sys.exit(app.exec_())
-'''
+
