@@ -1,3 +1,16 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'main_window_template.ui'
+#
+# Created by: PyQt5 UI code generator 5.14.2
+#
+# WARNING! All changes made in this file will be lost!
+
+import sys
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QApplication, QMainWindow
+
+
 
 # -*- coding: utf-8 -*-
 
@@ -519,8 +532,11 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "Velocity: 245 km/h"))
 
 
+app = QApplication(sys.argv)
+window = QMainWindow()
 
-if __name__ == '__main__':
-    app = qtw.QApplication(sys.argv)
-    mw = MainWindow()
-    sys.exit(app.exec())
+ui = Ui_MainWindow()
+ui.setupUi(window)
+
+window.show()
+sys.exit(app.exec_())
