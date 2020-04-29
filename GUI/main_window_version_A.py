@@ -9,7 +9,10 @@
 
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtCore import pyqtProperty, QCoreApplication, QObject, QUrl
+from PyQt5.QtWidgets import QApplication, QMainWindow, QHBoxLayout
+from PyQt5.QtQuick import QQuickView
+from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlEngine
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -30,6 +33,7 @@ class Ui_MainWindow(object):
         self.right_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.right_frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.right_frame.setObjectName("right_frame")
+
         self.emergency_stop_button = QtWidgets.QPushButton(self.right_frame)
         self.emergency_stop_button.setGeometry(QtCore.QRect(60, 60, 121, 61))
         font = QtGui.QFont()
@@ -202,6 +206,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
+
+        # QML addition
+        quickView = QQuickView(QUrl('Guage.qml'))
+        quickView.setResizeMode(QQuickView.SizeRootObjectToView)
+        quickWidget = QtWidgets.QWidget().createWindowContainer(quickView)
+        self.horizontalLayout.addWidget(quickWidget)
+
         self.label_10 = QtWidgets.QLabel(self.horizontalLayoutWidget)
         self.label_10.setStyleSheet("background-color: rgb(255, 0, 0);\n"
 "font: 75 8pt \"MS Shell Dlg 2\";\n"
@@ -1256,6 +1267,11 @@ window = QMainWindow()
 
 ui = Ui_MainWindow()
 ui.setupUi(window)
+
+# engine = QQmlEngine()
+# component = QQmlComponent(engine)
+# component.loadUrl(QUrl('Guage.qml'))
+# obj = component.create()
 
 window.show()
 sys.exit(app.exec_())
