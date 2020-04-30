@@ -13,6 +13,7 @@ from PyQt5.QtCore import pyqtProperty, QCoreApplication, QObject, QUrl
 from PyQt5.QtWidgets import QApplication, QMainWindow, QHBoxLayout
 from PyQt5.QtQuick import QQuickView
 from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlEngine
+from PyQt5.QtQuickWidgets import QQuickWidget
 
 
 class Ui_MainWindow(object):
@@ -62,15 +63,12 @@ class Ui_MainWindow(object):
          # USER ADDED QML WIDGET ##########################
 
         #Spedometer
-        speed_gauge = QQuickView(QUrl('Guage.qml'))
-        speed_gauge.setResizeMode(QQuickView.SizeRootObjectToView)
-        quickWidget = QtWidgets.QWidget().createWindowContainer(speed_gauge)
-        #why wont the next line work :(
-        quickWidget.setStyleSheet("background-color: transparent;")
-        self.speed_guage_layout.addWidget(quickWidget)
+        spedometerWidget = QQuickWidget()
+        spedometerWidget.setClearColor(QtCore.Qt.transparent)
+        spedometerWidget.setResizeMode(QQuickWidget.SizeRootObjectToView)
+        spedometerWidget.setSource(QUrl("Guage.qml"))
+        self.speed_guage_layout.addWidget(spedometerWidget)
 
-
-        
         self.time_elapsed_label = QtWidgets.QLabel(self.left_frame)
         self.time_elapsed_label.setGeometry(QtCore.QRect(80, 400, 171, 41))
         self.time_elapsed_label.setStyleSheet("font: 75 10pt \"Microsoft YaHei UI\";\n"
