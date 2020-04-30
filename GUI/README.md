@@ -23,7 +23,8 @@ Second tab of the tabWidget contains a list of phases. **As a demo, all the colo
 
 Tab 3 contains packet logger information with several buttons that do not have current functionality.  A **Seperate Window** button has been added so another window will pop up displaying the packet information at a more comfortable view. This functionality has not been added yet. 
 
-##Fixes Needed
+## Fixes Needed
+
 Apart from the functionality of the buttons, the speedGauge has an issue with the white background. The following code is used within the **AlbertaLoop_UI.py** main file
 
 ```python
