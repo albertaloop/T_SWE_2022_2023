@@ -85,7 +85,7 @@ font: 63 8pt &quot;Segoe UI Semibold&quot;;</string>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-color: rgb(66, 66, 66);</string>
+      <string notr="true">background-color: rgb(0, 0, 0);</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -154,7 +154,7 @@ color: rgb(255, 255, 255);</string>
        <item>
         <widget class="QProgressBar" name="progressBar">
          <property name="styleSheet">
-          <string notr="true"/>
+          <string notr="true">color: rgb(255, 255, 255);</string>
          </property>
          <property name="maximum">
           <number>500</number>
@@ -255,7 +255,7 @@ border-color: rgb(0, 0, 0);
 alternate-background-color: rgb(50, 50, 50);</string>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -1092,7 +1092,7 @@ background-color: rgb(22, 40, 38);</string>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-color: rgb(66, 66, 66);</string>
+      <string notr="true">background-color: rgb(0, 0, 0);</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -1110,7 +1110,7 @@ background-color: rgb(22, 40, 38);</string>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">background-color: rgb(45, 45, 45);</string>
+       <string notr="true">background-color: rgb(30, 30, 30);</string>
       </property>
       <widget class="QLabel" name="camera_feed_label">
        <property name="geometry">
