@@ -18,14 +18,14 @@ If you intend to edit a UI using QTDesigner, download the .ui version of it from
 
 If you are just editing non-UI methods, do not alter the .ui file and class Ui_MainWindow in the .py version unless changes were made in those locations.
 
-### Github 
+### Github
 
-The general guidline for Github is to always develop on your own branch. After a feature is ready, create a pull request for the branch you are working on and have a senior member of the team review and approve your pull request. Once a pull request has been approved, it can be merged into the master branch. If you are unsure of how to merge, please ask a senior member of the team for guidance. 
+The general guideline for Github is to always develop on your own branch. After a feature is ready, create a pull request for the branch you are working on and have a senior member of the team review and approve your pull request. Once a pull request has been approved, it can be merged into the master branch. If you are unsure of how to merge, please ask a senior member of the team for guidance.
 
 #### Github Branches
-Use "-" character to seperate words in a branch name. Example: rutvik-gui. Try to name each branch to highlight **who** is working on the feature, and **what** the feature is. 
+Use "-" character to separate words in a branch name. Example: rutvik-gui. Try to name each branch to highlight **who** is working on the feature, and **what** the feature is.
 
-#### Github Commit Messages 
+#### Github Commit Messages
+Commit messages must accurately and briefly explain what change you are making. Try to be concise.
 
-Commit messages must accurately and briefly explain what change you are making. Try to be concise. 
 
