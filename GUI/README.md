@@ -21,18 +21,18 @@ When editing the GUI on QT Creator, the QML widget will not show as it is an add
       
       ```
       app = QApplication(sys.argv)
-window = QMainWindow()
+      window = QMainWindow()
 
-ui = Ui_MainWindow()
-ui.setupUi(window)
+      ui = Ui_MainWindow()
+      ui.setupUi(window)
 
-#engine = QQmlEngine()
-#component = QQmlComponent(engine)
-#component.loadUrl(QUrl('Guage.qml'))
-#obj = component.create()
+      #engine = QQmlEngine()
+      #component = QQmlComponent(engine)
+      #component.loadUrl(QUrl('Guage.qml'))
+      #obj = component.create()
 
-window.show()
-sys.exit(app.exec_())
+      window.show()
+      sys.exit(app.exec_())
       ```
 -------------------------------------------------------------------------------
 *04/29/2020:* Basic features of Front end of this second GUI complete
