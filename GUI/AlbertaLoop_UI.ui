@@ -255,7 +255,7 @@ border-color: rgb(0, 0, 0);
 alternate-background-color: rgb(50, 50, 50);</string>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -362,7 +362,8 @@ font: 75 8pt &quot;Microsoft JhengHei&quot;;
          <item>
           <widget class="QLabel" name="battery_1_temp">
            <property name="styleSheet">
-            <string notr="true">color: rgb(255, 255, 255);</string>
+            <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(121, 215, 15);</string>
            </property>
            <property name="text">
             <string>56C</string>
@@ -375,7 +376,8 @@ font: 75 8pt &quot;Microsoft JhengHei&quot;;
          <item>
           <widget class="QLabel" name="battery_2_temp">
            <property name="styleSheet">
-            <string notr="true">color: rgb(255, 255, 255);</string>
+            <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(211, 38, 38);</string>
            </property>
            <property name="text">
             <string>65C</string>
@@ -388,7 +390,8 @@ font: 75 8pt &quot;Microsoft JhengHei&quot;;
          <item>
           <widget class="QLabel" name="motor_temp">
            <property name="styleSheet">
-            <string notr="true">color: rgb(255, 255, 255);</string>
+            <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(245, 163, 26);</string>
            </property>
            <property name="text">
             <string>55C</string>
@@ -487,7 +490,8 @@ color: rgb(255, 255, 255);</string>
          <item>
           <widget class="QLabel" name="bat_1_volt">
            <property name="styleSheet">
-            <string notr="true">color: rgb(255, 255, 255);</string>
+            <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(121, 215, 15);</string>
            </property>
            <property name="text">
             <string>46.51V</string>
@@ -500,7 +504,8 @@ color: rgb(255, 255, 255);</string>
          <item>
           <widget class="QLabel" name="bat_2_volt">
            <property name="styleSheet">
-            <string notr="true">color: rgb(255, 255, 255);</string>
+            <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(121, 215, 15);</string>
            </property>
            <property name="text">
             <string>36.73V</string>
@@ -513,7 +518,10 @@ color: rgb(255, 255, 255);</string>
          <item>
           <widget class="QLabel" name="conv_volt">
            <property name="styleSheet">
-            <string notr="true">color: rgb(255, 255, 255);</string>
+            <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(211, 38, 38);
+
+</string>
            </property>
            <property name="text">
             <string>4.92V</string>
@@ -625,7 +633,8 @@ color: rgb(255, 255, 255);</string>
          <item>
           <widget class="QLabel" name="brake_pressure">
            <property name="styleSheet">
-            <string notr="true">color: rgb(255, 255, 255);</string>
+            <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(121, 215, 15);</string>
            </property>
            <property name="text">
             <string>30kPa</string>
@@ -638,7 +647,8 @@ color: rgb(255, 255, 255);</string>
          <item>
           <widget class="QLabel" name="thing_2">
            <property name="styleSheet">
-            <string notr="true">color: rgb(255, 255, 255);</string>
+            <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(211, 38, 38);</string>
            </property>
            <property name="text">
             <string>-</string>
@@ -651,7 +661,8 @@ color: rgb(255, 255, 255);</string>
          <item>
           <widget class="QLabel" name="thing_3">
            <property name="styleSheet">
-            <string notr="true">color: rgb(255, 255, 255);</string>
+            <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(211, 38, 38);</string>
            </property>
            <property name="text">
             <string>-</string>
@@ -674,6 +685,19 @@ color: rgb(255, 255, 255);</string>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButton">
+        <property name="geometry">
+         <rect>
+          <x>232</x>
+          <y>10</y>
+          <width>141</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Run Health Check</string>
         </property>
        </widget>
       </widget>
@@ -1083,7 +1107,7 @@ background-color: rgb(22, 40, 38);</string>
        <x>740</x>
        <y>110</y>
        <width>371</width>
-       <height>551</height>
+       <height>521</height>
       </rect>
      </property>
      <property name="font">
@@ -1311,6 +1335,14 @@ background-color:rgb(79, 79, 79);</string>
       <string>Pod Connection: No Connection</string>
      </property>
     </widget>
+    <zorder>estop_button</zorder>
+    <zorder>left_frame</zorder>
+    <zorder>mid_frame</zorder>
+    <zorder>right_frame</zorder>
+    <zorder>command_line</zorder>
+    <zorder>send_command_button</zorder>
+    <zorder>pod_connect_ind</zorder>
+    <zorder>albertaloop_logo</zorder>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -1319,7 +1351,7 @@ background-color:rgb(79, 79, 79);</string>
      <x>0</x>
      <y>0</y>
      <width>1145</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
