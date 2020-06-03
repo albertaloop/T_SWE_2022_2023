@@ -255,7 +255,7 @@ border-color: rgb(0, 0, 0);
 alternate-background-color: rgb(50, 50, 50);</string>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -690,8 +690,8 @@ background-color: rgb(211, 38, 38);</string>
        <widget class="QPushButton" name="pushButton">
         <property name="geometry">
          <rect>
-          <x>232</x>
-          <y>10</y>
+          <x>230</x>
+          <y>0</y>
           <width>141</width>
           <height>32</height>
          </rect>
@@ -1096,8 +1096,31 @@ background-color: rgb(22, 40, 38);</string>
       </widget>
       <widget class="QWidget" name="tab_4">
        <attribute name="title">
-        <string>Page</string>
+        <string>Packet Logger 2</string>
        </attribute>
+       <widget class="QScrollArea" name="scrollArea">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>371</width>
+          <height>451</height>
+         </rect>
+        </property>
+        <property name="widgetResizable">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="scrollAreaWidgetContents">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>369</width>
+           <height>449</height>
+          </rect>
+         </property>
+        </widget>
+       </widget>
       </widget>
      </widget>
     </widget>
@@ -1155,6 +1178,29 @@ color: rgb(255, 255, 255);</string>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
        </property>
+      </widget>
+      <widget class="QTabWidget" name="tabWidget">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>40</y>
+         <width>371</width>
+         <height>221</height>
+        </rect>
+       </property>
+       <property name="currentIndex">
+        <number>1</number>
+       </property>
+       <widget class="QWidget" name="tab_5">
+        <attribute name="title">
+         <string>Front Camera</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="tab_6">
+        <attribute name="title">
+         <string>Rear Camera</string>
+        </attribute>
+       </widget>
       </widget>
      </widget>
      <widget class="QWidget" name="verticalLayoutWidget_3">
@@ -1335,6 +1381,37 @@ background-color:rgb(79, 79, 79);</string>
       <string>Pod Connection: No Connection</string>
      </property>
     </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>700</x>
+       <y>40</y>
+       <width>81</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="estop_button_2">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>50</y>
+       <width>151</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(240, 165, 0);
+color: rgb(255, 255, 255);
+font: 63 8pt &quot;Segoe UI Semibold&quot;;</string>
+     </property>
+     <property name="text">
+      <string>ENTER SIMULATION</string>
+     </property>
+    </widget>
     <zorder>estop_button</zorder>
     <zorder>left_frame</zorder>
     <zorder>mid_frame</zorder>
@@ -1343,6 +1420,8 @@ background-color:rgb(79, 79, 79);</string>
     <zorder>send_command_button</zorder>
     <zorder>pod_connect_ind</zorder>
     <zorder>albertaloop_logo</zorder>
+    <zorder>label</zorder>
+    <zorder>estop_button_2</zorder>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
