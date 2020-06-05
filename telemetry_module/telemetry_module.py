@@ -12,6 +12,7 @@ from enum import IntEnum
 import struct
 import socket
 import select
+from threading import Thread
 
 class TelemetryManager:
 
@@ -31,7 +32,8 @@ class TelemetryManager:
         self.highest_velocity = 0
         self.packet_format = ">BB7iI"
 
-        self.run()
+        thread = Thread(target=self.run)
+        thread.start()
 
     def get_team_id(self):
         return self.team_id
