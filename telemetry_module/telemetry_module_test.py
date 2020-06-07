@@ -2,11 +2,12 @@ import telemetry_module
 from subprocess import call
 import time
 
+MY_IP_ADDRESS = "192.168.1.84"
+PORT = 3000
+
 # Run "python3 mock-pod.py --server_ip 192.168.1.84 --server_port 3000" in another shell
 
-telemetry_manager = telemetry_module.TelemetryManager("192.168.1.84", 3000)
-
-# call(["python3", "mock-pod.py", "--server_ip", "192.168.1.84", "--server_port", "3000", "&"])
+telemetry_manager = telemetry_module.TelemetryManager(MY_IP_ADDRESS, PORT)
 
 while True:
     print("Team ID: ", telemetry_manager.get_team_id())
