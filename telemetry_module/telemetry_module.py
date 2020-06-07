@@ -1,13 +1,3 @@
-"""
-@brief Hyperloop team mock receiver program
-@author Harmjan Treep <harmjan@boringcompany.com>
-
-Subject to the existing rights of third parties, THE BORING COMPANY
-is the owner of the copyright in this work and no portion thereof is
-to be copied, reproduced or communicated to any person without
-written permission.
-"""
-
 from enum import IntEnum
 import struct
 import socket
