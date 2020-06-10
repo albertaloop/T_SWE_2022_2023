@@ -34,6 +34,19 @@ When editing the GUI on QT Creator, the QML widget will not show as it is an add
       window.show()
       sys.exit(app.exec_())
       ```
+      
+      3) Ensure the import statements are as follows:
+      ```
+      
+      import sys
+      from PyQt5 import QtCore, QtGui, QtWidgets
+      from PyQt5.QtCore import pyqtProperty, QCoreApplication, QObject, QUrl
+      from PyQt5.QtWidgets import QApplication, QMainWindow, QHBoxLayout
+      from PyQt5.QtQuick import QQuickView
+      from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlEngine
+      from PyQt5.QtQuickWidgets import QQuickWidget
+      
+      ```
 -------------------------------------------------------------------------------
 *04/29/2020:* Basic features of Front end of this second GUI complete
 
