@@ -77,20 +77,7 @@ So far, the only variables are the GUI element variables. _Anything named self.'
 
 ## Fixes Needed
 
-Apart from the functionality of the buttons, the speedGauge has an issue with the white background. The following code is used within the **AlbertaLoop_UI.py** main file
 
-```python
-      # USER ADDED QML WIDGET ##########################
-
-        #Spedometer
-        speed_gauge = QQuickView(QUrl('Guage.qml'))
-        speed_gauge.setResizeMode(QQuickView.SizeRootObjectToView)
-        quickWidget = QtWidgets.QWidget().createWindowContainer(speed_gauge)
-        #why wont the next line work :(
-        quickWidget.setStyleSheet("background-color: transparent;")
-        self.speed_guage_layout.addWidget(quickWidget)
-```
-Despite the attempt to fix line 8, it appears that QtWidgets.QWidget().createWindowContainer(speed_gauge) cannot have its color changed. If there is any way to fix it, please submit a pull request and change the box color to either of the following: **background-color: transparent **OR **rgb (45,45,45)**
 
 
 
