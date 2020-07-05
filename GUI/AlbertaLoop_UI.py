@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'albertaloop_2_ui.ui'
+# Form implementation generated from reading ui file 'AlbertaLoop_UI.ui'
 #
-# Created by: PyQt5 UI code generator 5.14.2
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
-
 
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -59,8 +58,7 @@ class Ui_MainWindow(object):
         self.speed_guage_layout.setObjectName("speed_guage_layout")
 
 
-
-         # USER ADDED QML WIDGET ##########################
+        #USER ADDED QML WIDGET ##########################
 
         #Spedometer
         spedometerWidget = QQuickWidget()
@@ -69,6 +67,7 @@ class Ui_MainWindow(object):
         spedometerWidget.setSource(QUrl("Guage.qml"))
         self.speed_guage_layout.addWidget(spedometerWidget)
 
+        
         self.time_elapsed_label = QtWidgets.QLabel(self.left_frame)
         self.time_elapsed_label.setGeometry(QtCore.QRect(80, 400, 171, 41))
         self.time_elapsed_label.setStyleSheet("font: 75 10pt \"Microsoft YaHei UI\";\n"
@@ -87,14 +86,13 @@ class Ui_MainWindow(object):
         self.progress_bar_layout.setContentsMargins(0, 0, 0, 0)
         self.progress_bar_layout.setObjectName("progress_bar_layout")
         self.progressBar = QtWidgets.QProgressBar(self.verticalLayoutWidget_2)
-        self.progressBar.setStyleSheet("")
+        self.progressBar.setStyleSheet("color: rgb(255, 255, 255);")
         self.progressBar.setMaximum(500)
         self.progressBar.setProperty("value", 115)
         self.progressBar.setTextVisible(True)
         self.progressBar.setInvertedAppearance(False)
         self.progressBar.setTextDirection(QtWidgets.QProgressBar.TopToBottom)
         self.progressBar.setObjectName("progressBar")
-        self.progressBar.setStyleSheet("color: rgb(255, 255, 255);")
         self.progress_bar_layout.addWidget(self.progressBar)
         self.horizontalLayoutWidget = QtWidgets.QWidget(self.left_frame)
         self.horizontalLayoutWidget.setGeometry(QtCore.QRect(90, 310, 141, 80))
@@ -175,17 +173,20 @@ class Ui_MainWindow(object):
         self.temp_layout_2.setContentsMargins(0, 0, 0, 0)
         self.temp_layout_2.setObjectName("temp_layout_2")
         self.battery_1_temp = QtWidgets.QLabel(self.horizontalLayoutWidget_3)
-        self.battery_1_temp.setStyleSheet("color: rgb(255, 255, 255);")
+        self.battery_1_temp.setStyleSheet("color: rgb(255, 255, 255);\n"
+"background-color: rgb(121, 215, 15);")
         self.battery_1_temp.setAlignment(QtCore.Qt.AlignCenter)
         self.battery_1_temp.setObjectName("battery_1_temp")
         self.temp_layout_2.addWidget(self.battery_1_temp)
         self.battery_2_temp = QtWidgets.QLabel(self.horizontalLayoutWidget_3)
-        self.battery_2_temp.setStyleSheet("color: rgb(255, 255, 255);")
+        self.battery_2_temp.setStyleSheet("color: rgb(255, 255, 255);\n"
+"background-color: rgb(211, 38, 38);")
         self.battery_2_temp.setAlignment(QtCore.Qt.AlignCenter)
         self.battery_2_temp.setObjectName("battery_2_temp")
         self.temp_layout_2.addWidget(self.battery_2_temp)
         self.motor_temp = QtWidgets.QLabel(self.horizontalLayoutWidget_3)
-        self.motor_temp.setStyleSheet("color: rgb(255, 255, 255);")
+        self.motor_temp.setStyleSheet("color: rgb(255, 255, 255);\n"
+"background-color: rgb(245, 163, 26);")
         self.motor_temp.setAlignment(QtCore.Qt.AlignCenter)
         self.motor_temp.setObjectName("motor_temp")
         self.temp_layout_2.addWidget(self.motor_temp)
@@ -226,17 +227,22 @@ class Ui_MainWindow(object):
         self.temp_layout_4.setContentsMargins(0, 0, 0, 0)
         self.temp_layout_4.setObjectName("temp_layout_4")
         self.bat_1_volt = QtWidgets.QLabel(self.horizontalLayoutWidget_5)
-        self.bat_1_volt.setStyleSheet("color: rgb(255, 255, 255);")
+        self.bat_1_volt.setStyleSheet("color: rgb(255, 255, 255);\n"
+"background-color: rgb(121, 215, 15);")
         self.bat_1_volt.setAlignment(QtCore.Qt.AlignCenter)
         self.bat_1_volt.setObjectName("bat_1_volt")
         self.temp_layout_4.addWidget(self.bat_1_volt)
         self.bat_2_volt = QtWidgets.QLabel(self.horizontalLayoutWidget_5)
-        self.bat_2_volt.setStyleSheet("color: rgb(255, 255, 255);")
+        self.bat_2_volt.setStyleSheet("color: rgb(255, 255, 255);\n"
+"background-color: rgb(121, 215, 15);")
         self.bat_2_volt.setAlignment(QtCore.Qt.AlignCenter)
         self.bat_2_volt.setObjectName("bat_2_volt")
         self.temp_layout_4.addWidget(self.bat_2_volt)
         self.conv_volt = QtWidgets.QLabel(self.horizontalLayoutWidget_5)
-        self.conv_volt.setStyleSheet("color: rgb(255, 255, 255);")
+        self.conv_volt.setStyleSheet("color: rgb(255, 255, 255);\n"
+"background-color: rgb(211, 38, 38);\n"
+"\n"
+"")
         self.conv_volt.setAlignment(QtCore.Qt.AlignCenter)
         self.conv_volt.setObjectName("conv_volt")
         self.temp_layout_4.addWidget(self.conv_volt)
@@ -282,17 +288,20 @@ class Ui_MainWindow(object):
         self.temp_layout_10.setContentsMargins(0, 0, 0, 0)
         self.temp_layout_10.setObjectName("temp_layout_10")
         self.brake_pressure = QtWidgets.QLabel(self.horizontalLayoutWidget_11)
-        self.brake_pressure.setStyleSheet("color: rgb(255, 255, 255);")
+        self.brake_pressure.setStyleSheet("color: rgb(255, 255, 255);\n"
+"background-color: rgb(121, 215, 15);")
         self.brake_pressure.setAlignment(QtCore.Qt.AlignCenter)
         self.brake_pressure.setObjectName("brake_pressure")
         self.temp_layout_10.addWidget(self.brake_pressure)
         self.thing_2 = QtWidgets.QLabel(self.horizontalLayoutWidget_11)
-        self.thing_2.setStyleSheet("color: rgb(255, 255, 255);")
+        self.thing_2.setStyleSheet("color: rgb(255, 255, 255);\n"
+"background-color: rgb(211, 38, 38);")
         self.thing_2.setAlignment(QtCore.Qt.AlignCenter)
         self.thing_2.setObjectName("thing_2")
         self.temp_layout_10.addWidget(self.thing_2)
         self.thing_3 = QtWidgets.QLabel(self.horizontalLayoutWidget_11)
-        self.thing_3.setStyleSheet("color: rgb(255, 255, 255);")
+        self.thing_3.setStyleSheet("color: rgb(255, 255, 255);\n"
+"background-color: rgb(211, 38, 38);")
         self.thing_3.setAlignment(QtCore.Qt.AlignCenter)
         self.thing_3.setObjectName("thing_3")
         self.temp_layout_10.addWidget(self.thing_3)
@@ -301,6 +310,10 @@ class Ui_MainWindow(object):
         self.line_5.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_5.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_5.setObjectName("line_5")
+        self.health_chk_button = QtWidgets.QPushButton(self.tab)
+        self.health_chk_button.setGeometry(QtCore.QRect(230, 0, 141, 32))
+        self.health_chk_button.setStyleSheet("color: rgb(255, 255, 255);")
+        self.health_chk_button.setObjectName("health_chk_button")
         self.tabs_widget.addTab(self.tab, "")
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
@@ -459,9 +472,17 @@ class Ui_MainWindow(object):
         self.tabs_widget.addTab(self.tab_3, "")
         self.tab_4 = QtWidgets.QWidget()
         self.tab_4.setObjectName("tab_4")
+        self.scrollArea = QtWidgets.QScrollArea(self.tab_4)
+        self.scrollArea.setGeometry(QtCore.QRect(0, 0, 371, 451))
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setObjectName("scrollArea")
+        self.scrollAreaWidgetContents = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 369, 449))
+        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.tabs_widget.addTab(self.tab_4, "")
         self.right_frame = QtWidgets.QFrame(self.main_frame)
-        self.right_frame.setGeometry(QtCore.QRect(740, 110, 371, 551))
+        self.right_frame.setGeometry(QtCore.QRect(740, 110, 371, 521))
         font = QtGui.QFont()
         font.setFamily("MS Shell Dlg 2")
         self.right_frame.setFont(font)
@@ -479,6 +500,15 @@ class Ui_MainWindow(object):
 "color: rgb(255, 255, 255);")
         self.camera_feed_label.setAlignment(QtCore.Qt.AlignCenter)
         self.camera_feed_label.setObjectName("camera_feed_label")
+        self.tabWidget = QtWidgets.QTabWidget(self.camera_placeholder)
+        self.tabWidget.setGeometry(QtCore.QRect(0, 40, 371, 221))
+        self.tabWidget.setObjectName("tabWidget")
+        self.tab_5 = QtWidgets.QWidget()
+        self.tab_5.setObjectName("tab_5")
+        self.tabWidget.addTab(self.tab_5, "")
+        self.tab_6 = QtWidgets.QWidget()
+        self.tab_6.setObjectName("tab_6")
+        self.tabWidget.addTab(self.tab_6, "")
         self.verticalLayoutWidget_3 = QtWidgets.QWidget(self.right_frame)
         self.verticalLayoutWidget_3.setGeometry(QtCore.QRect(10, 430, 160, 80))
         self.verticalLayoutWidget_3.setObjectName("verticalLayoutWidget_3")
@@ -555,9 +585,29 @@ class Ui_MainWindow(object):
         self.pod_connect_ind.setGeometry(QtCore.QRect(440, 650, 191, 16))
         self.pod_connect_ind.setStyleSheet("color: rgb(255, 255, 255);")
         self.pod_connect_ind.setObjectName("pod_connect_ind")
+        self.label = QtWidgets.QLabel(self.main_frame)
+        self.label.setGeometry(QtCore.QRect(700, 40, 81, 41))
+        self.label.setText("")
+        self.label.setObjectName("label")
+        self.simulation_button = QtWidgets.QPushButton(self.main_frame)
+        self.simulation_button.setGeometry(QtCore.QRect(180, 50, 151, 51))
+        self.simulation_button.setStyleSheet("background-color: rgb(240, 165, 0);\n"
+"color: rgb(255, 255, 255);\n"
+"font: 63 8pt \"Segoe UI Semibold\";")
+        self.simulation_button.setObjectName("simulation_button")
+        self.estop_button.raise_()
+        self.left_frame.raise_()
+        self.mid_frame.raise_()
+        self.right_frame.raise_()
+        self.command_line.raise_()
+        self.send_command_button.raise_()
+        self.pod_connect_ind.raise_()
+        self.albertaloop_logo.raise_()
+        self.label.raise_()
+        self.simulation_button.raise_()
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1145, 25))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1145, 20))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -565,7 +615,8 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabs_widget.setCurrentIndex(1)
+        self.tabs_widget.setCurrentIndex(3)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -598,6 +649,7 @@ class Ui_MainWindow(object):
         self.brake_pressure.setText(_translate("MainWindow", "30kPa"))
         self.thing_2.setText(_translate("MainWindow", "-"))
         self.thing_3.setText(_translate("MainWindow", "-"))
+        self.health_chk_button.setText(_translate("MainWindow", "Run Health Check"))
         self.tabs_widget.setTabText(self.tabs_widget.indexOf(self.tab), _translate("MainWindow", "Instrument Panel"))
         self.accel_ind.setText(_translate("MainWindow", "Acceleration"))
         self.braking_ind.setText(_translate("MainWindow", "Braking"))
@@ -617,16 +669,17 @@ class Ui_MainWindow(object):
         self.packet2_label.setText(_translate("MainWindow", "2"))
         self.packet3_label.setText(_translate("MainWindow", "3"))
         self.tabs_widget.setTabText(self.tabs_widget.indexOf(self.tab_3), _translate("MainWindow", "Packet Logger"))
-        self.tabs_widget.setTabText(self.tabs_widget.indexOf(self.tab_4), _translate("MainWindow", "Page"))
+        self.tabs_widget.setTabText(self.tabs_widget.indexOf(self.tab_4), _translate("MainWindow", "Packet Logger 2"))
         self.camera_feed_label.setText(_translate("MainWindow", "Feed"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _translate("MainWindow", "Front Camera"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_6), _translate("MainWindow", "Rear Camera"))
         self.current_state_title.setText(_translate("MainWindow", "Current State"))
         self.current_state_ind.setText(_translate("MainWindow", "Acceleration"))
         self.current_state_title_2.setText(_translate("MainWindow", "Telemetry Connection"))
         self.current_state_ind_2.setText(_translate("MainWindow", "No Connection"))
         self.send_command_button.setText(_translate("MainWindow", "Send Command"))
         self.pod_connect_ind.setText(_translate("MainWindow", "Pod Connection: No Connection"))
-
-
+        self.simulation_button.setText(_translate("MainWindow", "ENTER SIMULATION"))
 
 app = QApplication(sys.argv)
 window = QMainWindow()
@@ -634,10 +687,10 @@ window = QMainWindow()
 ui = Ui_MainWindow()
 ui.setupUi(window)
 
-# engine = QQmlEngine()
-# component = QQmlComponent(engine)
-# component.loadUrl(QUrl('Guage.qml'))
-# obj = component.create()
-
+#engine = QQmlEngine()
+#component = QQmlComponent(engine)
+#component.loadUrl(QUrl('Guage.qml'))
+#obj = component.create()
+    
 window.show()
 sys.exit(app.exec_())
