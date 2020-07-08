@@ -1,29 +1,30 @@
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow
-from AlbertaLoop_UI import Ui_MainWindow
-import telemetry_module
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QDialog
+from PyQt5.QtCore import pyqtProperty, QCoreApplication, QObject, QUrl
+from PyQt5.QtQuick import QQuickView
+from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlEngine
+from PyQt5.QtQuickWidgets import QQuickWidget
 import sys
+from AlbertaLoop_UI import Ui_MainWindow
 
-class MyWindow(QMainWindow):
 
-    def __init__(self):
-        super(MyWindow, self).__init__()
-        self.ui = Ui_MainWindow()
-        self.ui.setupUi(window)
-        self.initUI()
-        self.telemetry_manager = telemetry_module.TelemetryManager("192.168.1.84", 3000)
+class Logic(Ui_MainWindow):
+
+    def __init__(self, window):
+        self.setupUi(window)
+
+        #Add functionality below!
+        self.send_command_button.clicked.connect(self.command_button_clicked)
         
-    def initUI(self):
-        self.ui.send_command_button.clicked(self.clicked)
-
-    def clicked(self):
-        print("You pressed the command button.")
-
-def window():
-    app = QApplication(sys.argv)
-    win = MyWindow()
-    win.show()
-    sys.exit(app.exec_())
+    def command_button_clicked(self):
+        print('button pressed')
 
 
-window()
+app = QApplication(sys.argv)
+MainWindow = QMainWindow()
+ui = Logic(MainWindow)
+MainWindow.show()
+sys.exit(app.exec_())
+
+
+    #add more definitons here for functionality!!
