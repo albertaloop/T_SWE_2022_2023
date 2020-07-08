@@ -57,7 +57,7 @@ class Ui_MainWindow(object):
         self.speed_guage_layout.setContentsMargins(0, 0, 0, 0)
         self.speed_guage_layout.setObjectName("speed_guage_layout")
 
-
+        '''
         #USER ADDED QML WIDGET ##########################
 
         #Spedometer
@@ -66,7 +66,7 @@ class Ui_MainWindow(object):
         spedometerWidget.setResizeMode(QQuickWidget.SizeRootObjectToView)
         spedometerWidget.setSource(QUrl("Guage.qml"))
         self.speed_guage_layout.addWidget(spedometerWidget)
-
+        '''
         
         self.time_elapsed_label = QtWidgets.QLabel(self.left_frame)
         self.time_elapsed_label.setGeometry(QtCore.QRect(80, 400, 171, 41))
@@ -681,6 +681,7 @@ class Ui_MainWindow(object):
         self.pod_connect_ind.setText(_translate("MainWindow", "Pod Connection: No Connection"))
         self.simulation_button.setText(_translate("MainWindow", "ENTER SIMULATION"))
 
+'''
 app = QApplication(sys.argv)
 window = QMainWindow()
 
@@ -694,3 +695,4 @@ ui.setupUi(window)
     
 window.show()
 sys.exit(app.exec_())
+'''
