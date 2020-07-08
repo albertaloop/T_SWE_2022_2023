@@ -45,6 +45,3 @@ MainWindow = QMainWindow()
 ui = Logic(MainWindow)
 MainWindow.show()
 sys.exit(app.exec_())
-
-
-    #add more definitons here for functionality!!
