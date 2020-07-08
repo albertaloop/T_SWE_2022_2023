@@ -8,7 +8,20 @@
 
 This GUI was written in PyQT using QT Editor in Python and QtQuick2 in C++ with QML libraries. This is only the concept and functionalities are to be added in later.
 
+IF you are openning the code in VSCode, right click ui.py and hit *Run Current File in Python Interactive Window* otherwise the QML widget will not show
+
 ## Features 
+
+### July 7th, 2020
+A major functionality update was done to the GUI. Now, ALL logic/functionality code will go under ui.py and only front end changes will be altered on the AlbertaLoop_UI.ui using QT Designer
+
+This means that if more features are added to the front end of the GUI, the resulting .ui file can be converted to .py and adding widgets and functions is not to be dealt with anymore as that is all in the ui.py file. 
+
+#### Functionality Changes
+As a test, now when something is written into the command line of the GUI and the button is pressed, text is returned to the console.
+Typing 'exit' and pressing the button exits the program completely. 
+
+
 ### April 29, 2020
 GUI was made in a dark mode in contrast with the [first GUI ](https://github.com/albertaloop/T_SWE_2019_2020/tree/hsprabhakar-patch-1 "first GUI ")
 Moreover, the higher contrast and tri-division design allows ease of access and usage.
@@ -31,14 +44,8 @@ Tab 3 contains packet logger information with several buttons that do not have c
 
 So far, the only variables are the GUI element variables. _Anything named self.'...'_label represents titles/labels on the GUI. Variables named self.'...'_ind or self.'...' are values/text that will be dynamically changed 
 
-## Fixes Needed
+## Fixes/Actions Needed
 
-
-
-
-
-
-
-
-
-
+July 7th, 2020: 
+Add the telemetry module stuff in for simulation
+ 
