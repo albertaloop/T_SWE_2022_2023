@@ -1,29 +1,47 @@
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow
-from AlbertaLoop_UI import Ui_MainWindow
-import telemetry_module
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QDialog, QHBoxLayout
+from PyQt5.QtCore import pyqtProperty, QCoreApplication, QObject, QUrl
+from PyQt5.QtQuick import QQuickView
+from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlEngine
+from PyQt5.QtQuickWidgets import QQuickWidget
 import sys
-
-class MyWindow(QMainWindow):
-
-    def __init__(self):
-        super(MyWindow, self).__init__()
-        self.ui = Ui_MainWindow()
-        self.ui.setupUi(window)
-        self.initUI()
-        self.telemetry_manager = telemetry_module.TelemetryManager("192.168.1.84", 3000)
-        
-    def initUI(self):
-        self.ui.send_command_button.clicked(self.clicked)
-
-    def clicked(self):
-        print("You pressed the command button.")
-
-def window():
-    app = QApplication(sys.argv)
-    win = MyWindow()
-    win.show()
-    sys.exit(app.exec_())
+from AlbertaLoop_UI import Ui_MainWindow
 
 
-window()
+class Logic(Ui_MainWindow):
+
+    def __init__(self, window):
+        self.setupUi(window)
+        #-----------------------------------------------------------------
+        #Add functionality below!
+        #User Added QML Widget for Speed Gauge
+        spedometerWidget = QQuickWidget()
+        spedometerWidget.setClearColor(QtCore.Qt.transparent)
+        spedometerWidget.setResizeMode(QQuickWidget.SizeRootObjectToView)
+        spedometerWidget.setSource(QUrl("Guage.qml"))
+        self.speed_guage_layout.addWidget(spedometerWidget)
+
+        # command button connects
+        self.send_command_button.clicked.connect(self.command_button_clicked)
+        self.send_command_button.clicked.connect(self.command_button_input)
+
+
+
+    #functionality definitions   
+ 
+    def command_button_clicked(self):
+        print('Command button pressed')
+
+    def command_button_input(self):
+        text = self.command_line.text()
+
+        #exits program (remove later plz)
+        if text.lower() == 'exit':
+            sys.exit()
+        print('command >> ', text)
+
+app = QApplication(sys.argv)
+MainWindow = QMainWindow()
+ui = Logic(MainWindow)
+MainWindow.show()
+sys.exit(app.exec_())

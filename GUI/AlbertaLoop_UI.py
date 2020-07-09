@@ -55,19 +55,7 @@ class Ui_MainWindow(object):
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
         self.speed_guage_layout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.speed_guage_layout.setContentsMargins(0, 0, 0, 0)
-        self.speed_guage_layout.setObjectName("speed_guage_layout")
-
-
-        #USER ADDED QML WIDGET ##########################
-
-        #Spedometer
-        spedometerWidget = QQuickWidget()
-        spedometerWidget.setClearColor(QtCore.Qt.transparent)
-        spedometerWidget.setResizeMode(QQuickWidget.SizeRootObjectToView)
-        spedometerWidget.setSource(QUrl("Guage.qml"))
-        self.speed_guage_layout.addWidget(spedometerWidget)
-
-        
+        self.speed_guage_layout.setObjectName("speed_guage_layout")       
         self.time_elapsed_label = QtWidgets.QLabel(self.left_frame)
         self.time_elapsed_label.setGeometry(QtCore.QRect(80, 400, 171, 41))
         self.time_elapsed_label.setStyleSheet("font: 75 10pt \"Microsoft YaHei UI\";\n"
@@ -681,6 +669,7 @@ class Ui_MainWindow(object):
         self.pod_connect_ind.setText(_translate("MainWindow", "Pod Connection: No Connection"))
         self.simulation_button.setText(_translate("MainWindow", "ENTER SIMULATION"))
 
+'''
 app = QApplication(sys.argv)
 window = QMainWindow()
 
@@ -694,3 +683,4 @@ ui.setupUi(window)
     
 window.show()
 sys.exit(app.exec_())
+'''

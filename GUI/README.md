@@ -3,56 +3,25 @@
 -------------------------------------------------------------------------------
 ## Coding Notes
 
-When editing the GUI on QT Creator, the QML widget will not show as it is an added in feature. Edit the GUI, convert it to .py, and add the following to the .py file. 
 
-      1) Look for self.speed_guage_layout and under it add the following code:
-      ```
-       # USER ADDED QML WIDGET ##########################
-
-        #Spedometer
-        spedometerWidget = QQuickWidget()
-        spedometerWidget.setClearColor(QtCore.Qt.transparent)
-        spedometerWidget.setResizeMode(QQuickWidget.SizeRootObjectToView)
-        spedometerWidget.setSource(QUrl("Guage.qml"))
-        self.speed_guage_layout.addWidget(spedometerWidget)
-      
-      ```
-      2) Then at the end of the code:
-      
-      ```
-      app = QApplication(sys.argv)
-      window = QMainWindow()
-
-      ui = Ui_MainWindow()
-      ui.setupUi(window)
-
-      #engine = QQmlEngine()
-      #component = QQmlComponent(engine)
-      #component.loadUrl(QUrl('Guage.qml'))
-      #obj = component.create()
-
-      window.show()
-      sys.exit(app.exec_())
-      ```
-      
-      3) Ensure the import statements are as follows:
-      ```
-      
-      import sys
-      from PyQt5 import QtCore, QtGui, QtWidgets
-      from PyQt5.QtCore import pyqtProperty, QCoreApplication, QObject, QUrl
-      from PyQt5.QtWidgets import QApplication, QMainWindow, QHBoxLayout
-      from PyQt5.QtQuick import QQuickView
-      from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlEngine
-      from PyQt5.QtQuickWidgets import QQuickWidget
-      
-      ```
--------------------------------------------------------------------------------
 *04/29/2020:* Basic features of Front end of this second GUI complete
 
 This GUI was written in PyQT using QT Editor in Python and QtQuick2 in C++ with QML libraries. This is only the concept and functionalities are to be added in later.
 
+IF you are openning the code in VSCode, right click ui.py and hit *Run Current File in Python Interactive Window* otherwise the QML widget will not show
+
 ## Features 
+
+### July 7th, 2020
+A major functionality update was done to the GUI. Now, ALL logic/functionality code will go under ui.py and only front end changes will be altered on the AlbertaLoop_UI.ui using QT Designer
+
+This means that if more features are added to the front end of the GUI, the resulting .ui file can be converted to .py and adding widgets and functions is not to be dealt with anymore as that is all in the ui.py file. 
+
+#### Functionality Changes
+As a test, now when something is written into the command line of the GUI and the button is pressed, text is returned to the console.
+Typing 'exit' and pressing the button exits the program completely. 
+
+
 ### April 29, 2020
 GUI was made in a dark mode in contrast with the [first GUI ](https://github.com/albertaloop/T_SWE_2019_2020/tree/hsprabhakar-patch-1 "first GUI ")
 Moreover, the higher contrast and tri-division design allows ease of access and usage.
@@ -75,14 +44,8 @@ Tab 3 contains packet logger information with several buttons that do not have c
 
 So far, the only variables are the GUI element variables. _Anything named self.'...'_label represents titles/labels on the GUI. Variables named self.'...'_ind or self.'...' are values/text that will be dynamically changed 
 
-## Fixes Needed
+## Fixes/Actions Needed
 
-
-
-
-
-
-
-
-
-
+July 7th, 2020: 
+Add the telemetry module stuff in for simulation
+ 
