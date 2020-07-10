@@ -6,6 +6,7 @@ from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlEngine
 from PyQt5.QtQuickWidgets import QQuickWidget
 import sys
 from AlbertaLoop_UI import Ui_MainWindow
+import telemetry_module
 
 
 class Logic(Ui_MainWindow):
@@ -21,11 +22,18 @@ class Logic(Ui_MainWindow):
         spedometerWidget.setSource(QUrl("Guage.qml"))
         self.speed_guage_layout.addWidget(spedometerWidget)
 
+        #logo added
+        pixmap = QtGui.QPixmap('img/Albertaloop_logo.png')
+        self.albertaloop_logo.setPixmap(pixmap)
+
         # command button connects
         self.send_command_button.clicked.connect(self.command_button_clicked)
         self.send_command_button.clicked.connect(self.command_button_input)
 
-
+        #Emergency button and Simulation button connects
+        self.estop_button.clicked.connect(self.e_stop_button_clicked)
+        self.simulation_button.clicked.connect(self.simulation_button_clicked)
+        
 
     #functionality definitions   
  
@@ -39,6 +47,13 @@ class Logic(Ui_MainWindow):
         if text.lower() == 'exit':
             sys.exit()
         print('command >> ', text)
+        
+
+    def e_stop_button_clicked(self):
+        print('EMERGENCY STOP BUTTON HAS BEEN PUSHED')
+
+    def simulation_button_clicked(self):
+        print('Entering simulation')
 
 app = QApplication(sys.argv)
 MainWindow = QMainWindow()
