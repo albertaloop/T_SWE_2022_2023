@@ -885,7 +885,7 @@ background-color:rgb(79, 79, 79);</string>
 background-color:rgb(79, 79, 79);</string>
         </property>
         <property name="text">
-         <string>Do something 2</string>
+         <string>Save packets to directory</string>
         </property>
        </widget>
        <widget class="QPushButton" name="packet_logger_button_3">
@@ -902,7 +902,7 @@ background-color:rgb(79, 79, 79);</string>
 background-color:rgb(79, 79, 79);</string>
         </property>
         <property name="text">
-         <string>Do something 3</string>
+         <string>Watch for packet</string>
         </property>
        </widget>
        <widget class="QWidget" name="gridLayoutWidget">
