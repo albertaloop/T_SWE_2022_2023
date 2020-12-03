@@ -11,10 +11,10 @@ public:
     FlexCAN* fc;
     CircularBuffer<CAN_message_t, 10> incoming_buffer;
     CircularBuffer<CAN_message_t, 10> outgoing_buffer;
-    void read_msg();
+    CAN_message_t read_msg();
     void send_msg();
-    void read_incoming();
-    void send_outgoing();
+    void read_buffer();
+    void write_buffer();
 };
 
 
