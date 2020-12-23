@@ -16,6 +16,7 @@ import struct
 from enum import IntEnum
 from time import time
 
+
 class Status(IntEnum):
     Fault = 0
     SafeToApproach = 1
@@ -25,22 +26,32 @@ class Status(IntEnum):
     Braking = 5
     Crawling = 6
 
+
 def get_position(seconds, run_length, tube_length):
     return (1-1*math.cos(seconds*math.pi/run_length)) / 2.0 * tube_length
+
 
 def get_velocity(seconds, run_length, tube_length):
     return (get_position(seconds, run_length, tube_length) - get_position(seconds-0.1, run_length, tube_length)) * 10
 
+
 def get_acceleration(seconds, run_length, tube_length):
     return (get_velocity(seconds, run_length, tube_length) - get_velocity(seconds-0.1, run_length, tube_length)) * 10
 
+
 if __name__ == "__main__":
-    parser = ArgumentParser(description="Mock the run of a pod to test the Hyperloop system")
-    parser.add_argument("--team_id", type=int, default=0, help="The team id to send")
-    parser.add_argument("--frequency", type=int, default=25, help="The frequency to send packets at")
-    parser.add_argument("--server_ip", default="192.168.0.1", help="The ip to send the packets to")
-    parser.add_argument("--server_port", type=int, default=3000, help="The UDP port to send packets to")
-    parser.add_argument("--tube_length", type=int, default=125000, help="The length of the tube in centimeters")
+    parser = ArgumentParser(
+        description="Mock the run of a pod to test the Hyperloop system")
+    parser.add_argument("--team_id", type=int, default=0,
+                        help="The team id to send")
+    parser.add_argument("--frequency", type=int, default=25,
+                        help="The frequency to send packets at")
+    parser.add_argument("--server_ip", default="192.168.0.1",
+                        help="The ip to send the packets to")
+    parser.add_argument("--server_port", type=int, default=3000,
+                        help="The UDP port to send packets to")
+    parser.add_argument("--tube_length", type=int, default=125000,
+                        help="The length of the tube in centimeters")
 
     args = parser.parse_args()
 
@@ -120,7 +131,8 @@ if __name__ == "__main__":
         #                            Optional
         # stripe_count        uint32 Count of optical navigation stripes detected in
         #                            the tube. Optional
-        packet = struct.pack(">BB7iI", team_id, status, int(acceleration), int(position), int(velocity), 0, 0, 0, 0, int(position) // 3048)
+        packet = struct.pack(">BB7iI", team_id, status, int(acceleration), int(
+            position), int(velocity), 0, 0, 0, 0, int(position) // 3048)
         print(packet)
         sock.sendto(packet, server)
 

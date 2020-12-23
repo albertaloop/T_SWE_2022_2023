@@ -12,6 +12,7 @@ from threading import Thread
 from datetime import datetime
 from argparse import ArgumentParser
 
+
 class Logic(Ui_MainWindow):
 
     def __init__(self, window, ip, port):
@@ -123,10 +124,13 @@ class Logic(Ui_MainWindow):
         # TODO luanch new window to start simulation testing on pod
         print('Entering simulation')
 
+
 if __name__ == "__main__":
     parser = ArgumentParser(description="Albertaloop GUI launch")
-    parser.add_argument("--server_ip", default="192.168.0.1", help="The ip to send the packets to")
-    parser.add_argument("--server_port", type=int, default=3000, help="The UDP port to send packets to")
+    parser.add_argument("--server_ip", default="192.168.0.1",
+                        help="The ip to send the packets to")
+    parser.add_argument("--server_port", type=int, default=3000,
+                        help="The UDP port to send packets to")
 
     args = parser.parse_args()
 
