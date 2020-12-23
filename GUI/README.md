@@ -8,6 +8,7 @@
 1) Install pyqt5 on your computer. For example for mac, simply run `brew install pyqt5`
 2) Navigate to the directory containing this README and run `python3 main.py`
 3) To exit out, press Ctrl+C
+4) To launch the GUI with the fake telemetry connection, use the included shell script. `sh startGUIWithTelemetry.sh 127.0.0.1 8000` where 127.0.0.1 is your localhost IP and port refers to an open port on your computer. Feel free to change these numbers if they don't work for you. Moreover, this shell script has been tested on Mac. If it doesn't work on your system, feel free to make a new script and please push that to the repo so others can use it as well. 
 
 ### How to edit GUI
 1) The GUI's user interface was built using QT Designer. Therefore, to edit the UI, you will also need to download the QT Designer. You can find a lightweight QT designer program at (https://build-system.fman.io/qt-designer-download), which doesn't include the gigabytes of unnecessary stuff you get with the regular QTCreator installation. 
