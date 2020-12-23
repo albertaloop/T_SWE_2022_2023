@@ -19,12 +19,12 @@ void CANBus::send_msg(CAN_message_t msg_out) {
 void CANBus::receive() {
     // use read() function to pass message into incoming buffer
     CAN_message_t msg_in;
-    fc->read(msg_in);
+    this->fc->read(msg_in);
     this->incoming_buffer.Write(msg_in);
 }
 
 void CANBus::broadcast() {
     // use write() function to empty outgoing buffer
     CAN_message_t msg_out = this->outgoing_buffer.Read();
-    fc->write(msg_out);
+    this->fc->write(msg_out);
 }
