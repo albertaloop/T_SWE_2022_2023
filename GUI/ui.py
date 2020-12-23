@@ -11,20 +11,24 @@ import time
 from threading import Thread
 from datetime import datetime
 
+MY_IP_ADDRESS = "127.0.0.1"
+PORT = 8820
+
+
 class Logic(Ui_MainWindow):
 
     def __init__(self, window):
         self.setupUi(window)
-        #-----------------------------------------------------------------
-        #Add functionality below!
-        #User Added QML Widget for Speed Gauge
+        # -----------------------------------------------------------------
+        # Add functionality below!
+        # User Added QML Widget for Speed Gauge
         self.spedometerWidget = QQuickWidget()
         self.spedometerWidget.setClearColor(QtCore.Qt.transparent)
         self.spedometerWidget.setResizeMode(QQuickWidget.SizeRootObjectToView)
         self.spedometerWidget.setSource(QUrl("Guage.qml"))
         self.speed_guage_layout.addWidget(self.spedometerWidget)
 
-        #logo added
+        # logo added
         pixmap = QtGui.QPixmap('img/Albertaloop_logo.png')
         self.albertaloop_logo.setPixmap(pixmap)
 
@@ -32,17 +36,16 @@ class Logic(Ui_MainWindow):
         self.send_command_button.clicked.connect(self.command_button_clicked)
         self.send_command_button.clicked.connect(self.command_button_input)
 
-        #Emergency button and Simulation button connects
+        # Emergency button and Simulation button connects
         self.estop_button.clicked.connect(self.e_stop_button_clicked)
         self.simulation_button.clicked.connect(self.simulation_button_clicked)
-        
+
         thread = Thread(target=self.getTelemetryData)
         thread.start()
 
     def getTelemetryData(self):
-        MY_IP_ADDRESS = "127.0.0.1"
-        PORT = 8820 
-        telemetry_manager = telemetry_module.TelemetryManager(MY_IP_ADDRESS, PORT)
+        telemetry_manager = telemetry_module.TelemetryManager(
+            MY_IP_ADDRESS, PORT)
         start_time = time.time()
         self.current_state_ind_2.setText("Active Connection")
         self.pod_connect_ind.setText("Active Connection")
@@ -56,39 +59,71 @@ class Logic(Ui_MainWindow):
             print("Position: ", telemetry_manager.get_position())
             print("Battery Voltage: ", telemetry_manager.get_battery_voltage())
             print("Battery Current: ", telemetry_manager.get_battery_current())
-            print("Battery Temperature: ", telemetry_manager.get_battery_temperature())
+            print("Battery Temperature: ",
+                  telemetry_manager.get_battery_temperature())
             print("Pod Temperature: ", telemetry_manager.get_pod_temperature())
             print("Stripe Count: ", telemetry_manager.get_stripe_count())
             print("Highest Velocity: ", telemetry_manager.get_highest_velocity())
-            print()
-            print()
-            self.battery_1_temp.setText(str(telemetry_manager.get_battery_voltage()))
+            print("\n")
+
+            self.packetTextBrowser.append(
+                "Team ID: " + str(telemetry_manager.get_team_id()))
+            self.packetTextBrowser.append(
+                "Status: " + str(telemetry_manager.get_status()))
+            self.packetTextBrowser.append(
+                "Acceleration: " + str(telemetry_manager.get_acceleration()))
+            self.packetTextBrowser.append(
+                "Velocity: " + str(telemetry_manager.get_velocity()))
+            self.packetTextBrowser.append(
+                "Position: " + str(telemetry_manager.get_position()))
+            self.packetTextBrowser.append(
+                "Battery Voltage: " + str(telemetry_manager.get_battery_voltage()))
+            self.packetTextBrowser.append(
+                "Battery Current: " + str(telemetry_manager.get_battery_current()))
+            self.packetTextBrowser.append(
+                "Battery Temperature: " + str(telemetry_manager.get_battery_temperature()))
+            self.packetTextBrowser.append(
+                "Pod Temperature: " + str(telemetry_manager.get_pod_temperature()))
+            self.packetTextBrowser.append(
+                "Stripe Count: " + str(telemetry_manager.get_stripe_count()))
+            self.packetTextBrowser.append(
+                "Highest Velocity: " + str(telemetry_manager.get_highest_velocity()))
+            self.packetTextBrowser.append("\n")
+            self.packetTextBrowser.moveCursor(QtGui.QTextCursor.End)
+
+            self.battery_1_temp.setText(
+                str(telemetry_manager.get_battery_voltage()))
             self.position_ind.setText(str(telemetry_manager.get_position()))
-            self.bat_1_volt.setText(str(telemetry_manager.get_battery_voltage()))
+            self.bat_1_volt.setText(
+                str(telemetry_manager.get_battery_voltage()))
             # self.progressBar.setProperty("value", telemetry_manager.get_position())
             elapsed_time = time.time() - start_time
-            self.time_elapsed_label.setText("Time Elapsed: %.2f" % elapsed_time)
+            self.time_elapsed_label.setText(
+                "Time Elapsed: %.2f" % elapsed_time)
             # self.self.spedometerWidget.engine().setContextProperty('gauge_value', telemetry_manager.get_velocity())
             time.sleep(1)
-    #functionality definitions   
- 
+    # functionality definitions
+
     def command_button_clicked(self):
+        # TODO send general command to pod
         print('Command button pressed')
 
     def command_button_input(self):
         text = self.command_line.text()
 
-        #exits program (remove later plz)
+        # exits program TODO (remove later plz)
         if text.lower() == 'exit':
             sys.exit()
         print('command >> ', text)
-        
 
     def e_stop_button_clicked(self):
+        # TODO send stop packet to pod
         print('EMERGENCY STOP BUTTON HAS BEEN PUSHED')
 
     def simulation_button_clicked(self):
+        # TODO luanch new window to start simulation testing on pod
         print('Entering simulation')
+
 
 app = QApplication(sys.argv)
 MainWindow = QMainWindow()

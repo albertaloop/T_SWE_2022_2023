@@ -1101,7 +1101,7 @@ background-color: rgb(22, 40, 38);</string>
        <attribute name="title">
         <string>Packet Logger 2</string>
        </attribute>
-       <widget class="QScrollArea" name="scrollArea">
+       <widget class="QTextBrowser" name="packetTextBrowser">
         <property name="geometry">
          <rect>
           <x>0</x>
@@ -1110,19 +1110,16 @@ background-color: rgb(22, 40, 38);</string>
           <height>451</height>
          </rect>
         </property>
-        <property name="widgetResizable">
-         <bool>true</bool>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(255, 255, 255)</string>
         </property>
-        <widget class="QWidget" name="scrollAreaWidgetContents">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>369</width>
-           <height>449</height>
-          </rect>
-         </property>
-        </widget>
+        <property name="html">
+         <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; color:#ffffff;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
        </widget>
       </widget>
      </widget>
@@ -1433,7 +1430,7 @@ font: 63 8pt &quot;Segoe UI Semibold&quot;;</string>
      <x>0</x>
      <y>0</y>
      <width>1145</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
