@@ -1,6 +1,21 @@
 # AlbertaLoop GUI
 
 -------------------------------------------------------------------------------
+
+## How to use
+
+### How to start GUI
+1) Install pyqt5 on your computer. For example for mac, simply run `brew install pyqt5`
+2) Navigate to the directory containing this README and run `python3 main.py`
+3) To exit out, press Ctrl+C
+
+### How to edit GUI
+1) The GUI's user interface was built using QT Designer. Therefore, to edit the UI, you will also need to download the QT Designer. You can find a lightweight QT designer program at (https://build-system.fman.io/qt-designer-download), which doesn't include the gigabytes of unnecessary stuff you get with the regular QTCreator installation. 
+
+2) Then use QT Designer tp open the AlbertaLoop_UI.ui file, and make whatever edits you want
+
+3) After making the edits, run the command `pyuic5 -x AlbertaLoop_UI.ui -o AlbertaLoop_UI.py` to auto generate the corresponding python file for the UI.
+
 ## Coding Notes
 
 
