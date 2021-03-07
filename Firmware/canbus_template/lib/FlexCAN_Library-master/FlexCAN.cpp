@@ -74,8 +74,11 @@ FlexCAN::FlexCAN(uint32_t baud, uint8_t id, uint8_t txAlt, uint8_t rxAlt)
   // wait for freeze ack
   while(!(FLEXCANb_MCR(flexcanBase) & FLEXCAN_MCR_FRZ_ACK))
     ;
-  // disable self-reception
-  FLEXCANb_MCR(flexcanBase) |= FLEXCAN_MCR_SRX_DIS;
+  // enable self-reception
+  FLEXCANb_MCR(flexcanBase) &= ~FLEXCAN_MCR_SRX_DIS;
+
+  // enable loop-back mode
+  FLEXCANb_CTRL1(flexcanBase) |= FLEXCAN_CTRL_LPB;
 
   //enable RX FIFO
   FLEXCANb_MCR(flexcanBase) |= FLEXCAN_MCR_FEN;
