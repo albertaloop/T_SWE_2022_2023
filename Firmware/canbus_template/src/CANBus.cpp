@@ -1,8 +1,10 @@
 #include "CANBus.h"
 #include "circular_buffer.h"
+#include <FlexCAN.h>
 
-CANBus::CANBus(FlexCAN* fc) {
+CANBus::CANBus(FlexCAN *fc, CAN_filter_t *mask) {
     this->fc = fc;
+    fc->begin(*mask);
 }
 
 CAN_message_t CANBus::read_msg() {
