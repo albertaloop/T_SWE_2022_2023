@@ -1,4 +1,6 @@
 # Starter CANBus network
+Test basic CANBus implementations using two nodes connected to the same Teensy 4.0
+
 * On the left : _Arduino Serial Monitor_. Shows CANBus nodes with IDs 0x{100,500} transmitting and receiving on the CANBus network
 * On the right: _pulseview_. D1 is connected to the CANL line. Note the CAN row is garbage (expects CANRX, I set it to CANL)
 
@@ -10,10 +12,11 @@ Arrange your CANBus network per the schematic below
 
 <img src="https://user-images.githubusercontent.com/11367325/116735135-1ec36600-a9bc-11eb-9a2d-f38ecac2b1d4.png" alt="Devices drawio" width="640"/>
 
-Open mike.ino in the _Arduino IDE_, plug in your teensy and upload the program to your board
+Using the PlatformIO plugin, compile the program and use either [PlatformIO Remote](https://docs.platformio.org/en/latest/plus/pio-remote.html#pioremote) or `scp` + [teensy loader](https://www.pjrc.com/teensy/loader.html) to program your Teensy 4.0
 
 Open the _Serial Monitor_. You should see TX/RX printouts
 
+## Hardware
 * Teensy 4.0
 * 2x CANBus transceiver breakout boards [src -  CANBUS-BRKMINI of CAN transceiver SN65HVD230](https://copperhilltech.com/can-bus-mini-breakout-board/)
 * Logic analyser [src - AZDelivery Logic Analyzer 24MHz 8CH with USB Cable](https://www.amazon.ca/AZDelivery-%E2%AD%90%E2%AD%90%E2%AD%90%E2%AD%90%E2%AD%90-Logic-Analyzer-24MHz/dp/B07F8C1PMQ/ref=sr_1_10?dchild=1&keywords=logic+analyzer&qid=1619794302&sr=8-10)
