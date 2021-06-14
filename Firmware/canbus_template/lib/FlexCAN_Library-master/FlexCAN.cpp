@@ -74,11 +74,12 @@ FlexCAN::FlexCAN(uint32_t baud, uint8_t id, uint8_t txAlt, uint8_t rxAlt)
   // wait for freeze ack
   while(!(FLEXCANb_MCR(flexcanBase) & FLEXCAN_MCR_FRZ_ACK))
     ;
+  // // disable self-reception
+  // FLEXCANb_MCR(flexcanBase) |= FLEXCAN_MCR_SRX_DIS;
+
   // enable self-reception
   FLEXCANb_MCR(flexcanBase) &= ~FLEXCAN_MCR_SRX_DIS;
 
-  // enable loop-back mode
-  FLEXCANb_CTRL1(flexcanBase) |= FLEXCAN_CTRL_LPB;
 
   //enable RX FIFO
   FLEXCANb_MCR(flexcanBase) |= FLEXCAN_MCR_FEN;
@@ -108,7 +109,8 @@ FlexCAN::FlexCAN(uint32_t baud, uint8_t id, uint8_t txAlt, uint8_t rxAlt)
   defaultMask.rtr = 0;
   defaultMask.ext = 0;
   defaultMask.id = 0;
-}
+
+  }
 
 
 // -------------------------------------------------------------
@@ -137,7 +139,8 @@ void FlexCAN::begin(const CAN_filter_t &mask)
   FLEXCANb_MCR(flexcanBase) &= ~(FLEXCAN_MCR_HALT);
   // wait till exit of freeze mode
   while(FLEXCANb_MCR(flexcanBase) & FLEXCAN_MCR_FRZ_ACK);
-
+  // enable loop-back mode
+  FLEXCANb_CTRL1(flexcanBase) |= FLEXCAN_CTRL_LPB;
   // wait till ready
   while(FLEXCANb_MCR(flexcanBase) & FLEXCAN_MCR_NOT_RDY);
 
@@ -256,7 +259,12 @@ int FlexCAN::write(const CAN_message_t &msg)
   } else {
     FLEXCANb_MBn_ID(flexcanBase, buffer) = FLEXCAN_MB_ID_IDSTD(msg.id);
   }
+  // Serial.print("Mailbox before write: ");
+  // Serial.println((uint32_t)(FLEXCANb_MBn_WORD0(flexcanBase, buffer) | 0xff) >> 24);
+  // Serial.println(msg.buf[0]);
   FLEXCANb_MBn_WORD0(flexcanBase, buffer) = (msg.buf[0]<<24)|(msg.buf[1]<<16)|(msg.buf[2]<<8)|msg.buf[3];
+  // Serial.print("Mailbox after write: ");
+  // Serial.println((uint32_t)(FLEXCANb_MBn_WORD0(flexcanBase, buffer) | 0xff) >> 24);
   FLEXCANb_MBn_WORD1(flexcanBase, buffer) = (msg.buf[4]<<24)|(msg.buf[5]<<16)|(msg.buf[6]<<8)|msg.buf[7];
   if(msg.ext) {
     FLEXCANb_MBn_CS(flexcanBase, buffer) = FLEXCAN_MB_CS_CODE(FLEXCAN_MB_CODE_TX_ONCE)

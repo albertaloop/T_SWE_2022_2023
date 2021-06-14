@@ -8,6 +8,7 @@ class CANBus
 {
 public:
     CANBus(FlexCAN *fc, CAN_filter_t *mask);
+    CANBus(FlexCAN *fc);
     FlexCAN* fc;
     CircularBuffer<CAN_message_t, 10> incoming_buffer;
     CircularBuffer<CAN_message_t, 10> outgoing_buffer;

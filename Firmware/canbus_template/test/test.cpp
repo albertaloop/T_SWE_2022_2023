@@ -19,7 +19,7 @@ void setup() {
   message1.timeout = 0;
   message1.buf[0] = 0b01010101;
   
-    CAN_Message_t message2;
+  CAN_Message_t message2;
   message2.ext = 0;
   message2.id = 0xffffffff;
   message2.len = 1;
