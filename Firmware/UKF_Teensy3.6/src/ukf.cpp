@@ -1,13 +1,22 @@
-#include ukf.h
+#include <arm_math.h>
+#include "ukf.h"
 
-ukf::ukf(float32_t * pData){
-    arm_mat_init_f32(arm_matrix_instance_f32 * S, 1, 15, pData)
+ukf::ukf(){
+    arm_mat_init_f32(&this->xyz_pos, 1, 3, this->state_vector[0]);
+    arm_mat_init_f32(&this->xyz_vel, 1, 3, this->state_vector[3]);
+    arm_mat_init_f32(&this->xyz_accel, 1, 3, this->state_vector[6]);
+    arm_mat_init_f32(&this->rpy_att, 1, 3, this->state_vector[9]);
+    arm_mat_init_f32(&this->rpy_vel, 1, 3, this->state_vector[12]);
+
 }
 
-ukf::predict() {
+int ukf::predict() {
 
+    return 1;
 }
 
-ukf::update() {
+int ukf::update() {
+
+    return 1;
 
 }
