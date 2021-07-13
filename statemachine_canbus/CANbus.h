@@ -1,41 +1,20 @@
-#ifndef _CANBUS_H_
-#define _CANBUS_H_
+#ifndef __CANBus__
+#define __CANBus__
 
-#include <vector>
-#include <iostream>
-#include <algorithm>
-#include <fstream>
-#include <utility>
-#include <cassert>
-#include <string>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
-#include <string.h>
-#include <time.h>
-
-#include "FlexCAN.h"
+#include <FlexCAN.h>
 #include "circular_buffer.h"
 
 class CANBus
 {
 public:
-    CANBus();
-    ~CANBus();
-
-    void write_buffer(CAN_message_t msg);
-    void send_msg();
-
-    void read_buffer();
-    void read_msg();
-
-private:
-    FlexCAN flexcan;
-    // outgoing
-    CircularBuffer<CAN_message_t, 16> buffer1;
-    // incoming
-    CircularBuffer<CAN_message_t, 16> buffer2;
-}
+    CANBus(FlexCAN *fc, CAN_filter_t *mask);
+    FlexCAN *fc;
+    CircularBuffer<CAN_message_t, 10> incoming_buffer;
+    CircularBuffer<CAN_message_t, 10> outgoing_buffer;
+    CAN_message_t read_msg();
+    void send_msg(CAN_message_t msg_out);
+    void receive();
+    void broadcast();
+};
 
 #endif

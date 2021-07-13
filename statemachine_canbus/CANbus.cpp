@@ -1,31 +1,32 @@
 #include "CANBus.h"
 #include "circular_buffer.h"
+#include <FlexCAN.h>
 
-CANBus::CANBus(){
-    // the constructor
-}
-CANBus::~CANBus(){
-    // do something or leave it empty
-}
-
-void CANBus::write_buffer(CAN_message_t msg){
-    this->flexcan.write(&msg);
+CANBus::CANBus(FlexCAN *fc, CAN_filter_t *mask) {
+    this->fc = fc;
+    fc->begin(*mask);
 }
 
-void CANBus::send_msg(){
-    CAN_message_t msg_send;
-    this->flexcan.read(&msg_send);
-    this->buffer1.Write(msg_send);
+CAN_message_t CANBus::read_msg() {
+    // Read CAN_message_t from incoming buffer
+    CAN_message_t msg_in = this->incoming_buffer.Read();
+    return msg_in;
 }
 
-void CANBus::read_buffer(){
-    // I'm not sure what should read_buffer do.
-    
+void CANBus::send_msg(CAN_message_t msg_out) {
+    // Write CAN_message_t to outgoing buffer
+    this->outgoing_buffer.Write(msg_out);
 }
 
-void CANBus::read_msg(){
-    // read from incoming buffer
-    CAN_message_t msg_read = buffer2.Read();
-    // write to FlexCAN object
-    this->flexcan.write(&msg_read);
+void CANBus::receive() {
+    // use read() function to pass message into incoming buffer
+    CAN_message_t msg_in;
+    this->fc->read(msg_in);
+    this->incoming_buffer.Write(msg_in);
+}
+
+void CANBus::broadcast() {
+    // use write() function to empty outgoing buffer
+    CAN_message_t msg_out = this->outgoing_buffer.Read();
+    this->fc->write(msg_out);
 }
