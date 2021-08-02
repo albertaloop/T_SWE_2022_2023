@@ -3,7 +3,10 @@
 
 #define Number_of_sigma_points 3
 
-ukf::ukf(int alpha, int kappa, int beta, *float32_t P){
+
+void sigma_points();
+
+ukf::ukf(int alpha, int kappa, int beta, float32_t *P){
 
     this->alpha = alpha;
     this->kappa = kappa;
@@ -51,18 +54,21 @@ ukf::ukf(int alpha, int kappa, int beta, *float32_t P){
 
 //   Position type state vector
 
-int ukf::predict_xyz_pos {
+int ukf::predict() {
 
     // Initialize State Transition Matrix
-    arm_matrix_instance_f32 F;
+    // arm_matrix_instance_f32 F;
 
+
+    
 
     // Declare sigma point matrix
     arm_matrix_instance_f32 X;
     // Declare Data array for matrix X
     float32_t X_data[2 * n * 3];
     // Compute Sigma points and place result in X_data
-    sigma_points(X_data[0]);
+    X_data = sigma_points();
+    arm_matrix_instance_f32 X;
     // Initialize sigma point matrix X
     arm_mat_init_f32(X, 1, 3, X_data[0]);
 
@@ -87,15 +93,14 @@ void sigma_points() {
     int lamda = ((this->alpha) * (this->alpha) * (n + this->kappa)) - n;
     // Declare matrix 
     // n is the dimension of the state vector
-    float X sigmas[n];
-
-
+    float X[2 * n * 3];
+    arm_matrix_instance_f32 choleskyd = cholesky(P);
     // Generate columns
-    for (int i = 0; i < state_dim; i++) {
+    for (int i = 0; i < 3; i++) {
         // Generate Rows
         X[0] = state[i];
         for (int j = i; j < n; j++) {
-            X[j] = state[i] + ;
+            X[j] = state[i] + ( (n + lamda) * Sigma[i] );
             
         }
         for (int j = n; j < 2n; j++) {
@@ -105,4 +110,36 @@ void sigma_points() {
     }
 }
 
-void cholesky(arm_matrix_instance_f32 P);
+
+// Cholesky - Crout algorithm : https://en.wikipedia.org/wiki/Cholesky_decomposition
+arm_matrix_instance_f32 cholesky(arm_matrix_instance_f32 P) {
+    arm_matrix_instance_f32 choleskyd;
+    float32_t L[9];
+    float32_t A[9];
+
+    float32_t * pData = P.pData;
+    for (int i = 0; i < 9; i++) {
+        L[i] = *pData++;
+    }
+    for (int j = 0; j < 9; j++) {
+        float sum = 0;
+
+        for (int i = 0; i < 9; i++) {
+            choleskyarray[i] = 0;
+        }
+        for (int k = 0; k < j; k++) {
+            sum += L[(j*3)+k];
+        }
+
+        for (int i = 0; i < 9; i++) {
+            pData = P.pData;
+            pData += i*3 + j;
+            if(i == j) {
+                L[(i*3)+j] = sqrt(*pData - sum);
+            }
+            L[(i*3)+j] = ( 1.0 / L[(j*3)+j] * (*pData - sum ));
+        }
+    }
+    arm_matrix_init_f32(choleskyd, 3, 3, L[0]);
+    return (choleskyd);
+}

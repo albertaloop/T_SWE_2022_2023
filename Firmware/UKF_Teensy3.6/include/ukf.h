@@ -8,7 +8,7 @@
 
 class ukf {
     public:
-        ukf();
+        ukf(int alpha, int kappa, int beta, float32_t *P);
 
         // State parameters to be tracked
         float32_t state[n];   
