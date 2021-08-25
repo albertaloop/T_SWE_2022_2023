@@ -12,43 +12,40 @@ FLEXCAN_Init(CAN_SETUP, &flexcanConfig);
 FLEXCAN_Enable(CAN_SETUP, true);
 
 FlexCAN Cbus(500000);
-CircularBuffer<CAN_message_t, 10> in_buff, out_buff;
 uint16_t wait_time = 40; // 40 ms
-uint8_t CAN_id = 0;
+CircularBuffer<CAN_message_t, 10> in_buff, out_buff;
+uint8_t CAN_id = 4;
+uint8_t msg_type = Msg_Type::SafeToApproach;
 
-EthernetUDP Udp;
+bool movement_request = false;
+uint8_t movement_state = MovementState::SafeToApproach;
 
 double seconds = 0;
 unsigned long wait_time = 400; // 400 ms
 
 static struct States
 {
-    uint32_t pod_state = Status::SafeToApproach;
+    uint32_t movement_state = Status::Still;
+    double speed = 0;
     bool ready_to_send = false;
     bool fault_detected = false;
     uint32_t fault_type = FaultType::No_Fault;
-    double position = 0;
-    double velocity = 0;
-    double acceleration = 0;
-    bool should_launch = true;
 } pod_context;
 
-enum Status
+enum MovementState
 {
-    Fault = 0,
-    SafeToApproach = 1,
-    ReadyToLaunch = 2,
-    Launching = 3,
-    Coasting = 4,
-    Braking = 5,
-    Crawling = 6
+    Still = 0,
+    Accelerating = 1,
+    Decelerating = 2,
+    Cruising = 3
 };
 
 enum Msg_Type
 {
     Telemetry = 0,
-    Command = 1,
-    Fault = 2
+    Fault = 1,
+    Accelerate = 2,
+    Decelerate = 3,
 };
 
 enum CANID_List
@@ -75,6 +72,10 @@ uint8_t get_status()
     return 0;
 }
 
+uint8_t is_fault(struct States *context)
+{
+    return context->fault_detected;
+}
 
 //to-do: fit canbus messages here
 double get_position()
@@ -217,7 +218,17 @@ static THD_FUNCTION(Thread3, arg)
     chRegSetThreadName("movement_task");
     while (1)
     {
-        //add task code here
+        //start by checking if any requests have been made
+        if (movement_request)
+        {
+            fault_detected = is_fault(&pod_context)
+            if(fault_detected) {
+                //stop motor
+            }
+            
+        }
+        
+
         chThdYield();
     }
 }
