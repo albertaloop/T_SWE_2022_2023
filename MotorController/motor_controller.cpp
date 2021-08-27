@@ -18,19 +18,12 @@ uint8_t CAN_id = 4;
 uint8_t msg_type = Msg_Type::SafeToApproach;
 
 bool movement_request = false;
+bool message_read = false;
 uint8_t movement_state = MovementState::SafeToApproach;
 
 double seconds = 0;
 unsigned long wait_time = 400; // 400 ms
 
-static struct States
-{
-    uint32_t movement_state = Status::Still;
-    double speed = 0;
-    bool ready_to_send = false;
-    bool fault_detected = false;
-    uint32_t fault_type = FaultType::No_Fault;
-} pod_context;
 
 enum MovementState
 {
@@ -42,11 +35,23 @@ enum MovementState
 
 enum Msg_Type
 {
-    Telemetry = 0,
-    Fault = 1,
+    None = 0,
+    Telemetry = 1,
     Accelerate = 2,
-    Decelerate = 3,
+    Decelerate = 3
 };
+
+static struct States
+{
+    uint8_t movement_state = Status::Still;
+    double speed = 0;
+    double desired_speed = 0;
+    double desired_accel = 0;
+    bool ready_to_send = false;
+    bool fault_detected = false;
+    uint32_t fault_type = FaultType::No_Fault;
+    uint8_t msg_type = Msg_Type::None;
+} pod_context;
 
 enum CANID_List
 {
@@ -66,15 +71,29 @@ enum FaultType
     Brk_Fault = 4
 };
 
-// TODO: implement this function
-uint8_t get_status()
+uint8_t get_state(struct States *context)
 {
-    return 0;
+    return context->movement_state;
 }
 
-uint8_t is_fault(struct States *context)
+void set_state(struct States *context, uint8_t state)
+{
+    context->movement_state = state;
+}
+
+bool is_fault(struct States *context)
 {
     return context->fault_detected;
+}
+
+uint8_t get_msg_type(struct States *context)
+{
+    return context->msg_type;
+}
+
+void set_msg_type(struct States *context, uint8_t msg_type)
+{
+    context->msg_type = msg_type;
 }
 
 //to-do: fit canbus messages here
@@ -83,14 +102,24 @@ double get_position()
     return 0;
 }
 
-double get_velocity()
+double get_speed()
 {
-    return 0;
+    return context->speed;
 }
 
 double get_acceleration()
 {
     return 0;
+}
+
+double get_desired_speed(struct States *context)
+{
+    return context->desired_speed;
+}
+
+double get_desired_accel(struct States *context)
+{
+    return context->desired_accel;
 }
 
 uint8_t *fault_msg(uint8_t CAN_id, uint8_t fault_type)
@@ -221,11 +250,40 @@ static THD_FUNCTION(Thread3, arg)
         //start by checking if any requests have been made
         if (movement_request)
         {
-            fault_detected = is_fault(&pod_context)
+            bool fault_detected = is_fault(&pod_context);
             if(fault_detected) {
                 //stop motor
             }
-            
+            uint8_t msg_type = get_msg_type(&pod_context);
+            message_read = true;
+            set_msg_type(&pod_context, Msg_Type::None);
+
+            switch (msg_type)
+            {
+            case Msg_Type::Telemetry:
+                /* code */
+                break;
+
+            case Msg_Type::Accelerate:
+                double desired_speed = get_desired_speed(&pod_context);
+                double desired_accel = get_desired_accel(&pod_context);
+                double speed = get_speed(&pod_context);
+
+                if (desired_speed>speed)
+                {
+                    set_state(&pod_context, MovementState::Cruising)
+                }
+                
+
+                break;
+
+            case Msg_Type::Decelerate:
+                /* code */
+                break;
+
+            default:
+                break;
+            }
         }
         
 
