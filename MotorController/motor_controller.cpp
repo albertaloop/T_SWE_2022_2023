@@ -291,7 +291,6 @@ static THD_FUNCTION(Thread3, arg)
 
 
             uint8_t movement_state = get_state(&pod_context);
-        
             switch (movement_state)
             {
             case MovementState::Accelerating:
@@ -301,9 +300,25 @@ static THD_FUNCTION(Thread3, arg)
                 //TO-DO: we must also trigger flag for speed request from bamocar
                 double speed = get_speed(&pod_context);
 
-                if (desired_speed > speed)
+                //checks if state needs to be changed to cruise
+                //speed must be within 2ms^-1 within desired speed to activate
+                //cruise
+                if (speed < (desired_speed + 2) && speed > (desired_speed - 2))
                 {
                     set_state(&pod_context, MovementState::Cruising);
+                    break;
+                }
+
+                //accel routine
+                if (desired_speed > speed)
+                {
+                    //trigger message asking bamocar to accelerate
+                }
+
+                //decel routine
+                else if (desired_speed < speed)
+                {
+                    //trigger message asking bamocar to decelerate
                 }
                 break;
             
