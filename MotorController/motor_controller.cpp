@@ -29,16 +29,18 @@ enum MovementState
 {
     Still = 0,
     Accelerating = 1,
-    Decelerating = 2,
-    Cruising = 3
+    //note: accelerating can mean deceleration as well
+    //we are combining accel and decel to reduce chances of errors
+    Cruising = 2
 };
 
 enum Msg_Type
 {
     None = 0,
     Telemetry = 1,
-    Accelerate = 2,
-    Decelerate = 3
+    Accelerate = 2
+    //note: accelerating can mean deceleration as well
+    //we are combining accel and decel to reduce chances of errors
 };
 
 static struct States
@@ -283,11 +285,6 @@ static THD_FUNCTION(Thread3, arg)
                 switch_just_changed(&pod_context, true);
                 break;
 
-            case Msg_Type::Decelerate:
-                set_state(&pod_context, MovementState::Decelerating);
-                switch_just_changed(&pod_context, true);
-                break;
-
             default:
                 break;
             }
@@ -300,11 +297,11 @@ static THD_FUNCTION(Thread3, arg)
             case MovementState::Accelerating:
                 double desired_speed = get_desired_speed(&pod_context);
                 double desired_accel = get_desired_accel(&pod_context);
-                
+
                 //TO-DO: we must also trigger flag for speed request from bamocar
                 double speed = get_speed(&pod_context);
 
-                if (desired_speed>speed)
+                if (desired_speed > speed)
                 {
                     set_state(&pod_context, MovementState::Cruising);
                 }
