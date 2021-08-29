@@ -51,6 +51,7 @@ static struct States
     bool fault_detected = false;
     uint32_t fault_type = FaultType::No_Fault;
     uint8_t msg_type = Msg_Type::None;
+    bool routine_just_changed = false; //flag to see if routine was JUST changed
 } pod_context;
 
 enum CANID_List
@@ -84,6 +85,16 @@ void set_state(struct States *context, uint8_t state)
 bool is_fault(struct States *context)
 {
     return context->fault_detected;
+}
+
+bool is_just_changed(struct States *context)
+{
+    return context->routine_just_changed;
+}
+
+void switch_just_changed(struct States *context, bool just_changed)
+{
+    context->routine_just_changed = just_changed;
 }
 
 uint8_t get_msg_type(struct States *context)
@@ -258,32 +269,52 @@ static THD_FUNCTION(Thread3, arg)
             message_read = true;
             set_msg_type(&pod_context, Msg_Type::None);
 
+            //this switch should only TRIGGER movement routine flags
+            //it should not contain code on running the routines!
             switch (msg_type)
             {
-            case Msg_Type::Telemetry:
-                /* code */
-                break;
+            /* 
+            we will not do anything when we get a telem message
+            besides continue the same routine as last time.
+            */
 
             case Msg_Type::Accelerate:
-                double desired_speed = get_desired_speed(&pod_context);
-                double desired_accel = get_desired_accel(&pod_context);
-                double speed = get_speed(&pod_context);
-
-                if (desired_speed>speed)
-                {
-                    set_state(&pod_context, MovementState::Cruising)
-                }
-                
-
+                set_state(&pod_context, MovementState::Accelerating);
+                switch_just_changed(&pod_context, true);
                 break;
 
             case Msg_Type::Decelerate:
-                /* code */
+                set_state(&pod_context, MovementState::Decelerating);
+                switch_just_changed(&pod_context, true);
                 break;
 
             default:
                 break;
             }
+
+
+            uint8_t movement_state = get_state(&pod_context);
+        
+            switch (movement_state)
+            {
+            case MovementState::Accelerating:
+                double desired_speed = get_desired_speed(&pod_context);
+                double desired_accel = get_desired_accel(&pod_context);
+                
+                //TO-DO: we must also trigger flag for speed request from bamocar
+                double speed = get_speed(&pod_context);
+
+                if (desired_speed>speed)
+                {
+                    set_state(&pod_context, MovementState::Cruising);
+                }
+                break;
+            
+            default:
+                break;
+            }
+                
+
         }
         
 
