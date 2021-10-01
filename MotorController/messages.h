@@ -12,7 +12,9 @@ uint8_t[9][7] snd_msg_list = {};
 //0xFF is a placeholder for values we will not send
 
 //Transmission messages
-int8_t[4] arr = {0x3, 0x3D, 0xE2, 0x00};
+
+
+uint8_t[4] arr = {0x3, 0x3D, 0xE2, 0x00};
 for (uint8_t i = 0; i < arr[0]; i++)
 {
     snd_msg_list[0][i] = arr[i];
