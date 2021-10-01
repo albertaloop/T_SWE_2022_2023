@@ -1,4 +1,5 @@
 
+//This is our list of messages
 //flexcan config script made with help of
 //http://eet.etec.wwu.edu/KurtTaylor/project/docs/Bibleography/MCU/ConnSoftDocs/Kinetis%20SDK%20v2.0.0%20API%20Reference%20Manual/group__flexcan__driver.html
 
