@@ -3,7 +3,7 @@
 //This is our list of messages
 
 uint8_t[3][7] rcv_msg_list = {};
-uint8_t[10][7] snd_msg_list = {};
+uint8_t[9][7] snd_msg_list = {};
 
 //arr[0] is the length of the msg
 //arr[1-n] are the msg bytes
@@ -60,16 +60,10 @@ for (uint8_t i = 0; i < arr[0]; i++)
     snd_msg_list[7][i] = arr[i];
 }
 
-uint8_t[4] arr = {0x3, 0x31, 0xA4, 0x7F};
-for (uint8_t i = 0; i < arr[0]; i++)
-{
-    snd_msg_list[8][i] = arr[i];
-}
-
 uint8_t[4] arr = {0x3, 0x31, 0x00, 0x00};
 for (uint8_t i = 0; i < arr[0]; i++)
 {
-    snd_msg_list[9][i] = arr[i];
+    snd_msg_list[8][i] = arr[i];
 }
 
 // Recieve messages
