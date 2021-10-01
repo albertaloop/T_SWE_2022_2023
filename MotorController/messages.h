@@ -1,22 +1,14 @@
+#include <Arduino.h>
 
 //This is our list of messages
-//flexcan config script made with help of
-//http://eet.etec.wwu.edu/KurtTaylor/project/docs/Bibleography/MCU/ConnSoftDocs/Kinetis%20SDK%20v2.0.0%20API%20Reference%20Manual/group__flexcan__driver.html
 
-enum MovementState
-{
-    Still = 0,
-    Accelerating = 1,
-    //note: accelerating can mean deceleration as well
-    //we are combining accel and decel to reduce chances of errors
-    Cruising = 2
-};
+uint8_t[3][7] rcv_msg_list = {};
+uint8_t[11][7] snd_msg_list = {};
 
-enum Msg_Type
+//arr[0] is the length of the msg
+//arr[1-n] are the msg bytes
+uint8_t[7] arr = {0x3, 0x3D, 0xE2, 0x00};
+for (uint8_t i = 0; i < arr[0]; i++)
 {
-    None = 0,
-    Telemetry = 1,
-    Accelerate = 2
-    //note: accelerating can mean deceleration as well
-    //we are combining accel and decel to reduce chances of errors
-};
+    rcv_msg_list[0][i] = arr[i];
+}
