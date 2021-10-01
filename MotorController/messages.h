@@ -27,3 +27,15 @@ for (uint8_t i = 0; i < arr[0]; i++)
 {
     rcv_msg_list[0][i] = arr[i];
 }
+
+uint8_t[5] arr = {0x4, 0xE8, 0x01, 0x00, 0x00};
+for (uint8_t i = 0; i < arr[0]; i++)
+{
+    rcv_msg_list[1][i] = arr[i];
+}
+
+uint8_t[5] arr = {0x4, 0x30, 0xff, 0xff, 0xff};
+for (uint8_t i = 0; i < arr[0]; i++)
+{
+    rcv_msg_list[2][i] = arr[i];
+}
