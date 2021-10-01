@@ -1,29 +1,6 @@
-#include <Arduino.h>
-#include <ChibiOS_ARM.h>
-#include "CANBus.h"
-#include "circular_buffer.h"
 
 //flexcan config script made with help of
 //http://eet.etec.wwu.edu/KurtTaylor/project/docs/Bibleography/MCU/ConnSoftDocs/Kinetis%20SDK%20v2.0.0%20API%20Reference%20Manual/group__flexcan__driver.html
-flexcan_config_t flexcanConfig;
-
-FLEXCAN_GetDefaultConfig(&flexcanConfig);
-FLEXCAN_Init(CAN_SETUP, &flexcanConfig);
-FLEXCAN_Enable(CAN_SETUP, true);
-
-FlexCAN Cbus(500000);
-uint16_t wait_time = 40; // 40 ms
-CircularBuffer<CAN_message_t, 10> in_buff, out_buff;
-uint8_t CAN_id = 4;
-uint8_t msg_type = Msg_Type::SafeToApproach;
-
-bool movement_request = false;
-bool message_read = false;
-uint8_t movement_state = MovementState::SafeToApproach;
-
-double seconds = 0;
-unsigned long wait_time = 400; // 400 ms
-
 
 enum MovementState
 {
