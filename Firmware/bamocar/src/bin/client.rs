@@ -1,17 +1,20 @@
 use bamocar::*;
-use std::io::{Read};
 use serialport;
+use std::io::{Read};
 
 fn main() {
+    env_logger::init();
     let slave = get_slave_from_config();
-    let mut port = serialport::new(slave.to_string_lossy(), 9600).open().expect(&format!("Failed to open {:?}", slave));
+    let mut port = serialport::new(slave.to_string_lossy(), 9600).open().expect(&format!("failed to open {:?}", slave));
     port.set_timeout(std::time::Duration::from_millis(1000)).unwrap();
-    port.write(b"a").unwrap();
-    read_port_and_print(&mut port);
-    port.write(b"b").unwrap();
-    read_port_and_print(&mut port);
-    port.write(b"c").unwrap();
-    read_port_and_print(&mut port);
+    log::debug!("polling various endpoints at 1 Hz");
+    loop {
+        let endpoint = &[rand::random::<u8>()];
+        log::debug!("TX: {:?}", endpoint);
+        port.write(endpoint).unwrap();
+        read_port_and_print(&mut port);
+        std::thread::sleep(std::time::Duration::from_millis(1000));
+    }
 }
 
 fn read_port(port:&mut std::boxed::Box<dyn serialport::SerialPort>, buf: &mut Vec<u8>) -> String {
@@ -21,5 +24,5 @@ fn read_port(port:&mut std::boxed::Box<dyn serialport::SerialPort>, buf: &mut Ve
 
 fn read_port_and_print(port: &mut std::boxed::Box<dyn serialport::SerialPort>) {
     let mut buf: Vec<u8> = vec![0; 1024];
-    println!("read: {:?}", read_port(port, &mut buf));
+    log::debug!("RX: {:?}", read_port(port, &mut buf));
 }

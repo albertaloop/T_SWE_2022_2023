@@ -32,7 +32,7 @@ pub fn pathbuf_of_string(strpath: String) -> PathBuf {
 pub fn write_slave_to_config(slave: PathBuf) {
     fs::create_dir_all(&get_config_path()).unwrap();
     fs::write(&get_slave_path(), &slave.as_os_str().to_str().unwrap()).unwrap();  // possible UTF-8 problems here
-    println!("Updating {:?} with slave {:?}", get_slave_path(), slave);
+    log::debug!("updating {:?} with slave {:?}", get_slave_path(), slave);
 }
 
 pub fn get_slave_from_config() -> PathBuf {
@@ -44,15 +44,20 @@ pub fn buffer_master(fd: &mut nix::pty::PtyMaster, sleep: Option<bool>) {
     let mut buf = [0; 1];
     let response = match fd.read_exact(&mut buf) {
         Err(why) => panic!("couldn't read fd {:?}: {}", fd, why),
-        Ok(_) => bamocar_registers(buf[0]),
+        Ok(()) => {
+            log::debug!("RX: {:?}", buf[0]);
+            bamocar_registers(buf[0])
+        },
     };
     match response {
-        Err(bad_register) =>
-            {
-                println!("Unknown register value received: {:?}", bad_register);
-                fd.write_fmt(format_args!("{:?}\n", bad_register)).unwrap()
-            },
-        Ok(register_value) => fd.write_fmt(format_args!("{:?}\n", register_value)).unwrap()
+        Err(bad_register) => {
+            log::debug!("TX: {:?}", bad_register);
+            fd.write_fmt(format_args!("{:?}\n", bad_register)).unwrap()
+        },
+        Ok(register_value) => {
+            log::debug!("TX: {:?}", register_value);
+            fd.write_fmt(format_args!("{:?}\n", register_value)).unwrap()
+        }
     }
     match sleep.unwrap_or(true) {
         true => std::thread::sleep(std::time::Duration::from_millis(10)),
@@ -69,6 +74,6 @@ fn bamocar_registers(register: u8) -> Result<u32, String> {
         0x0a => Ok(12),
         0x0b => Ok(231234),
         0x61 => Ok(12345),  // 0x61 is 'a' in ascii
-        _    => Err(format!("Bamocar register {} does not exist or is not implemented", register)),
+        _    => Err(format!("bamocar register {} does not exist or is not implemented", register)),
     }
 }

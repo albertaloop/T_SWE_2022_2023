@@ -6,14 +6,14 @@ This assumes you have [Rust](https://www.rust-lang.org/tools/install) and Python
 Server: open a terminal
 ```bash
 $ cd Firmware/bamocar
-$ cargo run  # runs server by default
-$ cargo run --bin server # or you can directly call the server
+$ RUST_LOG=debug cargo run  # runs server by default
+$ RUST_LOG=debug cargo run --bin server # or you can directly call the server
 ```
 
 Rust Client: open a terminal
 ```bash
 $ cd Firmware/bamocar
-$ cargo run --bin client
+$ RUST_LOG=debug cargo run --bin client
 ```
 
 Python Client: open a terminal
