@@ -8,9 +8,9 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "c:/Users/ian/Documents/GitHub/T_SWE_2019_2020/Firmware/canbus_template/include",
-                "c:/Users/ian/Documents/GitHub/T_SWE_2019_2020/Firmware/canbus_template/src",
-                "c:/Users/ian/Documents/GitHub/T_SWE_2019_2020/Firmware/canbus_template/lib/FlexCAN_Library-master",
+                "c:/Users/ian/Documents/GitHub/T_SWE_2019_2020/Firmware/CANbus_Teensy3.6/include",
+                "c:/Users/ian/Documents/GitHub/T_SWE_2019_2020/Firmware/CANbus_Teensy3.6/src",
+                "c:/Users/ian/Documents/GitHub/T_SWE_2019_2020/Firmware/CANbus_Teensy3.6/lib/FlexCAN_Library-master",
                 "C:/Users/ian/.platformio/packages/framework-arduinoteensy/cores/teensy3",
                 "C:/Users/ian/.platformio/packages/framework-arduinoteensy/libraries/ADC",
                 "C:/Users/ian/.platformio/packages/framework-arduinoteensy/libraries/AccelStepper/src",
@@ -119,9 +119,9 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "c:/Users/ian/Documents/GitHub/T_SWE_2019_2020/Firmware/canbus_template/include",
-                    "c:/Users/ian/Documents/GitHub/T_SWE_2019_2020/Firmware/canbus_template/src",
-                    "c:/Users/ian/Documents/GitHub/T_SWE_2019_2020/Firmware/canbus_template/lib/FlexCAN_Library-master",
+                    "c:/Users/ian/Documents/GitHub/T_SWE_2019_2020/Firmware/CANbus_Teensy3.6/include",
+                    "c:/Users/ian/Documents/GitHub/T_SWE_2019_2020/Firmware/CANbus_Teensy3.6/src",
+                    "c:/Users/ian/Documents/GitHub/T_SWE_2019_2020/Firmware/CANbus_Teensy3.6/lib/FlexCAN_Library-master",
                     "C:/Users/ian/.platformio/packages/framework-arduinoteensy/cores/teensy3",
                     "C:/Users/ian/.platformio/packages/framework-arduinoteensy/libraries/ADC",
                     "C:/Users/ian/.platformio/packages/framework-arduinoteensy/libraries/AccelStepper/src",
@@ -229,7 +229,7 @@
                 ]
             },
             "defines": [
-                "PLATFORMIO=50101",
+                "PLATFORMIO=50202",
                 "__MK66FX1M0__",
                 "ARDUINO_TEENSY36",
                 "USB_SERIAL",
