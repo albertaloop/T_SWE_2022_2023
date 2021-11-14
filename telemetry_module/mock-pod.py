@@ -45,12 +45,12 @@ def get_acceleration(seconds, run_length, tube_length):
     return (get_velocity(seconds, run_length, tube_length) - get_velocity(seconds-0.1, run_length, tube_length)) * 10
 
 # In general, battery voltage for hyperloop is around 36, voltage will increase as voltage increase
-def get_battery_volatge(seconds, initial_temp):
+def get_battery_voltage(seconds, initial_temp):
     return (36.0 + get_battery_temperature(seconds, initial_temp)/100.0)
 
 
 def get_battery_current(seconds, initial_temp, resistance):
-    return (get_battery_volatge(seconds, initial_temp)/resistance)
+    return (get_battery_voltage(seconds, initial_temp)/resistance)
 
 # Highest battery temperature is around 150C
 def get_battery_temperature(seconds, initial_temp):
@@ -143,7 +143,7 @@ if __name__ == "__main__":
             velocity = get_velocity(seconds, run_length, tube_length)
             acceleration = get_acceleration(seconds, run_length, tube_length)
             battery_temperature = get_battery_temperature(seconds, initial_temp)
-            battery_voltage = get_battery_volatge(seconds, initial_temp)
+            battery_voltage = get_battery_voltage(seconds, initial_temp)
             battery_current = get_battery_current(seconds, initial_temp, resistance)
             pod_temperature = get_pod_temperature(seconds, initial_pod_temp)
             stripe_count = get_stripe_count(seconds, initial_stripe_count)
@@ -155,7 +155,7 @@ if __name__ == "__main__":
             velocity = get_velocity(seconds, run_length, tube_length)
             acceleration = get_acceleration(seconds, run_length, tube_length)
             battery_temperature = get_battery_temperature(seconds, initial_temp)
-            battery_voltage = get_battery_volatge(seconds, initial_temp)
+            battery_voltage = get_battery_voltage(seconds, initial_temp)
             battery_current = get_battery_current(seconds, initial_temp, resistance)
             pod_temperature = get_pod_temperature(seconds, initial_pod_temp)
             stripe_count = get_stripe_count(seconds, initial_stripe_count)
@@ -167,7 +167,7 @@ if __name__ == "__main__":
             velocity = 0
             acceleration = 0
             battery_temperature = get_battery_temperature(seconds, initial_temp)
-            battery_voltage = get_battery_volatge(seconds, initial_temp)
+            battery_voltage = get_battery_voltage(seconds, initial_temp)
             battery_current = get_battery_current(seconds, initial_temp, resistance)
             pod_temperature = get_pod_temperature(seconds, initial_pod_temp)
             stripe_count = get_stripe_count(seconds, initial_stripe_count)
@@ -189,9 +189,8 @@ if __name__ == "__main__":
         #                            Optional
         # stripe_count        uint32 Count of optical navigation stripes detected in
         #                            the tube. Optional
-        packet = struct.pack(">BB7iI", team_id, status, int(acceleration),
-            int(position), int(velocity), float(battery_voltage), float(battery_current),
-            float(battery_temperature), float(pod_temperature), int(position) // stripe_count)
+        packet = struct.pack(">BB7iI", team_id, status, int(acceleration), int(
+            position), int(velocity), 0, 0, 0, 0, int(position) // 3048)
         print(packet)
         sock.sendto(packet, server)
 

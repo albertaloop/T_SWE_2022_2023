@@ -2,8 +2,8 @@ import telemetry_module
 from subprocess import call
 import time
 
-MY_IP_ADDRESS = "192.168.1.84"
-PORT = 3000
+MY_IP_ADDRESS = "127.0.0.1"
+PORT = 65432
 
 # Run "python3 mock-pod.py --server_ip 192.168.1.84 --server_port 3000" in another shell
 
