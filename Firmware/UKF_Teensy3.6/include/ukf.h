@@ -3,22 +3,37 @@
 
 #include <arm_math.h>
 
+#define State_dim                 3
+#define n                         State_dim
+
 class ukf {
     public:
-        ukf();   
-        arm_matrix_instance_f32 xyz_pos; 
-        arm_matrix_instance_f32 xyz_vel;
-        arm_matrix_instance_f32 xyz_accel;
-        arm_matrix_instance_f32 rpy_att;
-        arm_matrix_instance_f32 rpy_vel;
+        ukf(int alpha, int kappa, int beta, float32_t *P);
 
-        arm_matrix_instance_f32 Rz_Ry_Rx;
-        arm_matrix_instance_f32 Ttheta;
-        arm_matrix_instance_f32 sigma_points;
+        // State parameters to be tracked
+        float32_t state[n];   
 
-        float32_t state_vector[15];
-        int update();
+
+        // Sigma point parameters
+        int alpha;
+        int beta;
+        int kappa;
+
+
+        arm_matrix_instance_f32 P;
+
+        // Upper case Sigma, calculated using "matrix square root"
+        arm_matrix_instance_f32 Sigma;
+
+        // Examples:
+        // arm_matrix_instance_f32 rpy_att;
+        // arm_matrix_instance_f32 rpy_vel;
+        // arm_matrix_instance_f32 Rz_Ry_Rx;
+        // arm_matrix_instance_f32 Ttheta;
+
         int predict();
+
+        int update();
 
 };
 
