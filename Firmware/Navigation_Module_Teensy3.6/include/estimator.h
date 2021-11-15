@@ -44,15 +44,15 @@ class estimator {
             uint16_t nRows,
             uint16_t nColumns,
             float * pData);
-        int arm_mat_mult_f32(
+        void arm_mat_mult_f32(
             const arm_matrix_instance_f32 * pSrcA,
             const arm_matrix_instance_f32 * pSrcB,
             arm_matrix_instance_f32 * pDst);
-        int arm_mat_add_f32(
+        void arm_mat_add_f32(
             const arm_matrix_instance_f32 * pSrcA,
             const arm_matrix_instance_f32 * pSrcB,
             arm_matrix_instance_f32 * pDst);
-        int arm_mat_scale_f32(
+        void arm_mat_scale_f32(
             const arm_matrix_instance_f32 * pSrc,
             float32_t                 scale,
             arm_matrix_instance_f32 * pDst);

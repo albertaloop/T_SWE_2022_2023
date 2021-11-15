@@ -6,7 +6,7 @@
 #include "CANBus.h"
 
 #define ISR_INTERVAL 50000 // 100,000 microseconds = 50 ms
-
+#define total_responses 4
 
 FlexCAN fc = FlexCAN();
 estimator est = estimator();
@@ -19,17 +19,7 @@ volatile bool interrupt_flag = false;
 
 enum { state0 = 0, state1, state2, state3 };
 
-int castFloatToInt(float f) {
-    union { float f; int i; } u;
-    u.f = f;
-    return u.i;
-}
 
-float castIntToFloat(int i) {
-    union { float f; int i; } u;
-    u.i = i;
-    return u.f;
-}
 
 int state = 0;
 
@@ -39,9 +29,27 @@ struct {
   float x[3];
 } state_params;
 
+void (*responses[2])( void );
+
+
 void timerCallback(void) {
   interrupt_flag = true;
 }
+
+
+int castFloatToInt(float f) {
+    union { float f; int i; } u;
+    u.f = f;
+    return u.i;
+}
+
+
+float castIntToFloat(int i) {
+    union { float f; int i; } u;
+    u.i = i;
+    return u.f;
+}
+
 
 void measurement_loop(void) {
   // get accel measurement
@@ -56,22 +64,55 @@ void measurement_loop(void) {
   }
 }
 
+
 void canbus_loop(void) {
+  // receive message
   CAN_message_t msg_in;
-  can.fc->read(msg_in);
-  // convert floats to int array: msg_out.buf[] =
-  // intermediate char buffer to allow memcpy of float's bytes
+  if(can.fc->read(msg_in)) {
+    uint8_t msg_num = msg_in.buf[0];
+    // respond to message
+    responses[msg_num % total_responses]();
+  }
+
+}
+
+
+void recenter() {
   for (int i = 0; i < 3; i++) {
-    msg_out.buf[i] = castFloatToInt(state_params.x[i]);
-    // memcpy(&msg_out.buf[i], &state_params.x[i], 4);
+    est.x_bar[i] = castIntToFloat(msg_out.buf[i]);
+  }
+}
 
-    // the actual int array you want, use for loop to copy the ints
 
+void position_request() {
+  for (int i = 0; i < 3; i++) {
+    msg_out.buf[0] = castFloatToInt(est.x_bar[0]);
+  }
+  can.fc->write(msg_out);
+}
+
+
+void velocity_request() {
+  for (int i = 0; i < 3; i++) {
+    msg_out.buf[0] = castFloatToInt(est.x_bar[1]);
+  }
+  can.fc->write(msg_out);
+}
+
+
+void acceleration_request() {
+  for (int i = 0; i < 3; i++) {
+    msg_out.buf[0] = castFloatToInt(est.x_bar[2]);
   }
   can.fc->write(msg_out);
 }
 
 void setup() {
+  responses[0] = recenter;
+  responses[1] = position_request;
+  responses[2] = velocity_request;
+  responses[0] = acceleration_request;
+
   msg_out.ext = 0;
   msg_out.id = 0;
   msg_out.len = 1;
