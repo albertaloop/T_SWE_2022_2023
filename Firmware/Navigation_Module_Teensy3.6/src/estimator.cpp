@@ -201,7 +201,7 @@ void estimator::predict() {
     // F * x_bar + G * a
     arm_mat_add_f32(&temp2, &temp1, &temp3);
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 2; i++) {
         x_bar[i] = temp3data[i];
     }
 }
