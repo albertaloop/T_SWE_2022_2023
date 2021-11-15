@@ -111,7 +111,7 @@ void setup() {
   responses[0] = recenter;
   responses[1] = position_request;
   responses[2] = velocity_request;
-  responses[0] = acceleration_request;
+  responses[3] = acceleration_request;
 
   msg_out.ext = 0;
   msg_out.id = 0;
