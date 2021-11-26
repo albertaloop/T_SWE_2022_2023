@@ -52,3 +52,21 @@ void MessageMaster::buildSndMessages(uint8_t snd_msg_list[9][4])
         }
     }
 }
+
+
+//this is the list of messages which can be received from the nav module
+void MessageMaster::buildNavMessages(uint8_t nav_msg_list[3][2])
+{
+    // temp messages array
+    uint8_t messages[3][2] = {{0x02, 0x00}, //position
+                              {0x02, 0x01}, //velocity
+                              {0x02, 0x02}  //accel
+                              };
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 2; j++)
+        {
+            nav_msg_list[i][j] = messages[i][j];
+        }
+    }
+}

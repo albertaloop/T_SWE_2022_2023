@@ -10,6 +10,7 @@ class MessageMaster {
   public:
     void buildSndMessages(uint8_t snd_msg_list[9][4]);
     void buildRcvMessages(uint8_t rcv_msg_list[3][5]);
+    void buildNavMessages(uint8_t nav_msg_list[3][2]);
 };
 
 #endif
