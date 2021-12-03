@@ -4,15 +4,13 @@
 #include <SPI.h>
 #include <FlexCAN_T4.h>
 
-#include <ChibiOS_ARM.h>
+#include "ChRt.h"
 #include "circular_buffer.h"
 
 FlexCAN_T4<CAN0, RX_SIZE_256, TX_SIZE_16> Can0;
 
 uint16_t wait_time = 40; // 40 ms
-CircularBuffer<CAN_message_t, 10> in_buff, out_buff;
 uint8_t CAN_id = 4;
-uint8_t msg_type = Msg_Type::SafeToApproach;
 
 MessageMaster messageCreator;
 uint8_t rcv_msg_list[3][5];
@@ -21,7 +19,6 @@ uint8_t nav_msg_list[3][2];
 
 bool movement_request = false;
 bool message_read = false;
-uint8_t movement_state = MovementState::SafeToApproach;
 
 double seconds = 0;
 unsigned long wait_time = 400; // 400 ms
@@ -53,7 +50,7 @@ enum Nav_Msg_Type
 
 static struct States
 {
-  uint8_t movement_state = Status::Still;
+  uint8_t movement_state = MovementState::Still;
   double position[3] = {0, 0, 0};
   double velocity[3] = {0, 0, 0};
   double accel[3] = {0, 0, 0};
@@ -169,9 +166,9 @@ double get_desired_accel(struct States *context)
 }
 
 // indentation changed here for some reason
-uint8_t *fault_msg(uint8_t CAN_id, uint8_t fault_type)
+bool fault_msg(struct States *context, uint8_t CAN_id, uint8_t fault_type)
 {
-  if (fault_detected)
+  if (is_fault(context))
   {
     switch (fault_type)
     {
@@ -198,19 +195,16 @@ uint8_t *fault_msg(uint8_t CAN_id, uint8_t fault_type)
   }
   else
   {
-    return -1; // error, fault hasn't been identified
+    return false; // error, fault hasn't been identified
   }
-
-  return 0;
+  return true;
 }
 
-CAN_message_t *build_msg(uint8_t recipient_id, uint8_t msg_type)
+void *build_msg(CAN_message_t out_msg, uint8_t msg_id)
 {
-  CAN_message_t out_msg;
-  out_msg.ext = 0;
-  out_msg.id = recipient_id;
-  out_msg.len = PACKET_LENGTH;
-  for (size_t i = 0; i < PACKET_LENGTH; i++)
+  out_msg.id = msg_id;
+  out_msg.len = 1;
+  for (size_t i = 0; i < 1; i++)
   {
     out_msg.buf[i] = 0x0F; // just a placeholder. fill according to situation.
   }
@@ -428,12 +422,14 @@ void setup()
   Can0.begin();
   Can0.setBaudRate(500000);
   Can0.setMaxMB(16);
+  Can0.enableFIFO();
+  Can0.enableFIFOInterrupt();
+  Can0.mailboxStatus();
 
   messageCreator.buildRcvMessages(rcv_msg_list);
   messageCreator.buildSndMessages(snd_msg_list);
   messageCreator.buildNavMessages(nav_msg_list);
 
-  halInit();
   chSysInit();
   chThdCreateStatic(waThread1, sizeof(waThread1),
                     NORMALPRIO, Thread1, NULL);
