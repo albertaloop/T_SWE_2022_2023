@@ -5,17 +5,13 @@
 #include <FlexCAN_T4.h>
 
 #include "ChRt.h"
-#include "circular_buffer.h"
 
 FlexCAN_T4<CAN0, RX_SIZE_256, TX_SIZE_16> Can0;
+FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
 
-uint16_t wait_time = 40; // 40 ms
 uint8_t CAN_id = 4;
 
-MessageMaster messageCreator;
-uint8_t rcv_msg_list[3][5];
-uint8_t snd_msg_list[9][4];
-uint8_t nav_msg_list[3][2];
+MessageMaster messageCreator(Can0, Can1);
 
 bool movement_request = false;
 bool message_read = false;
@@ -32,20 +28,27 @@ enum MovementState
   Cruising = 2
 };
 
-enum Msg_Type
+enum CanMessages
 {
-  None = 0,
-  Telemetry = 1,
-  Accelerate = 2
-  // note: accelerating can mean deceleration as well
-  // we are combining accel and decel to reduce chances of errors
+  Start = 0,
+  Position = 9,
+  Velocity = 10,
+  Acceleration = 11
 };
 
-enum Nav_Msg_Type
+enum BamocarCanID
 {
-  Position = 0x00,
-  Velocity = 0x01,
-  Acceleration = 0x02
+  Transmit = 0x181,
+  Receive = 0x201,
+};
+
+enum FaultType
+{
+  No_Fault = 0,
+  Gen_Fault = 1,
+  Mtr_Fault = 2,
+  Nav_Fault = 3,
+  Brk_Fault = 4
 };
 
 static struct States
@@ -58,30 +61,12 @@ static struct States
   double speed = 0;
   double desired_speed = 0;
   double desired_accel = 0;
-  bool ready_to_send = false;
+  bool telemetry_request = false;
   bool fault_detected = false;
   uint32_t fault_type = FaultType::No_Fault;
-  uint8_t msg_type = Msg_Type::None;
+  uint8_t msg_type = CanMessages::Start;
   bool routine_just_changed = false; // flag to see if routine was JUST changed
 } pod_context;
-
-enum CANID_List
-{
-  General = 0,
-  BMS = 1,
-  Nav = 2,
-  Brk = 3,
-  Mtr = 4
-};
-
-enum FaultType
-{
-  No_Fault = 0,
-  Gen_Fault = 1,
-  Mtr_Fault = 2,
-  Nav_Fault = 3,
-  Brk_Fault = 4
-};
 
 uint8_t get_state(struct States *context)
 {
@@ -150,9 +135,25 @@ void set_velocity(struct States *context, double velocity[3])
   }
 }
 
-double get_acceleration(struct States *context)
+double get_acceleration_scalar(struct States *context)
 {
-  return 0;
+  return sqrt(context->accel[0] * context->accel[0] + context->accel[1] * context->accel[1] + context->accel[2] * context->accel[2]);
+}
+
+void get_acceleration(struct States *context, double accel[3])
+{
+  for (int8_t i = 0; i < 3; i++)
+  {
+    accel[i] = context->accel[i];
+  }
+}
+
+void set_acceleration(struct States *context, double accel[3])
+{
+  for (int8_t i = 0; i < 3; i++)
+  {
+    context->accel[i] = accel[i];
+  }
 }
 
 double get_desired_speed(struct States *context)
@@ -200,19 +201,14 @@ bool fault_msg(struct States *context, uint8_t CAN_id, uint8_t fault_type)
   return true;
 }
 
-void *build_msg(CAN_message_t out_msg, uint8_t msg_id)
+void *build_msg(CAN_message_t &out_msg, uint8_t msg_id, uint8_t length, uint8_t *buff)
 {
   out_msg.id = msg_id;
-  out_msg.len = 1;
-  for (size_t i = 0; i < 1; i++)
+  out_msg.len = length;
+  for (uint8_t i = 0; i < length; i++)
   {
-    out_msg.buf[i] = 0x0F; // just a placeholder. fill according to situation.
+    out_msg.buf[i] = buff[i];
   }
-
-  // out_msg.timeout = wait_time;
-
-  // cbus.write(out_msg);
-  return out_msg;
 }
 
 THD_WORKING_AREA(waThread1, 128);
@@ -224,77 +220,96 @@ static THD_FUNCTION(Thread1, arg)
   while (1)
   {
     // add getter for ready to send flag here
-    if (pod_context.ready_to_send)
+    if (1)
     {
-      // read context file to know request type here
-      msg_type = Msg_Type::Telemetry;     // placeholder
-      recipient_id = CANID_List::General; // placeholder
-      CAN_message_t *out_msg = build_msg(recipient_id, msg_type);
-      out_buff.Write(out_msg);
-      // Cbus.write(out_msg);
+      // read context struct to know request type here
+      CAN_message_t out_msg;
+      uint8_t x[3] = {1, 3, 45};
+      build_msg(out_msg, 1, 3, &x[0]);
+      Can0.write(out_msg);
     }
 
     // begin reading messages
-    while (Cbus.available())
+    Can0.events();
+    CAN_message_t in_msg;
+    while (Can0.read(in_msg)) // CHECK THIS OUT, LIKELY TO BE INCORRECT
     {
-      CAN_message_t in_msg;
-      Cbus.read(in_msg);
-      in_buff.Write(in_msg);
-
+      Can0.events();
       /*
         Nav Module Message Handling Here:
           IF / STATEMENT 1: Position Change
           ELSE IF / STATEMENT 2: Velocity Change
           ELSE IF / STATEMENT 3: Acceleration Change
       */
-      if (in_msg.buf[0] == nav_msg_list[0][0] && in_msg.buf[1] == nav_msg_list[0][1])
+      if (in_msg.id == CanMessages::Position)
       {
         // response for position change here
       }
-      else if (in_msg.buf[0] == nav_msg_list[1][0] && in_msg.buf[1] == nav_msg_list[1][1])
+      else if (in_msg.id == CanMessages::Velocity)
       {
         // response for velocity change here
         double velocity[3] = {0, 0, 0};
         for (int8_t i = 0; i < 3; i++)
         {
-          velocity[i] == in_msg.buf[2 * i + 3];
-          if (in_msg.buf[2 * i + 3] == 1)
+          velocity[i] = in_msg.buf[2*i+1];
+          if (in_msg.buf[2*i+1] == 1)
           {
             velocity[i] = -velocity[i];
           }
         }
-        double speed = sqrt(velocity[0]**2+velocity[1]**2+velocity[2]**2);
+        double speed = sqrt(velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2]);
 
-        // set_velocity(&pod_context, &velocity);
+        set_velocity(&pod_context, velocity);
         set_speed(&pod_context, speed);
       }
-    }
-
-    // unpacking messages
-    for (size_t i = 0; i < in_buff.numElements(); i++)
-    {
-      CAN_message_t in_msg = in_buff.Read();
-
-      // here, check the contents of the message
-      msg_type == Msg_Type::Telemetry // placeholder. change.
-          if (msg_type == Msg_Type::Telemetry)
+      else if (in_msg.id == CanMessages::Acceleration)
       {
-        // handle each CANbus member differently
-        // add to context, and pass info to UDP module via context
+        // response for velocity change here
+        double accel[3] = {0, 0, 0};
+        for (int8_t i = 0; i < 3; i++)
+        {
+          accel[i] = in_msg.buf[2 * i + 3];
+          if (in_msg.buf[2 * i + 3] == 1)
+          {
+            accel[i] = -accel[i];
+          }
+        }
+        set_acceleration(&pod_context, accel);
       }
-      elif (msg_type == Msg_Type::Fault)
-      {
-        // handle each CANbus member differently
-        recipient_id = CANID_List::General;
-        CAN_message_t *out_msg = build_msg(0, msg_type);
-        out_buff.Write(out_msg);
-      }
+
+      /*
+        Message Creation Here.
+        Here we check the state of the context object:
+          STATEMENT 1: If ready for telemetry 
+          STATEMENT 2: Velocity Change
+          STATEMENT 3: Acceleration Change
+      */
+
+      // // unpacking messages
+      // for (size_t i = 0; i < in_buff.numElements(); i++)
+      // {
+      //   CAN_message_t in_msg = in_buff.Read();
+
+      //   // here, check the contents of the message
+      //   msg_type == Msg_Type::Telemetry // placeholder. change.
+      //       if (msg_type == Msg_Type::Telemetry)
+      //   {
+      //     // handle each CANbus member differently
+      //     // add to context, and pass info to UDP module via context
+      //   }
+      //   elif (msg_type == Msg_Type::Fault)
+      //   {
+      //     // handle each CANbus member differently
+      //     recipient_id = CANID_List::General;
+      //     CAN_message_t *out_msg = build_msg(0, msg_type);
+      //     out_buff.Write(out_msg);
+      //   }
+      // }
+      delay(wait_time);
+      chThdYield();
     }
-    delay(wait_time);
-    chThdYield();
   }
 }
-
 THD_WORKING_AREA(waThread2, 128);
 
 static THD_FUNCTION(Thread2, arg)
@@ -304,6 +319,9 @@ static THD_FUNCTION(Thread2, arg)
   while (1)
   {
     // add task code here
+
+    // CAN_message_t in_msg;
+    // Serial.print(Can0.read(in_msg));
     chThdYield();
   }
 }
@@ -316,121 +334,89 @@ static THD_FUNCTION(Thread3, arg)
   chRegSetThreadName("movement_task");
   while (1)
   {
-    // start by checking if any requests have been made
-    if (movement_request)
+    CAN_message_t out_msg;
+    
+    // start by checking if any faults
+    bool fault_detected = is_fault(&pod_context);
+    if (fault_detected)
     {
-      bool fault_detected = is_fault(&pod_context);
-      if (fault_detected)
+      // INSERT: stop motor
+
+    }
+
+    // this switch contains code on running the routines!
+    uint8_t movement_state = get_state(&pod_context);
+    switch (movement_state)
+    {
+    case MovementState::Accelerating:
+      double desired_speed = get_desired_speed(&pod_context);
+      double desired_accel = get_desired_accel(&pod_context);
+
+      // TO-DO: we must also add bamocar messages
+      double speed = get_speed(&pod_context);
+
+      // checks if state needs to be changed to cruise
+      // speed must be within 2ms^-1 within desired speed to activate
+      // cruise
+      if (speed < (desired_speed + 2) && speed > (desired_speed - 2))
       {
-        // stop motor
-      }
-      uint8_t msg_type = get_msg_type(&pod_context);
-      message_read = true;
-      set_msg_type(&pod_context, Msg_Type::None);
-
-      // this switch should only TRIGGER movement routine flags
-      // it should not contain code on running the routines!
-      switch (msg_type)
-      {
-        /*
-        we will not do anything when we get a telem message
-        besides continue the same routine as last time.
-        */
-
-      case Msg_Type::Accelerate:
-        set_state(&pod_context, MovementState::Accelerating);
-        switch_just_changed(&pod_context, true);
-        break;
-
-      default:
-        break;
+        set_state(&pod_context, MovementState::Cruising);
+        //trigger message asking bamocar to cut accel
       }
 
-      uint8_t movement_state = get_state(&pod_context);
-      switch (movement_state)
+      // accel/decel routine
+      else if (desired_speed > speed)
       {
-      case MovementState::Accelerating:
-        double desired_speed = get_desired_speed(&pod_context);
-        double desired_accel = get_desired_accel(&pod_context);
-
-        // TO-DO: we must also trigger flag for speed request from bamocar
-        double speed = get_speed(&pod_context);
-
-        // checks if state needs to be changed to cruise
-        // speed must be within 2ms^-1 within desired speed to activate
-        // cruise
-        if (speed < (desired_speed + 2) && speed > (desired_speed - 2))
-        {
-          set_state(&pod_context, MovementState::Cruising);
-          break;
-        }
-
-        // accel/decel routine
-        if (desired_speed > speed)
-        {
-          // trigger message asking bamocar to accelerate
-        }
-
-        // decel routine
-        else if (desired_speed < speed)
-        {
-          // trigger message asking bamocar to decelerate
-        }
-        break;
-
-      case MovementState::Cruising:
-        double desired_speed = get_desired_speed(&pod_context);
-        double desired_accel = get_desired_accel(&pod_context);
-
-        // TO-DO: we must also trigger flag for speed request from bamocar
-        double speed = get_speed(&pod_context);
-
-        // checks if state needs to be changed to cruise
-        // speed must be within 2ms^-1 within desired speed to activate
-        // cruise
-        if (speed < (desired_speed + 2) && speed > (desired_speed - 2))
-        {
-          set_state(&pod_context, MovementState::Cruising);
-          break;
-        }
-
-        // slight const accel if speed dropping is here
-        if (desired_speed > speed)
-        {
-          // trigger message asking bamocar to accelerate
-        }
-
-        // decel routine if speed is too high here
-        else if (desired_speed < speed)
-        {
-          // trigger message asking bamocar to decelerate
-        }
-
-        break;
-
-      default:
-        break;
+        // trigger message asking bamocar to accelerate
+        build_msg(out_msg, BamocarCanID::Receive, )
       }
+
+      // decel routine
+      else if (desired_speed < speed)
+      {
+        // trigger message asking bamocar to decelerate
+      }
+      break;
+
+    case MovementState::Cruising:
+      desired_speed = get_desired_speed(&pod_context);
+      desired_accel = get_desired_accel(&pod_context);
+
+      // TO-DO: we must also trigger flag for speed request from bamocar
+      speed = get_speed(&pod_context);
+
+      // checks if state needs to be changed to cruise
+      // speed must be within 2ms^-1 within desired speed to activate
+      // cruise
+      if (speed < (desired_speed + 2) && speed > (desired_speed - 2))
+      {
+        set_state(&pod_context, MovementState::Cruising);
+        
+      }
+
+      // slight const accel if speed dropping is here
+      if (desired_speed > speed)
+      {
+        // trigger message asking bamocar to accelerate
+      }
+
+      // decel routine if speed is too high here
+      else if (desired_speed < speed)
+      {
+        // trigger message asking bamocar to decelerate
+      }
+
+      break;
+
+    default:
+      break;
     }
 
     chThdYield();
   }
 }
 
-void setup()
-{
-  Can0.begin();
-  Can0.setBaudRate(500000);
-  Can0.setMaxMB(16);
-  Can0.enableFIFO();
-  Can0.enableFIFOInterrupt();
-  Can0.mailboxStatus();
-
-  messageCreator.buildRcvMessages(rcv_msg_list);
-  messageCreator.buildSndMessages(snd_msg_list);
-  messageCreator.buildNavMessages(nav_msg_list);
-
-  chSysInit();
+void chSetup() {
   chThdCreateStatic(waThread1, sizeof(waThread1),
                     NORMALPRIO, Thread1, NULL);
   chThdCreateStatic(waThread2, sizeof(waThread2),
@@ -439,8 +425,14 @@ void setup()
                     NORMALPRIO, Thread2, NULL);
 }
 
+void setup()
+{
+  chSysInit();
+  chBegin(chSetup);
+}
+
 void loop()
 {
-  Serial.println("Main thread");
-  chThdYield();
+  // Serial.println("Main thread");
+
 }
