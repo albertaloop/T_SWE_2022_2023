@@ -13,18 +13,18 @@ enum RegIDs
     DCVoltages = 0x08,
     PowerFactor = 0x0E,
     CurrentActualVal = 0x20,
-    IMaxInUse = 0x24,
-    ICMDInUse = 0x25,
-    MotorTemp = 0x49,
-    PowerStageTemp = 0x4A,
-    AirTemp = 0x4B,
-    CurrentDerateTemp = 0x4C,
+    IMaxInUse = 0x24, // We set I max in NDrive
+    ICMDInUse = 0x25, // I cmd is processed using Ramp (NDrive)
+    MotorTemp = 0x49, // Not handled by Bamocar
+    PowerStageTemp = 0x4A, // Not handled by Bamocar
+    AirTemp = 0x4B, // Not handled by Bamocar
+    CurrentDerateTemp = 0x4C, // Not handled by Bamocar
     CurrentActualI1 = 0x54,
     CurrentActualI2 = 0x55,
     CurrentActualI3 = 0x56,
     FilteredActualI3 = 0x5F,
     Filter = 0x60,
-    MainsSupplyVoltage = 0x64, //the extra s is not a typo
+    MainsSupplyVoltage = 0x64, // the extra s is not a typo
     BatteryVoltage = 0x66
 };
 
@@ -97,11 +97,12 @@ class BamocarInterface {
     void setDCTimePreMag(uint16_t time);
     void setDCVoltage(uint16_t percentage);
     void setPowerFactor(float PF);
-    void setCurrentActual(uint16_t percentage); // to-do: find unit
-    void setIMaxInUse(uint16_t amperes);
-    void setCurrentActualI1(uint16_t amperes); // to-do: find unit
-    void setCurrentActualI2(uint16_t amperes); // to-do: find unit
-    void setCurrentActualI3(uint16_t amperes); // to-do: find unit
+    // void setCurrentActual(uint16_t amperes); // to-do: find unit
+    // void setIMaxInUse(uint16_t amperes);
+    // void setCurrentActualI1(uint16_t amperes); // to-do: find unit
+    // void setCurrentActualI2(uint16_t amperes); // to-do: find unit
+    // void setCurrentActualI3(uint16_t amperes); // to-do: find unit
+    void setFilter(uint16_t filter);
     void setMainsSupplyVoltage(uint16_t voltage);
     void setBatteryVoltage(uint16_t voltage);
 };

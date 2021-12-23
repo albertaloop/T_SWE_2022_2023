@@ -105,5 +105,45 @@ void BamocarInterface::setDCTimePreMag(uint16_t time)
 void BamocarInterface::setDCVoltage(uint16_t percentage)
 {
     this->preChangeParameter();
-    this->setRegisterBase(RegIDs::MotorNominalVoltage, percentage);
+
+    // convert percentage to bamocar format
+    uint16_t converted = (percentage * 0x7FFF) / 100;
+    this->setRegisterBase(RegIDs::DCVoltages, converted);
+}
+
+/* Sets Filter.
+    Input value from 0-10.
+    Low filter values: motor noise may occur
+    High filter values: low-frequency vibrations may occur */
+void BamocarInterface::setFilter(uint16_t filter)
+{
+    this->preChangeParameter();
+    this->setRegisterBase(RegIDs::Filter, filter);
+}
+
+/* Sets Mains Supply Voltage. Input Voltage in V.
+    AC and three-phase current voltage AC (30~to 480V~).
+    Battery voltage or dc mains (12V= to 560V=). */
+void BamocarInterface::setMainsSupplyVoltage(uint16_t voltage)
+{
+    this->preChangeParameter();
+    this->setRegisterBase(RegIDs::MainsSupplyVoltage, voltage);
+}
+
+/* Sets Battery Supply Voltage. Input Voltage in V. */
+void BamocarInterface::setBatteryVoltage(uint16_t voltage)
+{
+    this->preChangeParameter();
+    this->setRegisterBase(RegIDs::BatteryVoltage, voltage);
+}
+
+/* Sets DC Voltage for Pre-Magnetization.
+    Input Voltage as % of max voltage. */
+void BamocarInterface::setPowerFactor(float PF)
+{
+    this->preChangeParameter();
+
+    // convert percentage to bamocar format
+    uint16_t converted = (PF * 0x7FFF);
+    this->setRegisterBase(RegIDs::PowerFactor, converted);
 }
