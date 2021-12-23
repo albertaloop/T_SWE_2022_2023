@@ -2,20 +2,6 @@
 #include <FlexCAN_T4.h>
 #include <Arduino.h>
 
-enum CanMessages
-{
-    Start = 0,
-    Position = 9,
-    Velocity = 10,
-    Acceleration = 11
-};
-
-enum BamocarCanID
-{
-    Transmit = 0x181,
-    Receive = 0x201,
-};
-
 // this constructor is used generally for when only one CANbus line is used
 MessageMaster::MessageMaster(FlexCAN_T4<CAN0, RX_SIZE_256, TX_SIZE_16> &PrimaryBus)
 {
@@ -127,36 +113,44 @@ void MessageMaster::buildNavMessages()
     }
 }
 
-void MessageMaster::sendMsgMain(CAN_message_t &outMsg)
+void MessageMaster::sendMsgMain(const CAN_message_t &outMsg)
 {
     (this->PrimaryBus)->write(outMsg);
 }
 
-void MessageMaster::sendMsgBamocar(CAN_message_t &outMsg)
+void MessageMaster::sendMsgBamocar(const CAN_message_t &outMsg)
 {
     (this->BamocarBus)->write(outMsg);
 }
 
-void MessageMaster::transmissionEnable()
+void MessageMaster::sendSndTemplateBamocar(int sndArrayRow)
 {
     CAN_message_t outMsg;
-    outMsg.id = BamocarCanID::Receive;
-    outMsg.len = this->snd_msg_list[0][0];
-    for (int i = 0; i < this->snd_msg_list[1][0]; i++)
+    outMsg.id = BamocarCanID::Receive; // this is INTENTIONALLY the receive ID. DON'T CHANGE.
+    outMsg.len = this->snd_msg_list[sndArrayRow][0];
+    for (int i = 0; i < outMsg.len; i++)
     {
-        outMsg.buf[i] = this->snd_msg_list[0][i+1];
+        outMsg.buf[i] = this->snd_msg_list[sndArrayRow][i + 1];
     }
     this->sendMsgBamocar(outMsg);
 }
 
+void MessageMaster::transmissionEnableBTB()
+{
+    this->sendSndTemplateBamocar(0);
+}
+
+void MessageMaster::transmissionEnableHW()
+{
+    this->sendSndTemplateBamocar(3);
+}
+
+void MessageMaster::transmitNoDisable()
+{
+    this->sendSndTemplateBamocar(4);
+}
+
 void MessageMaster::transmissionDisable()
 {
-    CAN_message_t outMsg;
-    outMsg.id = BamocarCanID::Receive;
-    outMsg.len = this->snd_msg_list[1][0];
-    for (int i = 0; i < this->snd_msg_list[1][0]; i++)
-    {
-        outMsg.buf[i] = this->snd_msg_list[1][i+1];
-    }
-    this->sendMsgBamocar(outMsg);
+    this->sendSndTemplateBamocar(1);
 }
