@@ -13,11 +13,13 @@ enum BamocarCanID
 enum CanMessages
 {
   Start = 0,
+  Stop = 1,
   BrakeEnable = 6,
   BrakeDisable = 7,
   Position = 9,
   Velocity = 10,
   Acceleration = 11,
+  ChargeLevelUpdate = 12,
   BrakeConfirmation = 13,
   BrakeFailure = 14
 };
