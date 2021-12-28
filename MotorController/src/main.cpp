@@ -8,6 +8,7 @@
 #include "StateMachine.h"
 #include "BamocarInterface.h"
 
+unsigned long wait_time = 400; // 400 ms
 FlexCAN_T4<CAN0, RX_SIZE_256, TX_SIZE_16> Can0;
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
 
@@ -15,10 +16,8 @@ MessageMaster msgMaster(Can0, Can1);
 BamocarInterface bamocar(msgMaster);
 StateMachine stateMachine(msgMaster, bamocar);
 
-unsigned long wait_time = 400; // 400 ms
 
 THD_WORKING_AREA(waThread1, 128);
-
 static THD_FUNCTION(Thread1, arg)
 {
   (void)arg;
@@ -36,7 +35,6 @@ static THD_FUNCTION(Thread1, arg)
   }
 }
 THD_WORKING_AREA(waThread2, 128);
-
 static THD_FUNCTION(Thread2, arg)
 {
   (void)arg;
@@ -52,7 +50,6 @@ static THD_FUNCTION(Thread2, arg)
 }
 
 THD_WORKING_AREA(waThread3, 128);
-
 static THD_FUNCTION(Thread3, arg)
 {
   (void)arg;

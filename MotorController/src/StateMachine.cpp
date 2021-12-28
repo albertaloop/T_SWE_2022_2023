@@ -44,9 +44,29 @@ void StateMachine::set_state(uint8_t state)
     this->movement_state = state;
 }
 
+void StateMachine::set_telemetry_requested(bool flag)
+{
+    this->telemetry_requested = flag;
+}
+
+bool StateMachine::get_telemetry_requested()
+{
+    return this->telemetry_requested;
+}
+
+void StateMachine::set_in_decel_zone(bool flag)
+{
+    this->in_decel_zone = flag;
+}
+
+bool StateMachine::get_in_decel_zone()
+{
+    return this->in_decel_zone;
+}
+
 void StateMachine::set_fault(bool flag)
 {
-    this->fault_detected = true;
+    this->fault_detected = flag;
 }
 
 bool StateMachine::is_fault()
@@ -162,6 +182,16 @@ float StateMachine::get_desired_accel()
     return this->desired_accel;
 }
 
+void StateMachine::set_desired_accel(float accel)
+{
+    this->desired_accel = accel;
+}
+
+void StateMachine::set_desired_speed(float accel)
+{
+    this->desired_accel = accel;
+}
+
 bool StateMachine::fault_msg(uint8_t fault_type)
 {
     uint8_t CAN_id=this->CAN_id;
@@ -198,10 +228,10 @@ bool StateMachine::fault_msg(uint8_t fault_type)
 }
 
 /*
-    Message Handling Here.
-    We send messages to handle each flag.
+    Message Based State Changes.
+    Change states based on messages received.
 */
-void StateMachine::read_msg()
+void StateMachine::msg_state_change()
 {
     CAN_message_t in_msg;
     Can0.read(in_msg);
@@ -224,6 +254,12 @@ void StateMachine::read_msg()
         set_position(position);
         int distance_travelled = sqrt(position[0] * position[0] + position[1] * position[1] + position[2] * position[2]);
         set_distance_travelled(distance_travelled);
+
+        if (max_dist_travelled-distance_travelled < 40)
+        {
+            set_in_decel_zone(true);
+            set_desired_speed(VariousSpeeds::EndZone); // we want deceleration to 5ms^-1. TO-DO: Determine correct speed
+        }
     }
     else if (id == CanMessages::Velocity)
     {
@@ -238,6 +274,11 @@ void StateMachine::read_msg()
             }
         }
         float speed = sqrt(velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2]);
+
+        //prevent speed for being too great
+        if(speed>=VariousSpeeds::Limit) {
+            set_desired_speed(0);
+        }
 
         this->set_velocity(velocity);
         this->set_speed(speed);
@@ -254,6 +295,7 @@ void StateMachine::read_msg()
                 accel[i] = -accel[i];
             }
         }
+
         this->set_acceleration(accel);
         float accel_scalar = sqrt(accel[0] * accel[0] + accel[1] * accel[1] + accel[2] * accel[2]);
         set_acceleration_scalar(accel_scalar);
@@ -278,13 +320,13 @@ void StateMachine::read_msg()
 
 
 /*
-    Message Creation Here.
+    State-based CANbus tasks.
     Here we check the state and write messages:
         STATEMENT 1: If ready for telemetry
         STATEMENT 2: Velocity Change
         STATEMENT 3: Acceleration Change
 */
-void StateMachine::msg_tasks()
+void StateMachine::msg_state_tasks()
 {
     if (!get_ready_to_send_canbus()) {
         return;
@@ -295,6 +337,13 @@ void StateMachine::msg_tasks()
         //TO-DO: run end sequences
     }
 
+    if (get_in_decel_zone()) {
+        //TO-DO: figure out what to do in decel zone
+    }
+
+    if (get_telemetry_requested()) {
+        //TO-DO: send telemetry data
+    }
 }
 
 

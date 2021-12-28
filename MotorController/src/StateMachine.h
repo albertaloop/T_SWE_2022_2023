@@ -10,6 +10,15 @@
 #include "BamocarInterface.h"
 #include "MessageMaster.h"
 
+enum VariousSpeeds
+{
+  Halt = 0,
+  Slow = 10,
+  Fast = 50,
+  Limit = 100,
+  EndZone = 5
+};
+
 enum MovementState
 {
   Still = 0,
@@ -59,23 +68,24 @@ class StateMachine {
     float accel_scalar = 0;
     float desired_speed = 0;
     float desired_accel = 0;
-    bool telemetry_request = false;
+
+    //flags
+    bool telemetry_requested = false;
     bool fault_detected = false;
     bool ready_to_send_canbus = false;
     bool routine_just_changed = false; // flag to see if routine was JUST changed
+    bool in_decel_zone = false; // trigger when close (TO-DO: figure out what is the decel region)
 
 
     uint8_t fault_type = FaultType::No_Fault;
     uint8_t msg_type = CanMessages::Start;
 
   public:
-    const uint8_t max_dist_travelled = 20; // in meters
+    const uint32_t max_dist_travelled = 100; // in meters
     const uint8_t CAN_id = 4;
     StateMachine(MessageMaster &msgMaster, BamocarInterface &bamocar);
 
     uint8_t get_state();
-    bool is_fault();
-    bool is_just_changed();
     uint8_t get_msg_type();
     void get_position(int position[3]);
     float get_speed();
@@ -84,27 +94,35 @@ class StateMachine {
     void get_acceleration(int accel[3]);
     float get_desired_speed();
     float get_desired_accel();
-    bool get_ready_to_send_canbus();
     uint32_t get_distance_travelled();
     uint8_t get_battery_level();
+    bool is_fault();
+    bool is_just_changed();
+    bool get_ready_to_send_canbus();
+    bool get_in_decel_zone();
+    bool get_telemetry_requested();
 
+    void set_state(uint8_t state);
     void set_battery_level(uint8_t percentage);
     void set_distance_travelled(uint32_t meters); // in meters
-    void set_state(uint8_t state);
-    void set_just_changed(bool just_changed);
     void set_msg_type(uint8_t msg_type);
     void set_speed(float speed);
     void set_position(int position[3]);
     void set_velocity(int velocity[3]);
     void set_acceleration(int accel[3]);
     void set_acceleration_scalar(float accel);
+    void set_desired_accel(float accel);
+    void set_desired_speed(float speed); 
+    void set_just_changed(bool just_changed);
     void set_ready_to_send_canbus(bool flag);
     void set_fault(bool flag);
+    void set_in_decel_zone(bool flag);
+    void set_telemetry_requested(bool flag);
 
     bool fault_msg(uint8_t fault_type);
 
-    void read_msg();
-    void msg_tasks();
+    void msg_state_change();
+    void msg_state_tasks();
     void movement_tasks();
 };
 
