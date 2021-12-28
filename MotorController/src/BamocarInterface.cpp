@@ -101,7 +101,10 @@ void BamocarInterface::setDCTimePreMag(uint16_t time)
 }
 
 /* Sets DC Voltage for Pre-Magnetization.
-    Input Voltage as % of max voltage. */
+    Input Voltage as % of max voltage.
+    
+    Example: 15% would be setDCVoltage(15)
+    */
 void BamocarInterface::setDCVoltage(uint16_t percentage)
 {
     this->preChangeParameter();
@@ -137,8 +140,10 @@ void BamocarInterface::setBatteryVoltage(uint16_t voltage)
     this->setRegisterBase(RegIDs::BatteryVoltage, voltage);
 }
 
-/* Sets DC Voltage for Pre-Magnetization.
-    Input Voltage as % of max voltage. */
+/* Sets Power Factor.
+    Input PF as decimal value. 
+    
+    Example: setPowerFactor(0.132)*/
 void BamocarInterface::setPowerFactor(float PF)
 {
     this->preChangeParameter();

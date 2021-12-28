@@ -28,20 +28,6 @@ enum MovementState
   Cruising = 2
 };
 
-enum CanMessages
-{
-  Start = 0,
-  Position = 9,
-  Velocity = 10,
-  Acceleration = 11
-};
-
-enum BamocarCanID
-{
-  Transmit = 0x181,
-  Receive = 0x201,
-};
-
 enum FaultType
 {
   No_Fault = 0,
@@ -219,22 +205,11 @@ static THD_FUNCTION(Thread1, arg)
   chRegSetThreadName("communication_task");
   while (1)
   {
-    // add getter for ready to send flag here
-    if (1)
-    {
-      // read context struct to know request type here
-      CAN_message_t out_msg;
-      uint8_t x[3] = {1, 3, 45};
-      build_msg(out_msg, 1, 3, &x[0]);
-      Can0.write(out_msg);
-    }
-
     // begin reading messages
-    Can0.events();
     CAN_message_t in_msg;
-    while (Can0.read(in_msg)) // CHECK THIS OUT, LIKELY TO BE INCORRECT
+    while (Can0.events()>0) // CHECK THIS OUT, POSSIBLY INCORRECT. 
     {
-      Can0.events();
+      Can0.read(in_msg);
       /*
         Nav Module Message Handling Here:
           IF / STATEMENT 1: Position Change
@@ -368,7 +343,7 @@ static THD_FUNCTION(Thread3, arg)
       else if (desired_speed > speed)
       {
         // trigger message asking bamocar to accelerate
-        build_msg(out_msg, BamocarCanID::Receive, )
+        
       }
 
       // decel routine

@@ -28,28 +28,28 @@ enum RegIDs
     BatteryVoltage = 0x66
 };
 
-enum RegInternalIndices
-{
-  NominalMotorFrequency = 0,
-  MotorNominalVoltage = 1,
-  DCTimePreMag = 2,
-  DCVoltages = 3,
-  PowerFactor = 4,
-  CurrentActualVal = 5,
-  IMaxInUse = 6,
-  ICMDInUse = 7,
-  MotorTemp = 8,
-  PowerStageTemp = 9,
-  AirTemp = 10,
-  CurrentDerateTemp = 11,
-  CurrentActualI1 = 12,
-  CurrentActualI2 = 13,
-  CurrentActualI3 = 14,
-  FilteredActualI3 = 15,
-  Filter = 16,
-  MainsSupplyVoltage = 17, // the extra s is not a typo
-  BatteryVoltage = 18
-};
+// enum RegInternalIndices
+// {
+//   NominalMotorFrequency = 0,
+//   MotorNominalVoltage = 1,
+//   DCTimePreMag = 2,
+//   DCVoltages = 3,
+//   PowerFactor = 4,
+//   CurrentActualVal = 5,
+//   IMaxInUse = 6,
+//   ICMDInUse = 7,
+//   MotorTemp = 8,
+//   PowerStageTemp = 9,
+//   AirTemp = 10,
+//   CurrentDerateTemp = 11,
+//   CurrentActualI1 = 12,
+//   CurrentActualI2 = 13,
+//   CurrentActualI3 = 14,
+//   FilteredActualI3 = 15,
+//   Filter = 16,
+//   MainsSupplyVoltage = 17, // the extra s is not a typo
+//   BatteryVoltage = 18
+// };
 
 /*
   BamocarInterface is meant solely for being able to quickly, easily
@@ -81,10 +81,10 @@ class BamocarInterface {
 
     // void startupMotor();
 
-    //-----------
-    // void accelerationBaseRoutine();
-    // void accelerationHigh();
-    // void accelerationLow();
+    //TO-DO: implement these
+    // void accelerationBaseRoutine(); //start with high routine, then switch to low
+    // void accelerationHigh(); //high accel routine
+    // void accelerationLow(); //low accel routine
     // void accelerateToSpeed(uint8_t desiredSpeed);
 
     bool getTransmissionEnabled();
@@ -97,6 +97,9 @@ class BamocarInterface {
     void setDCTimePreMag(uint16_t time);
     void setDCVoltage(uint16_t percentage);
     void setPowerFactor(float PF);
+
+    //I don't know if we should modify these. 
+    //they might be sensor data/derived values.
     // void setCurrentActual(uint16_t amperes); // to-do: find unit
     // void setIMaxInUse(uint16_t amperes);
     // void setCurrentActualI1(uint16_t amperes); // to-do: find unit

@@ -20,6 +20,7 @@ MessageMaster::MessageMaster(FlexCAN_T4<CAN0, RX_SIZE_256, TX_SIZE_16> &PrimaryB
 
     this->setupPrimaryBus();
     this->setupBamocarBus();
+    this->stateMachineMode();
 }
 
 void MessageMaster::setupPrimaryBus() {
@@ -29,18 +30,41 @@ void MessageMaster::setupPrimaryBus() {
 
     this->PrimaryBus->begin();
     this->PrimaryBus->setBaudRate(500000);
-    this->PrimaryBus->distribute();
-    this->PrimaryBus->enableMBInterrupts();
-    this->PrimaryBus->mailboxStatus();
+    this->PrimaryBus->enableFIFO();
+    this->PrimaryBus->enableFIFOInterrupt();
+
+    this->PrimaryBus->setFIFOFilter(REJECT_ALL);
 }
 
 void MessageMaster::setupBamocarBus()
 {
     this->BamocarBus->begin();
     this->BamocarBus->setBaudRate(500000);
-    this->BamocarBus->distribute();
-    this->BamocarBus->enableMBInterrupts();
-    this->BamocarBus->mailboxStatus();
+    this->BamocarBus->enableFIFO();
+    this->BamocarBus->enableFIFOInterrupt();
+    this->BamocarBus->setFIFOFilter(REJECT_ALL);
+}
+
+void MessageMaster::stateMachineMode()
+{
+    this->modeSelected = true;
+    this->PrimaryBus->setFIFOFilterRange(0, 9, 11, STD);
+    this->PrimaryBus->setFIFOFilterRange(1, 3, 4, STD);
+    this->BamocarBus->setFIFOFilter(0, BamocarCanID::Transmit, STD);
+}
+
+void MessageMaster::brakeControllerMode()
+{
+    this->modeSelected = true;
+    this->PrimaryBus->setFIFOFilterRange(0, 0, 1, STD);
+    this->PrimaryBus->setFIFOFilterRange(0, 6, 7, STD);
+}
+
+void MessageMaster::navModuleMode()
+{
+    this->modeSelected = true;
+    this->PrimaryBus->setFIFOFilterRange(0, 0, 1, STD);
+    this->PrimaryBus->setFIFOFilter(1, 3, 5, STD);
 }
 
 // NOTE: For the Bamocar, percentages are provided as a number ranging from 0
@@ -100,9 +124,9 @@ void MessageMaster::buildSndMessages()
 void MessageMaster::buildNavMessages()
 {
     // temp messages array
-    uint8_t messages[3][2] = {{0x02, 0x00}, //position
-                              {0x02, 0x01}, //velocity
-                              {0x02, 0x02}  //accel
+    uint8_t messages[3][2] = {{0x06, 0x00}, //position
+                              {0x06, 0x01}, //velocity
+                              {0x06, 0x02}  //accel
                               };
     for (int i = 0; i < 3; i++)
     {
@@ -113,16 +137,19 @@ void MessageMaster::buildNavMessages()
     }
 }
 
+/* Send message on main canbus line */
 void MessageMaster::sendMsgMain(const CAN_message_t &outMsg)
 {
     (this->PrimaryBus)->write(outMsg);
 }
 
+/* Send message on canbus line */
 void MessageMaster::sendMsgBamocar(const CAN_message_t &outMsg)
 {
     (this->BamocarBus)->write(outMsg);
 }
 
+/* Sends a message to the Bamocar from the message templates */
 void MessageMaster::sendSndTemplateBamocar(int sndArrayRow)
 {
     CAN_message_t outMsg;
@@ -135,21 +162,34 @@ void MessageMaster::sendSndTemplateBamocar(int sndArrayRow)
     this->sendMsgBamocar(outMsg);
 }
 
+void MessageMaster::sendTemplateMain(CanMessages messageID)
+{
+    CAN_message_t outMsg;
+    outMsg.id = messageID;
+    outMsg.len = 1;
+    outMsg.buf[0] = 1;
+    this->sendMsgBamocar(outMsg);
+}
+
+/* used by BamocarInterface */
 void MessageMaster::transmissionEnableBTB()
 {
     this->sendSndTemplateBamocar(0);
 }
 
+/* used by BamocarInterface */
 void MessageMaster::transmissionEnableHW()
 {
     this->sendSndTemplateBamocar(3);
 }
 
+/* used by BamocarInterface */
 void MessageMaster::transmitNoDisable()
 {
     this->sendSndTemplateBamocar(4);
 }
 
+/* used by BamocarInterface */
 void MessageMaster::transmissionDisable()
 {
     this->sendSndTemplateBamocar(1);
