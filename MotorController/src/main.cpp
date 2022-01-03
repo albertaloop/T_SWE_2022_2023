@@ -27,11 +27,11 @@ static THD_FUNCTION(Thread1, arg)
     // begin reading messages
     while (Can0.events()>0) // CHECK THIS OUT, POSSIBLY INCORRECT. 
     {
-      stateMachine.read_msg();
+      stateMachine.msg_state_change();
       delay(wait_time);
       chThdYield();
     }
-    stateMachine.msg_tasks();
+    stateMachine.msg_state_tasks();
   }
 }
 THD_WORKING_AREA(waThread2, 128);
@@ -42,6 +42,7 @@ static THD_FUNCTION(Thread2, arg)
   while (1)
   {
     // add task code here
+    // we may change this to a UDP message unwrapping class
 
     // CAN_message_t in_msg;
     // Serial.print(Can0.read(in_msg));

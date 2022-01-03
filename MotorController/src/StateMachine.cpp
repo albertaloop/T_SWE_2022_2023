@@ -344,6 +344,8 @@ void StateMachine::msg_state_tasks()
     if (get_telemetry_requested()) {
         //TO-DO: send telemetry data
     }
+    set_ready_to_send_canbus(false);
+    return;
 }
 
 
