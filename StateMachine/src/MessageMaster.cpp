@@ -171,26 +171,79 @@ void MessageMaster::sendTemplateMain(CanMessages messageID)
     this->sendMsgBamocar(outMsg);
 }
 
-/* used by BamocarInterface */
+/* Used by BamocarInterface */
 void MessageMaster::transmissionEnableBTB()
 {
     this->sendSndTemplateBamocar(0);
 }
 
-/* used by BamocarInterface */
+/* Used by BamocarInterface */
 void MessageMaster::transmissionEnableHW()
 {
     this->sendSndTemplateBamocar(3);
 }
 
-/* used by BamocarInterface */
+/* Used by BamocarInterface */
 void MessageMaster::transmitNoDisable()
 {
     this->sendSndTemplateBamocar(4);
 }
 
-/* used by BamocarInterface */
+/* Used by BamocarInterface */
 void MessageMaster::transmissionDisable()
 {
     this->sendSndTemplateBamocar(1);
+}
+
+/* Used for transmitting Position vector */
+void MessageMaster::sendPosition(int positionVec[3])
+{
+    CAN_message_t outMsg;
+    outMsg.id = CanMessages::Position;
+    outMsg.len = 6;
+    for (int i = 0; i<3; i++) {
+        outMsg.buf[2*i] = 0;
+        if (positionVec[i]<0)
+        {
+            outMsg.buf[2*i] = 1;
+        }
+        outMsg.buf[2*i+1] = positionVec[i];
+    }
+    this->sendMsgMain(outMsg);
+}
+
+/* Used for transmitting Velocity vector */
+void MessageMaster::sendVelocity(int velocityVec[3])
+{
+    CAN_message_t outMsg;
+    outMsg.id = CanMessages::Velocity;
+    outMsg.len = 6;
+    for (int i = 0; i < 3; i++)
+    {
+        outMsg.buf[2 * i] = 0;
+        if (velocityVec[i] < 0)
+        {
+            outMsg.buf[2 * i] = 1;
+        }
+        outMsg.buf[2 * i + 1] = velocityVec[i];
+    }
+    this->sendMsgMain(outMsg);
+}
+
+/* Used for transmitting Acceleration vector */
+void MessageMaster::sendAcceleration(int accelVec[3])
+{
+    CAN_message_t outMsg;
+    outMsg.id = CanMessages::Acceleration;
+    outMsg.len = 6;
+    for (int i = 0; i < 3; i++)
+    {
+        outMsg.buf[2 * i] = 0;
+        if (accelVec[i] < 0)
+        {
+            outMsg.buf[2 * i] = 1;
+        }
+        outMsg.buf[2 * i + 1] = accelVec[i];
+    }
+    this->sendMsgMain(outMsg);
 }
