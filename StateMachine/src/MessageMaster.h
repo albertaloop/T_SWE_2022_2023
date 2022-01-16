@@ -64,6 +64,10 @@ class MessageMaster {
     void transmissionEnableHW();
     void transmitNoDisable();
     void transmissionDisable();
+
+    void sendPosition(int positionVec[3]);
+    void sendVelocity(int velocityVec[3]);
+    void sendAcceleration(int accelVec[3]);
 };
 
 #endif
