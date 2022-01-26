@@ -8,18 +8,15 @@
 // Tested and works great with the Adafruit Ultimate GPS module
 // using MTK33x9 chipset
 //    ------> http://www.adafruit.com/products/746
-// Pick one up today at the Adafruit electronics shop 
-// and help support open source hardware & software! -ada
-
+//if code not working see https://forum.pjrc.com/threads/41348-Teensy-3-6-Adafruit-Ultimate-GPS/ for details
+// credits to contributers on this forum and Adafruit for providing sample code
 #include <Adafruit_GPS.h>
 
-// This sketch is ONLY for the Arduino Due!
 // You should make the following connections with the Due and GPS module:
-// GPS power pin to Arduino Due 3.3V output.
-// GPS ground pin to Arduino Due ground.
-// For hardware serial 1 (recommended):
-//   GPS TX to Arduino Due Serial1 RX pin 19
-//   GPS RX to Arduino Due Serial1 TX pin 18
+// GPS Vin pin to Teensy 3.3V output.
+// GPS ground pin to Teensy ground.
+//   GPS TX to Teensy 3.6 RX1 pin 0
+//   GPS RX to Teensy TX pin 1
 #define mySerial Serial1
 
 Adafruit_GPS GPS(&mySerial);
@@ -49,8 +46,10 @@ void setup()
   
   // uncomment this line to turn on RMC (recommended minimum) and GGA (fix data) including altitude
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
+
   // uncomment this line to turn on only the "minimum recommended" data
   //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
+
   // For parsing data, we don't suggest using anything but either RMC only or RMC+GGA since
   // the parser doesn't care about other sentences at this time
   
@@ -59,7 +58,7 @@ void setup()
   // For the parsing code to work nicely and have time to sort thru the data, and
   // print it out we don't suggest using anything higher than 1 Hz
 
-  // Request updates on antenna status, comment out to keep quiet
+  // Request updates on antenna status, comment out to keep quiet 
   //GPS.sendCommand(PGCMD_ANTENNA);
 
   // the nice thing about this code is you can have a timer0 interrupt go off
@@ -133,6 +132,7 @@ void loop()                     // run over and over again
   if (timer > millis())  timer = millis();
 
   // approximately every 2 seconds or so, print out the current stats
+  // Main part to edit for GPS Configureations 
   if (millis() - timer > 2000) { 
     timer = millis(); // reset the timer
     
