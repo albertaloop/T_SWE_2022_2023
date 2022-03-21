@@ -76,19 +76,18 @@ void setup(void)
 //  Serial.println(" Deg C");
 //}
 
+
 void loop(void) {
-  test_room_temp();
-  Serial.println("All test passed");
+  if(test_room_temp()){Serial.println("Room temp test passed");}
   delay(500);
 }
 
-//assert over 10 temperatures fall under a predefined range
-void test_room_temp(void){
-
+bool test_room_temp(void){
   for (size_t i = 0; i < 10; i++){
     if(!(min_room_temp < ktc.readCelsius() < max_room_temp)){
       Serial.println("Test Room Temperature failed!");
+      return false;
     }
   }
-
+  return true;
 }
