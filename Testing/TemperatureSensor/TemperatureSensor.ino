@@ -77,12 +77,16 @@ void setup(void)
 //}
 
 
+//Integration tests
 void loop(void) {
+  //room temp test
   if(test_room_temp()){Serial.println("Room temp test passed");}
   delay(500);
 }
 
+//Roomtemp test returns true if test is data fetched is with roomtemp, false otherwise
 bool test_room_temp(void){
+  //reads for 10 data points
   for (size_t i = 0; i < 10; i++){
     if(!(min_room_temp < ktc.readCelsius() < max_room_temp)){
       Serial.println("Test Room Temperature failed!");
