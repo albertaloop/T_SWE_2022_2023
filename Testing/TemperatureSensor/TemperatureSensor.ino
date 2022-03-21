@@ -93,5 +93,6 @@ bool test_room_temp(void){
       return false;
     }
   }
+  //true if roomtemp test passed
   return true;
 }
