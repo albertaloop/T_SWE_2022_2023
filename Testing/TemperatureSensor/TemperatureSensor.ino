@@ -48,19 +48,7 @@ void do_max6675_loop(void) {
 //
 void setup(void)
 {
-  // start serial port
   Serial.begin(9600);
-
-#ifndef ThermoOnly
-  Serial.println("Dallas Temperature IC Control Library Demo");
-  Serial.println("...and MAX6675 Thermocouple.");
-
-//  // Start up the library
-//  DallasSensors.begin();
-#endif
-
-  // give the MAX a little time to settle
-  delay(500);
 }
 
 //void do_ds18B_loop(void)
