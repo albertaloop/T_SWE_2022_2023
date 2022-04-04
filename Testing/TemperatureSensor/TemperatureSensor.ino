@@ -1,7 +1,3 @@
-// Prototypes
-void ds18B_setup(void);
-void do_max6675_loop(void);
-void do_ds18B_loop(void);
 
 // Defines
 #define ThermoOnly 1  // For use with IDE Tools --> Serial Plotter
