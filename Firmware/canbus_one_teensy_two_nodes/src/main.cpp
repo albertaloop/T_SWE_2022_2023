@@ -85,11 +85,11 @@ char a[100];
 void loop() {
   bmsTimer->run();
   if (gcount++ > 10000) {
-    prepare_bms_message(_bms, bms_msg);
+    prepare_bms_message(_bms, &bms_msg);
     can1.write(bms_msg);
     can2.write(obc_msg);
-    sprintf(a, "writing to CANBUS %x: %d, CANBUS %x: %d", bms_msg.id,
-            bms_msg.len, obc_msg.id, obc_msg.len);
+    snprintf(a, sizeof(a), "writing to CANBUS %lx: %d, CANBUS %lx: %d",
+             bms_msg.id, bms_msg.len, obc_msg.id, obc_msg.len);
     Serial.println(a);
     Serial.print("TX: ");
     print_buffer(bms_msg);

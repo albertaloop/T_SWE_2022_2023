@@ -19,6 +19,10 @@ repos:
     rev: v14.0.1
     hooks:
     -   id: clang-format
+-   repo: https://github.com/cpplint/cpplint
+    rev: 1.6.0
+    hooks:
+    -   id: cpplint
 -   repo: https://github.com/psf/black
     rev: 22.3.0
     hooks:
