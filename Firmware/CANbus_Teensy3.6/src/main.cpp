@@ -1,19 +1,17 @@
+#include "messages.h"
 #include <Arduino.h>
 #include <CANBus.h>
 #include <FlexCAN.h>
-#include "messages.h"
 #include <kinetis_flexcan.h>
 
-#define FLEXCANb_MCR(b)                   (*(vuint32_t*)(b))
-  CAN_filter_t mask = {0, 0, 0};
-  CAN_message_t message1;  
-  CAN_message_t message2;
-  CAN_message_t message3;
-  extern FlexCAN Can0;
-  FlexCAN Can0(50000);
-  CANBus canbus = CANBus(&Can0, &mask);
-
-
+#define FLEXCANb_MCR(b) (*(vuint32_t *)(b))
+CAN_filter_t mask = {0, 0, 0};
+CAN_message_t message1;
+CAN_message_t message2;
+CAN_message_t message3;
+extern FlexCAN Can0;
+FlexCAN Can0(50000);
+CANBus canbus = CANBus(&Can0, &mask);
 
 void setup() {
   // put your setup code here, to run once:
@@ -26,7 +24,7 @@ void setup() {
   message1.len = 4;
   message1.timeout = 0;
   message1.buf[0] = 0b01010101;
-  
+
   message2.ext = 0;
   message2.id = 0xffffffff;
   message2.len = 1;
@@ -39,8 +37,6 @@ void setup() {
   // Serial.println("SETUP");
   // Serial.print("MCR = ");
   // Serial.println(FLEXCAN0_MCR, BIN);
-
-
 }
 
 void loop() {
@@ -53,7 +49,7 @@ void loop() {
   // Serial.print("CTRL1 = ");
   // Serial.println(FLEXCAN0_CTRL1, BIN);
 
-    // CAN_message_t msg_out = canbus.outgoing_buffer.Read();
+  // CAN_message_t msg_out = canbus.outgoing_buffer.Read();
 
   canbus.broadcast();
   delay(2);
@@ -61,8 +57,6 @@ void loop() {
   message3 = canbus.read_msg();
   Serial.print("Received msg: ");
   Serial.println(message3.buf[0], BIN);
-
-
 
   // Serial.print("Message 1 buf = ");
   // for (int i = 0; i < 7; i++) {

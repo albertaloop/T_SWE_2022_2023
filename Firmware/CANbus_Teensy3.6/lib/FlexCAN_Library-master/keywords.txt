@@ -9,4 +9,3 @@ available	KEYWORD2
 
 CAN_message_t	KEYWORD1
 CAN_filter_t	KEYWORD1
-

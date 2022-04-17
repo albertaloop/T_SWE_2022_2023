@@ -18,7 +18,7 @@ enum CAN_ID {
 CAN_message_t bms_msg;
 CAN_message_t obc_msg;
 struct bms _bms;
-StensTimer* bmsTimer = NULL;
+StensTimer *bmsTimer = NULL;
 const int TICK_ACTION = 1;
 
 void prepare_bms_message(struct bms &_bms, CAN_message_t &msg) {
@@ -26,8 +26,8 @@ void prepare_bms_message(struct bms &_bms, CAN_message_t &msg) {
   int_to_bytes2(_bms.voltage, &msg.buf[4]);
 }
 
-void timerCallback(Timer* timer){
-  if(TICK_ACTION == timer->getAction()){
+void timerCallback(Timer *timer) {
+  if (TICK_ACTION == timer->getAction()) {
     update_bms(_bms);
   }
 }
@@ -52,21 +52,30 @@ void setup(void) {
 }
 
 void print_buffer(const CAN_message_t &msg) {
-  Serial.print(" ID: "); Serial.print(msg.id, HEX);
+  Serial.print(" ID: ");
+  Serial.print(msg.id, HEX);
   Serial.print(" Buffer: ");
-  for ( uint8_t i = 0; i < msg.len; i++ ) {
-    Serial.print(msg.buf[i], HEX); Serial.print(" ");
-  } Serial.println();
+  for (uint8_t i = 0; i < msg.len; i++) {
+    Serial.print(msg.buf[i], HEX);
+    Serial.print(" ");
+  }
+  Serial.println();
 }
 
 void canSniff(const CAN_message_t &msg) {
   // This is NOT working
-  Serial.print("MB "); Serial.print(msg.mb);
-  Serial.print("  OVERRUN: "); Serial.print(msg.flags.overrun);
-  Serial.print("  LEN: "); Serial.print(msg.len);
-  Serial.print(" EXT: "); Serial.print(msg.flags.extended);
-  Serial.print(" TS: "); Serial.print(msg.timestamp);
-  Serial.print(" ID: "); Serial.print(msg.id, HEX);
+  Serial.print("MB ");
+  Serial.print(msg.mb);
+  Serial.print("  OVERRUN: ");
+  Serial.print(msg.flags.overrun);
+  Serial.print("  LEN: ");
+  Serial.print(msg.len);
+  Serial.print(" EXT: ");
+  Serial.print(msg.flags.extended);
+  Serial.print(" TS: ");
+  Serial.print(msg.timestamp);
+  Serial.print(" ID: ");
+  Serial.print(msg.id, HEX);
   print_buffer(msg);
 }
 
@@ -79,16 +88,21 @@ void loop() {
     prepare_bms_message(_bms, bms_msg);
     can1.write(bms_msg);
     can2.write(obc_msg);
-    sprintf(a, "writing to CANBUS %x: %d, CANBUS %x: %d", bms_msg.id, bms_msg.len, obc_msg.id, obc_msg.len);
+    sprintf(a, "writing to CANBUS %x: %d, CANBUS %x: %d", bms_msg.id,
+            bms_msg.len, obc_msg.id, obc_msg.len);
     Serial.println(a);
-    Serial.print("TX: "); print_buffer(bms_msg);
-    Serial.print("TX: "); print_buffer(obc_msg);
+    Serial.print("TX: ");
+    print_buffer(bms_msg);
+    Serial.print("TX: ");
+    print_buffer(obc_msg);
     gcount = 0;
   }
   if (can1.read(gmsg)) {
-    Serial.print("RX: "); print_buffer(gmsg);
+    Serial.print("RX: ");
+    print_buffer(gmsg);
   }
   if (can2.read(gmsg)) {
-    Serial.print("RX: "); print_buffer(gmsg);
+    Serial.print("RX: ");
+    print_buffer(gmsg);
   }
 }

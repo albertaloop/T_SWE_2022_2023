@@ -7,4 +7,4 @@ window.setWindowTitle('Hello QT')
 
 window.show()
 
-app.exec() 
+app.exec()

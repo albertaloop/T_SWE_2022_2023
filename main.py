@@ -102,7 +102,7 @@ class Logic(Ui_MainWindow):
             self.bat_1_volt.setText(
                 str(telemetry_manager.get_battery_voltage()))
             self.bat_2_volt.setText(
-                str(telemetry_manager.get_battery_voltage()))    
+                str(telemetry_manager.get_battery_voltage()))
             # Display acceleration
             self.accel_ind.setText(
                 str(telemetry_manager.get_acceleration()))
@@ -116,7 +116,7 @@ class Logic(Ui_MainWindow):
                 str(telemetry_manager.get_status()))
             # Display stripe count
             self.thing_2_label.setText(
-                str(telemetry_manager.get_stripe_count()))                
+                str(telemetry_manager.get_stripe_count()))
             # self.progressBar.setProperty("value", telemetry_manager.get_position())
             elapsed_time = time.time() - start_time
             self.time_elapsed_label.setText(

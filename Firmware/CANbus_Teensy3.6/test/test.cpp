@@ -18,7 +18,7 @@ void setup() {
   message1.len = 1;
   message1.timeout = 0;
   message1.buf[0] = 0b01010101;
-  
+
   CAN_Message_t message2;
   message2.ext = 0;
   message2.id = 0xffffffff;
@@ -27,6 +27,4 @@ void setup() {
   message2.buf[0] = 0b00000000;
 }
 
-void loop(){
-    
-}
+void loop() {}

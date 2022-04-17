@@ -45,7 +45,7 @@ class TelemetryManager:
 
     def get_battery_current(self):
         return self.battery_current
-    
+
     def get_battery_temperature(self):
         return self.battery_temperature
 

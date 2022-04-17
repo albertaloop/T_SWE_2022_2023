@@ -8,4 +8,3 @@ fn main() {
         buffer_master(&mut master_fd, None);
     }
 }
-
