@@ -1,6 +1,6 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
-exclude: '.pio/|CMSIS/'
+exclude: '.pio/|CMSIS/|GUI/AlbertaLoop_UI.py'
 repos:
 -   repo: meta
     hooks:
