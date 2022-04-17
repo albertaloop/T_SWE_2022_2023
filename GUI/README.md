@@ -12,12 +12,24 @@
 4. To launch the GUI with the fake telemetry connection, use the included shell script. `sh startGUIWithTelemetry.sh 127.0.0.1 8000` where 127.0.0.1 is your localhost IP and port refers to an open port on your computer. Feel free to change these numbers if they don't work for you. Moreover, this shell script has been tested on Mac. If it doesn't work on your system, feel free to make a new script and please push that to the repo so others can use it as well.
 
 ### How to edit GUI
+If you intend to edit a UI using QTDesigner, download the .ui version of it from github, open it on QTDesigner, edit, and submit a pull request for both the .ui and .py versions.
+
+If you are just editing non-UI methods, do not alter the .ui file and class Ui_MainWindow in the .py version unless changes were made in those locations.
 
 1. The GUI's user interface was built using QT Designer. Therefore, to edit the UI, you will also need to download the QT Designer. You can find a lightweight QT designer program at (https://build-system.fman.io/qt-designer-download), which doesn't include the gigabytes of unnecessary stuff you get with the regular QTCreator installation.
 
 2. Then use QT Designer tp open the AlbertaLoop_UI.ui file, and make whatever edits you want
 
 3. After making the edits, run the command `pyuic5 -x AlbertaLoop_UI.ui -o AlbertaLoop_UI.py` to auto generate the corresponding python file for the UI.
+
+### GUI Directory
+We will be trying to match the convention provided in the Mastering GUI book as much as possible. Feel free to add to this list by making a pull request so other team members can review the change.
+
+1. File names will follow a lowercase underscores naming convention. For ex. "main_window.py"
+2. To remain consistent with the Mastering GUI book, variable names will also follow lowercase underscore naming convention. For ex. health_panel = ...
+3. To remain consistent with the Mastering GUI book, method names will follow a camel case naming convention. For ex. doSomething()...
+4. Class names will follow a pascal case convention. ex. SomeClass
+5. Constants will use an all caps underscore naming convention. ex. SPEED_OF_LIGHT = 3E8
 
 ## Coding Notes
 
