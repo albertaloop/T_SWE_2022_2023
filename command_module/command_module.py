@@ -2,9 +2,11 @@ import socket
 import struct
 from enum import IntEnum
 
+
 class Command(IntEnum):
     Start = 0
     Stop = 1
+
 
 class CommandManager:
 

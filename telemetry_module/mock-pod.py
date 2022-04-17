@@ -45,6 +45,8 @@ def get_acceleration(seconds, run_length, tube_length):
     return (get_velocity(seconds, run_length, tube_length) - get_velocity(seconds-0.1, run_length, tube_length)) * 10
 
 # In general, battery voltage for hyperloop is around 36, voltage will increase as voltage increase
+
+
 def get_battery_voltage(seconds, initial_temp):
     return (36.0 + get_battery_temperature(seconds, initial_temp)/100.0)
 
@@ -53,6 +55,8 @@ def get_battery_current(seconds, initial_temp, resistance):
     return (get_battery_voltage(seconds, initial_temp)/resistance)
 
 # Highest battery temperature is around 150C
+
+
 def get_battery_temperature(seconds, initial_temp):
     temperature = initial_temp + math.sqrt(seconds*2)
     if(temperature < 150.0):
@@ -60,15 +64,18 @@ def get_battery_temperature(seconds, initial_temp):
     else:
         return 150.0
 
+
 def get_pod_temperature(seconds, initial_pod_temp):
     return (initial_pod_temp + math.sin(seconds/10)/(seconds/10))
 
+
 def get_stripe_count(seconds, initial_stripe_count):
-    prob = random.uniform(0,1)
-    if(prob>=0.5):
+    prob = random.uniform(0, 1)
+    if(prob >= 0.5):
         return initial_stripe_count + math.sin(seconds)/seconds
     else:
         return initial_stripe_count - math.sin(seconds)/seconds
+
 
 if __name__ == "__main__":
     parser = ArgumentParser(
@@ -142,9 +149,11 @@ if __name__ == "__main__":
             position = get_position(seconds, run_length, tube_length)
             velocity = get_velocity(seconds, run_length, tube_length)
             acceleration = get_acceleration(seconds, run_length, tube_length)
-            battery_temperature = get_battery_temperature(seconds, initial_temp)
+            battery_temperature = get_battery_temperature(
+                seconds, initial_temp)
             battery_voltage = get_battery_voltage(seconds, initial_temp)
-            battery_current = get_battery_current(seconds, initial_temp, resistance)
+            battery_current = get_battery_current(
+                seconds, initial_temp, resistance)
             pod_temperature = get_pod_temperature(seconds, initial_pod_temp)
             stripe_count = get_stripe_count(seconds, initial_stripe_count)
 
@@ -154,9 +163,11 @@ if __name__ == "__main__":
             position = get_position(seconds, run_length, tube_length)
             velocity = get_velocity(seconds, run_length, tube_length)
             acceleration = get_acceleration(seconds, run_length, tube_length)
-            battery_temperature = get_battery_temperature(seconds, initial_temp)
+            battery_temperature = get_battery_temperature(
+                seconds, initial_temp)
             battery_voltage = get_battery_voltage(seconds, initial_temp)
-            battery_current = get_battery_current(seconds, initial_temp, resistance)
+            battery_current = get_battery_current(
+                seconds, initial_temp, resistance)
             pod_temperature = get_pod_temperature(seconds, initial_pod_temp)
             stripe_count = get_stripe_count(seconds, initial_stripe_count)
 
@@ -166,9 +177,11 @@ if __name__ == "__main__":
             position = tube_length
             velocity = 0
             acceleration = 0
-            battery_temperature = get_battery_temperature(seconds, initial_temp)
+            battery_temperature = get_battery_temperature(
+                seconds, initial_temp)
             battery_voltage = get_battery_voltage(seconds, initial_temp)
-            battery_current = get_battery_current(seconds, initial_temp, resistance)
+            battery_current = get_battery_current(
+                seconds, initial_temp, resistance)
             pod_temperature = get_pod_temperature(seconds, initial_pod_temp)
             stripe_count = get_stripe_count(seconds, initial_stripe_count)
 
