@@ -1,6 +1,6 @@
-'''
+"""
 Instantiate filter class, and initialize x, F, H, P, R, and Q  https://github.com/rlabbe/filterpy
-'''
+"""
 from filterpy.kalman import KalmanFilter, predict, update
 from filterpy.common.discretization import Q_discrete_white_noise
 import numpy as np

@@ -9,7 +9,6 @@ class Command(IntEnum):
 
 
 class CommandManager:
-
     def __init__(self, ip_address, port):
         self.server = (ip_address, port)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

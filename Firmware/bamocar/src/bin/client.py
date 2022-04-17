@@ -20,46 +20,38 @@ class Client:
 def main(default_port=None, default_baudrate=9600):
     """Command line tool, entry point"""
 
-    parser = argparse.ArgumentParser(
-        description='A simple serial client')
+    parser = argparse.ArgumentParser(description="A simple serial client")
 
     parser.add_argument(
-        'port',
-        nargs='?',
-        help='serial port name',
-        default=default_port)
+        "port", nargs="?", help="serial port name", default=default_port
+    )
 
     parser.add_argument(
-        'baudrate',
-        nargs='?',
+        "baudrate",
+        nargs="?",
         type=int,
-        help='set baud rate, default: %(default)s',
-        default=default_baudrate)
+        help="set baud rate, default: %(default)s",
+        default=default_baudrate,
+    )
 
     args = parser.parse_args()
 
     if not args.port:
-        CONFIG_PATH = pathlib.Path(
-            pathlib.Path.home() / ".config/bamocar/slave")
+        CONFIG_PATH = pathlib.Path(pathlib.Path.home() / ".config/bamocar/slave")
         try:
-            with open(CONFIG_PATH, 'r') as f:
+            with open(CONFIG_PATH, "r") as f:
                 args.port = f.readline()
             logger.debug(f"Port automatically detected: {args.port}")
         except FileNotFoundError:
-            parser.error(
-                f"Port is not given, nor can it be sourced from {CONFIG_PATH}")
+            parser.error(f"Port is not given, nor can it be sourced from {CONFIG_PATH}")
 
     try:
-        ser = serial.Serial(
-            args.port,
-            args.baudrate,
-            timeout=1
-        )
+        ser = serial.Serial(args.port, args.baudrate, timeout=1)
         if not ser.is_open:
             ser.open()
         Client(ser)
     except serial.SerialException as e:
-        logger.error('could not open port {!r}: {}\n'.format(args.port, e))
+        logger.error("could not open port {!r}: {}\n".format(args.port, e))
         sys.exit(1)
 
 

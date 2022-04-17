@@ -27,26 +27,26 @@ def animate(i):
 
     # * To Do *
 
-    '''
+    """
     Append to "states" and "estimates" with respective values from pandas dataframe, then
     call the "plot" function
     https://pythonprogramming.net/live-graphs-matplotlib-tutorial/
     https://www.tutorialspoint.com/python_pandas/python_pandas_dataframe.htm
-    '''
+    """
 
     ax.legend(["Actual State", "Estimation"])
     ax.set_xlabel("Time Step")
     ax.set_ylabel("Position")
-    plt.title('Kalman Filter Estimation')
-    time.sleep(.05)  # keep refresh rate of 0.25 seconds
+    plt.title("Kalman Filter Estimation")
+    time.sleep(0.05)  # keep refresh rate of 0.25 seconds
 
 
 if __name__ == "__main__":
     # * To Do *
 
-    '''
+    """
     Read CSV file.
-    '''
+    """
 
     # Plot results
     fig, ax = plt.subplots()
