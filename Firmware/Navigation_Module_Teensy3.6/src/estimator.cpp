@@ -1,172 +1,122 @@
 #include "estimator.h"
+#include "matrix_math.h"
+#include <stdio.h>
 
-// void arm_mat_init_f32(
-//     arm_matrix_instance_f32 * S,
-//     uint16_t nRows,
-//     uint16_t nColumns,
-//     float * pData);
+
+//https://en.wikipedia.org/wiki/Kalman_filter
+
+// Declare Matrixes
+arm_matrix_instance_f32 temp_x;
+arm_matrix_instance_f32 temp_xbar;
+arm_matrix_instance_f32 temp1x1_1;
+arm_matrix_instance_f32 temp1x2_1;
+arm_matrix_instance_f32 temp2x1_1;
+arm_matrix_instance_f32 temp2x1_2;
+arm_matrix_instance_f32 temp2x1_3;
+arm_matrix_instance_f32 temp2x2_1;
+arm_matrix_instance_f32 temp2x2_2;
+
+// Declare Matrix Data
+float temp1x1_1data[1];
+float temp1x2_1data[2];
+float temp2x1_1data[2];
+float temp2x1_2data[2];
+float temp2x1_3data[2];
+float temp2x2_1data[4];
+float temp2x2_2data[4];
 
 estimator::estimator() {
     arm_mat_init_f32(&this->F, 2, 2, estimator::Fdata);
+    arm_mat_init_f32(&this->F_T, 2, 2, estimator::F_Tdata);
     arm_mat_init_f32(&this->G, 2, 1, estimator::Gdata);
-}
+    arm_mat_init_f32(&this->H, 1, 2, estimator::Hdata);
+    arm_mat_init_f32(&this->H_T, 2, 1, estimator::Hdata);
+    arm_mat_init_f32(&this->P, 2, 2, estimator::Pdata);
+    arm_mat_init_f32(&this->I, 2, 2, estimator::Idata);
+    arm_mat_init_f32(&this->P_bar, 2, 2, estimator::P_bardata);
 
-void estimator::arm_mat_init_f32(
-  arm_matrix_instance_f32 * S,
-  uint16_t nRows,
-  uint16_t nColumns,
-  float * pData)
-{
-  /* Assign Number of Rows */
-  S->numRows = nRows;
+    // 1x1 temp matrix
+    arm_mat_init_f32(&temp1x1_1, 1, 1, temp1x1_1data);
 
-  /* Assign Number of Columns */
-  S->numCols = nColumns;
+    // 1x2 temp matrixes
+    arm_mat_init_f32(&temp1x2_1, 1, 2, temp1x2_1data);
 
-  /* Assign Data pointer */
-  S->pData = pData;
-}
+    // 2x1 temp matrixes
+    arm_mat_init_f32(&temp2x1_1, 2, 1, temp2x1_1data);
+    arm_mat_init_f32(&temp2x1_2, 2, 1, temp2x1_2data);
+    arm_mat_init_f32(&temp2x1_3, 2, 1, temp2x1_3data);
 
-
-void estimator::arm_mat_mult_f32(
-  const arm_matrix_instance_f32 * pSrcA,
-  const arm_matrix_instance_f32 * pSrcB,
-        arm_matrix_instance_f32 * pDst)
-{
-  float32_t *pIn1 = pSrcA->pData;                /* Input data matrix pointer A */
-  float32_t *pIn2 = pSrcB->pData;                /* Input data matrix pointer B */
-  float32_t *pInA = pSrcA->pData;                /* Input data matrix pointer A */
-  float32_t *pInB = pSrcB->pData;                /* Input data matrix pointer B */
-  float32_t *pOut = pDst->pData;                 /* Output data matrix pointer */
-  float32_t *px;                                 /* Temporary output data matrix pointer */
-  float32_t sum;                                 /* Accumulator */
-  uint16_t numRowsA = pSrcA->numRows;            /* Number of rows of input matrix A */
-  uint16_t numColsB = pSrcB->numCols;            /* Number of columns of input matrix B */
-  uint16_t numColsA = pSrcA->numCols;            /* Number of columns of input matrix A */
-  unsigned int col, i = 0U, row = numRowsA, colCnt;  /* Loop counters */
-  {
-    /* The following loop performs the dot-product of each row in pSrcA with each column in pSrcB */
-    /* row loop */
-    do
-    {
-      /* Output pointer is set to starting address of row being processed */
-      px = pOut + i;
-      /* For every row wise process, column loop counter is to be initiated */
-      col = numColsB;
-      /* For every row wise process, pIn2 pointer is set to starting address of pSrcB data */
-      pIn2 = pSrcB->pData;
-      /* column loop */
-      do
-      {
-        /* Set the variable sum, that acts as accumulator, to zero */
-        sum = 0.0f;
-        /* Initialize pointer pIn1 to point to starting address of column being processed */
-        pIn1 = pInA;
- /* Initialize cntCnt with number of columns */
-        colCnt = numColsA;
-        while (colCnt > 0U)
-        {
-          /* c(m,n) = a(1,1) * b(1,1) + a(1,2) * b(2,1) + .... + a(m,p) * b(p,n) */
-          /* Perform the multiply-accumulates */
-          sum += *pIn1++ * *pIn2;
-          pIn2 += numColsB;
-          /* Decrement loop counter */
-          colCnt--;
-        }
-        /* Store result in destination buffer */
-        *px++ = sum;
-        /* Decrement column loop counter */
-        col--;
-        /* Update pointer pIn2 to point to starting address of next column */
-        pIn2 = pInB + (numColsB - col);
-      } while (col > 0U);
-      /* Update pointer pInA to point to starting address of next row */
-      i = i + numColsB;
-      pInA = pInA + numColsA;
-      /* Decrement row loop counter */
-      row--;
-    } while (row > 0U);
-    /* Set status as ARM_MATH_SUCCESS */
-  }
-  /* Return to application */
-}
-
-void estimator::arm_mat_scale_f32(
-  const arm_matrix_instance_f32 * pSrc,
-        float32_t                 scale,
-        arm_matrix_instance_f32 * pDst)
-{
-  float32_t *pIn = pSrc->pData;                  /* Input data matrix pointer */
-  float32_t *pOut = pDst->pData;                 /* Output data matrix pointer */
-  unsigned int numSamples;                           /* Total number of elements in the matrix */
-  unsigned int blkCnt;                               /* Loop counters */
-  {
-    /* Total number of samples in input matrix */
-    numSamples = (unsigned int) pSrc->numRows * pSrc->numCols;
-    /* Initialize blkCnt with number of samples */
-    blkCnt = numSamples;
-        while (blkCnt > 0U)
-    {
-      /* C(m,n) = A(m,n) * scale */
-      /* Scale and store result in destination buffer. */
-      *pOut++ = (*pIn++) * scale;
-      /* Decrement loop counter */
-      blkCnt--;
-    }
-    /* Set status as ARM_MATH_SUCCESS */
-  }
-  /* Return to application */
-}
-
-void estimator::arm_mat_add_f32(
-  const arm_matrix_instance_f32 * pSrcA,
-  const arm_matrix_instance_f32 * pSrcB,
-        arm_matrix_instance_f32 * pDst)
-{
-  float32_t *pInA = pSrcA->pData;                /* input data matrix pointer A */
-  float32_t *pInB = pSrcB->pData;                /* input data matrix pointer B */
-  float32_t *pOut = pDst->pData;                 /* output data matrix pointer */
-  unsigned int numSamples;                           /* total number of elements in the matrix */
-  unsigned int blkCnt;                               /* loop counters */
-   {
-    /* Total number of samples in input matrix */
-    numSamples = (unsigned int) pSrcA->numRows * pSrcA->numCols;
-    /* Initialize blkCnt with number of samples */
-    blkCnt = numSamples;
-        while (blkCnt > 0U)
-    {
-      /* C(m,n) = A(m,n) + B(m,n) */
-      /* Add and store result in destination buffer. */
-      *pOut++ = *pInA++ + *pInB++;
-      /* Decrement loop counter */
-      blkCnt--;
-    }
-    /* Set status as ARM_MATH_SUCCESS */
-  }
-  /* Return to application */
+    // 2x2 temp matrixes
+    arm_mat_init_f32(&temp2x2_1, 2, 2, temp2x2_1data);
+    arm_mat_init_f32(&temp2x2_2, 2, 2, temp2x2_2data);
 }
 
 void estimator::predict() {
-    // Declare Matrix Data
-    float temp2data[3];
-    float temp3data[3];
-    // Declare Matrixes
-    arm_matrix_instance_f32 temp1;
-    arm_matrix_instance_f32 temp2;
-    arm_matrix_instance_f32 temp3;
-    // Initialize Matrixes
-    arm_mat_init_f32(&temp1, 2, 1, this->x_bar);
-    arm_mat_init_f32(&temp2, 2, 1, temp2data);
-    arm_mat_init_f32(&temp3, 2, 1, temp3data);
+    arm_mat_init_f32(&temp_x, 2, 1, x);
 
+    /* x_bar = Fx + Ga */
     // F * x_bar
-    arm_mat_mult_f32(&F, &temp1, &temp2);
+    arm_mat_mult_f32(&this->F, &temp_x, &temp2x1_1);
     // G * a
-    arm_mat_scale_f32(&G, x_bar[2], &temp1);
+    arm_mat_scale_f32(&this->G, x[2], &temp2x1_2);
     // F * x_bar + G * a
-    arm_mat_add_f32(&temp2, &temp1, &temp3);
-
+    arm_mat_add_f32(&temp2x1_1, &temp2x1_2, &temp2x1_3);
     for (int i = 0; i < 2; i++) {
-        x_bar[i] = temp3data[i];
+        x_bar[i] = temp2x1_3data[i];
     }
+
+    /* P_bar = FPF^T + Q */
+    // F * P
+    arm_mat_mult_f32(&this->F, &this->P, &temp2x2_1);
+    // F * P * F^T
+    arm_mat_mult_f32(&temp2x2_1, &this->F_T, &this->P_bar);
+    /* Use this line instead if incorporating process noise Q */
+    // arm_mat_mult_f32(&temp2x2_1, &this->F_T, &temp2x2_2);
+    // FPF^T + Q
+    /* Neglect Process Noise Q */
+    // arm_mat_add_f32(&temp2x2_2, &this->Q, &this->P_bar);
+}
+
+void estimator::update(float z) {
+    arm_mat_init_f32(&temp_xbar, 2, 1, x_bar);
+    
+    /* y = z - Hx_bar */
+    // H * x_bar
+    arm_mat_mult_f32(&this->H, &temp_xbar, &temp1x1_1);
+    // y = z - H * x_bar
+    float y = z - temp1x1_1data[0];
+
+    /* S = HP_barH^T + R */
+    // H * P_bar
+    arm_mat_mult_f32(&this->H, &this->P_bar, &temp1x2_1);
+    // H * P_bar * H^T
+    arm_mat_mult_f32(&temp1x2_1, &this->H_T, &temp1x1_1);
+    // S = HP_barH^T + R
+    float S = temp1x1_1data[0] + this->R; 
+
+
+    /* K = P_barH^TS^-1 */
+    // S^-1
+    S = 1/S;
+    // P_bar * H^T
+    arm_mat_mult_f32(&this->P_bar, &this->H_T, &temp2x1_1);
+    // K = P_bar * H^T * S^-1
+    arm_mat_scale_f32(&temp2x1_1, S, &temp2x1_2);
+
+    /* x = x_bar + Ky */
+    // K * y
+    arm_mat_scale_f32(&temp2x1_2, y, &temp2x1_1);
+    // x = x_bar + Ky
+    arm_mat_add_f32(&temp_xbar, &temp2x1_1, &temp2x1_3);
+    for(int i = 0; i < 2; i++) {
+        x[i] = temp2x1_3data[i];
+    }
+
+    /* P = (I - KH)P_bar */
+    // K * H
+    arm_mat_mult_f32(&temp2x1_2, &this->H, &temp2x1_1);
+    // I - K * H
+    arm_mat_sub_f32(&this->I, &temp2x1_1, &temp2x2_2);
+    // P = (I-KH) * P_bar
+    arm_mat_mult_f32(&temp2x2_2, &this->P_bar, &this->P);
 }
