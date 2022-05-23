@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <utility/imumaths.h>
-#include <Adafruit_BNO055.h>
+#include <SparkFunLSM9DS1.h>
 #include <SPI.h>
 #include "estimator.h"
 #include "CANBus.h"
@@ -10,10 +10,17 @@
 #define ISR_INTERVAL 1000000 // 100,000 microseconds = 50 ms
 #define total_responses 4
 
+// Pin definitions for the accelerometer (LSM9DS1)
+#define LSM9DS1_M_CS 37  
+#define LSM9DS1_AG_CS	36
+
+bool isAccel_connected = false; // Flag for detecting the accelerometer
+
+LSM9DS1 lsm; // Uses the LSM9DS1 class to create an object 
+
 FlexCAN fc = FlexCAN();
 estimator est = estimator();
 CANBus can = CANBus(&fc, 0);
-Adafruit_BNO055 bno = Adafruit_BNO055(55);
 imu::Vector<3> accel;
 IntervalTimer interruptTimer;
 
@@ -23,7 +30,6 @@ enum { state0 = 0, state1, state2, state3 };
 
 int state = 0;
 CAN_message_t msg_out;
-Adafruit_GPS GPS(&Serial1);
 boolean usingInterrupt = false;
 void useInterrupt(boolean);
 
@@ -53,40 +59,12 @@ float castIntToFloat(int i) {
 
 
 void measurement_loop(void) {
-  // get accel measurement
-  // accel = bno.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
-  // set accel state parameter to measurement
-  // est.x[2] = (float)accel.x();
+  lsm.readAccel();
+  
+  est.x[2] = lsm.calcAccel(lsm.ax) * 9.81; // Normalize the accelerometer values to m/s^2
 
-
-    // if a sentence is received, we can check the checksum, parse it...
-      noInterrupts();
-          char c = GPS.read();
-      if (c) Serial.print(c);
-  if (GPS.newNMEAreceived()) {
-    // a tricky thing here is if we print the NMEA sentence, or data
-    // we end up not listening and catching other sentences! 
-    // so be very wary if using OUTPUT_ALLDATA and trytng to print out data
-    //Serial.println(GPS.lastNMEA());   // this also sets the newNMEAreceived() flag to false
-    if (!GPS.parse(GPS.lastNMEA()));   // this also sets the newNMEAreceived() flag to false
-      // return;  // we can fail to parse a sentence in which case we should just wait for another
-      Serial.print(GPS.fix);
-
-  }
-    interrupts();
   // iterate prediction
   est.predict();
-
-  if (GPS.fix) {
-    Serial.print("Location: ");
-    Serial.print(GPS.latitude, 4); Serial.print(GPS.lat);
-    Serial.print(", "); 
-    Serial.print(GPS.longitude, 4); Serial.println(GPS.lon);
-  }
-  // update state params
-  for (int i = 0; i < 3; i++) {
-    state_params.x[i] = est.x[i];
-  }
 }
 
 
@@ -142,33 +120,21 @@ void setup() {
   msg_out.id = 0;
   msg_out.len = 1;
   memset(msg_out.buf, 0, 8);
-  /* Initialize accelerometer */
-  if( !bno.begin() )
-  {
-    /* There was a problem detecting the BNO055 ... check your connections */
-    while(1);
+
+ // Checing the lsm connections
+ if(lsm.beginSPI(LSM9DS1_AG_CS, LSM9DS1_M_CS) == false)
+    Serial.println("Failed to communicate with LSM9DS1!");
+   
+  else {
+    Serial.println("LSM9DS1 Connection Successful");
+    isAccel_connected = true;
   }
   delay(1000);
-  bno.setExtCrystalUse(true);
 
-  /* Initialize GPS */
-  pinMode(13,OUTPUT);
-  digitalWrite(13,HIGH);
   // connect at 115200 so we can read the GPS fast enough and echo without dropping chars
   // also spit it out
   Serial.begin(115200);
-  Serial.println("Adafruit GPS library basic test!");
-    // 9600 NMEA is the default baud rate for Adafruit MTK GPS's- some use 4800
-  GPS.begin(9600);
-  Serial1.begin(9600);
-    // uncomment this line to turn on RMC (recommended minimum) and GGA (fix data) including altitude
-  GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
-    // Set the update rate
-  GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);   // 1 Hz update rate
-    delay(1000);
   interruptTimer.begin(timerCallback, ISR_INTERVAL);
-
-
 }
 
 void loop() {
@@ -180,14 +146,11 @@ void loop() {
         break;
       case (state1) : // 100 ms loop
         measurement_loop();
-        Serial.print(GPS.fix);
         break;
       case (state2) : // wait
         break;
       case (state3) : // 100 ms loop
-        accel = bno.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
-        est.x[2] = (float)accel.x();
-
+        measurement_loop();
         break;   
     }
     if(state < state3) {
