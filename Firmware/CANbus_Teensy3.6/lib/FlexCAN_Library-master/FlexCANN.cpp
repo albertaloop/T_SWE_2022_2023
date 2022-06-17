@@ -74,10 +74,10 @@ FlexCAN::FlexCAN(uint32_t baud, uint8_t id, uint8_t txAlt, uint8_t rxAlt)
   // wait for freeze ack
   while(!(FLEXCANb_MCR(flexcanBase) & FLEXCAN_MCR_FRZ_ACK))
     ;
-  // // disable self-reception
+  // // disable self-reception (not loop back mode)
   // FLEXCANb_MCR(flexcanBase) |= FLEXCAN_MCR_SRX_DIS;
 
-  // enable self-reception
+  // enable self-reception (use of loop back mode)
   FLEXCANb_MCR(flexcanBase) &= ~FLEXCAN_MCR_SRX_DIS;
 
 
@@ -229,7 +229,7 @@ int FlexCAN::read(CAN_message_t &msg)
 int FlexCAN::write(const CAN_message_t &msg)
 {
   unsigned long int startMillis;
-  Serial.println("writing");
+
   startMillis = msg.timeout? millis() : 0;
 
   // find an available buffer
@@ -241,14 +241,13 @@ int FlexCAN::write(const CAN_message_t &msg)
     }
     if ( !msg.timeout ) {
       if ( ++index >= (txb+txBuffers) ) {
-        Serial.println("No Buffers");
-
+        Serial.println("no buffers");
         return 0;// early EXIT no buffers available
       }
     } else {
       // blocking mode, only 1 txb used to guarantee frames in order
       if ( msg.timeout <= (millis()-startMillis) ) {
-                Serial.println("Timeout");
+        Serial.println("time out");
 
         return 0;// timed out
       }
@@ -263,12 +262,12 @@ int FlexCAN::write(const CAN_message_t &msg)
   } else {
     FLEXCANb_MBn_ID(flexcanBase, buffer) = FLEXCAN_MB_ID_IDSTD(msg.id);
   }
-  // Serial.print("Mailbox before write: ");
-  // Serial.println((uint32_t)(FLEXCANb_MBn_WORD0(flexcanBase, buffer) | 0xff) >> 24);
-  // Serial.println(msg.buf[0]);
+  Serial.print("Mailbox before write: ");
+  Serial.println((uint32_t)(FLEXCANb_MBn_WORD0(flexcanBase, buffer) | 0xff) >> 24);
+  Serial.println(msg.buf[0]);
   FLEXCANb_MBn_WORD0(flexcanBase, buffer) = (msg.buf[0]<<24)|(msg.buf[1]<<16)|(msg.buf[2]<<8)|msg.buf[3];
-  // Serial.print("Mailbox after write: ");
-  // Serial.println((uint32_t)(FLEXCANb_MBn_WORD0(flexcanBase, buffer) | 0xff) >> 24);
+  Serial.print("Mailbox after write: ");
+  Serial.println((uint32_t)(FLEXCANb_MBn_WORD0(flexcanBase, buffer) | 0xff) >> 24);
   FLEXCANb_MBn_WORD1(flexcanBase, buffer) = (msg.buf[4]<<24)|(msg.buf[5]<<16)|(msg.buf[6]<<8)|msg.buf[7];
   if(msg.ext) {
     FLEXCANb_MBn_CS(flexcanBase, buffer) = FLEXCAN_MB_CS_CODE(FLEXCAN_MB_CODE_TX_ONCE)

@@ -2,10 +2,8 @@
 #ifndef _CIRCULARBUFFER_H_
 #define _CIRCULARBUFFER_H_
 
-
 #include <sys/types.h>
 #include <unistd.h>
-
 
 using namespace std;
 // Circualr buffer is like a 1st add 1st out stack.
@@ -54,7 +52,6 @@ class CircularBuffer
             full = false;
             numElement--;
             return read;
-            
         }
         // Check the total capacity of the circular buffer or the remaining capacity.
         size_t Capacity(){
@@ -86,7 +83,6 @@ class CircularBuffer
         int numElement = 0;
         bool full = false;
         T buffer[Size];
-
 };
 
 #endif

@@ -10,11 +10,9 @@ class estimator {
     public:
         float x[3] = {0.0f, 0.0f, 0.0f};
         float x_bar[2];
-
         estimator();
         void predict();
         void update(float z);
-
   
     private:
         float Fdata[4] = {1.0f, delta, 0.0f, 1.0f};
@@ -26,12 +24,9 @@ class estimator {
         float P_bardata[4];
         /* Neglect process noise Q */
         // float Qdata[4] = { , , , };
-
         float y_bar;
-
         arm_matrix_instance_f32 H;
         arm_matrix_instance_f32 H_T;
-
         arm_matrix_instance_f32 F;
         arm_matrix_instance_f32 F_T;
         arm_matrix_instance_f32 G;
@@ -41,8 +36,6 @@ class estimator {
         float R = 1.0f;
         /* Neglect process noise Q */
         // arm_matrix_instance_f32 Q;
-
-        
 };
 
 #endif

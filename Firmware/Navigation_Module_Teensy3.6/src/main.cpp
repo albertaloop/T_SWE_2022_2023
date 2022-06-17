@@ -8,140 +8,109 @@
 
 
 #define ISR_INTERVAL 1000000 // 100,000 microseconds = 50 ms
-#define total_responses 4
+#define total_responses 255
 
-FlexCAN fc = FlexCAN();
+FlexCAN fc = FlexCAN(500000);
 estimator est = estimator();
-CANBus can = CANBus(&fc, 0);
 Adafruit_BNO055 bno = Adafruit_BNO055(55);
 imu::Vector<3> accel;
 IntervalTimer interruptTimer;
 
 volatile bool interrupt_flag = false;
+bool new_z = false;
 
 enum { state0 = 0, state1, state2, state3 };
-
 int state = 0;
-CAN_message_t msg_out;
+float z = 0;
+
+CAN_message_t pos_accel_out;
+CAN_message_t vel_out;
+CAN_message_t recenter_ack_out;
+CAN_filter_t mask = {(uint8_t)0x00, (uint8_t)0x00, (uint32_t)0x04fffff};
 Adafruit_GPS GPS(&Serial1);
 boolean usingInterrupt = false;
 void useInterrupt(boolean);
 
-struct {
-  float x[3];
-} state_params;
+typedef union
+{
+  float number;
+  uint8_t bytes[4];
+} FLOATUNION_t;
 
-void (*responses[total_responses])( void );
+void (*responses[total_responses])( CAN_message_t msg_in );
 
+void recenterCallback(CAN_message_t msg_in) {
+  for(int i = 0; i < 3; i++) {
+    est.x[i] = 0;
+  }
+}
+
+void positionCallback(CAN_message_t msg_in) {
+    Serial.println("position call back");
+    FLOATUNION_t t;
+    memcpy(t.bytes, msg_in.buf, 4);
+    z = t.number;
+}
 
 void timerCallback(void) {
   interrupt_flag = true;
 }
 
-int castFloatToInt(float f) {
-    union { float f; int i; } u;
-    u.f = f;
-    return u.i;
-}
-
-
-float castIntToFloat(int i) {
-    union { float f; int i; } u;
-    u.i = i;
-    return u.f;
-}
-
-
 void measurement_loop(void) {
-  // get accel measurement
-  // accel = bno.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
-  // set accel state parameter to measurement
-  // est.x[2] = (float)accel.x();
-
-
-    // if a sentence is received, we can check the checksum, parse it...
-      noInterrupts();
-          char c = GPS.read();
-      if (c) Serial.print(c);
-  if (GPS.newNMEAreceived()) {
-    // a tricky thing here is if we print the NMEA sentence, or data
-    // we end up not listening and catching other sentences! 
-    // so be very wary if using OUTPUT_ALLDATA and trytng to print out data
-    //Serial.println(GPS.lastNMEA());   // this also sets the newNMEAreceived() flag to false
-    if (!GPS.parse(GPS.lastNMEA()));   // this also sets the newNMEAreceived() flag to false
-      // return;  // we can fail to parse a sentence in which case we should just wait for another
-      Serial.print(GPS.fix);
-
-  }
-    interrupts();
   // iterate prediction
-  est.predict();
-
-  if (GPS.fix) {
-    Serial.print("Location: ");
-    Serial.print(GPS.latitude, 4); Serial.print(GPS.lat);
-    Serial.print(", "); 
-    Serial.print(GPS.longitude, 4); Serial.println(GPS.lon);
-  }
-  // update state params
-  for (int i = 0; i < 3; i++) {
-    state_params.x[i] = est.x[i];
+    est.predict();
+  if (new_z) {
+    est.update(z);
   }
 }
-
 
 void canbus_loop(void) {
   // receive message
   CAN_message_t msg_in;
-  if(can.fc->read(msg_in)) {
-    uint8_t msg_num = msg_in.buf[0];
+  msg_in.timeout = 1;
+  if(fc.read(msg_in)) {
     // respond to message
-    responses[msg_num % total_responses]();
+    Serial.println(msg_in.id);
+    responses[msg_in.id >> 24](msg_in);
   }
-}
-
-void recenter() {
-  for (int i = 0; i < 3; i++) {
-    est.x[i] = castIntToFloat(msg_out.buf[i]);
+  // Send telemetry
+  FLOATUNION_t t;
+  memcpy(t.bytes, est.x, 4);
+  for(int i = 0; i < 4; i++) {
+    pos_accel_out.buf[i] = t.bytes[i];
   }
-}
-
-void position_request() {
-  for (int i = 0; i < 3; i++) {
-    msg_out.buf[0] = castFloatToInt(est.x[0]);
+  memcpy(t.bytes, est.x + 2, 4);
+  for(int i = 0; i < 4; i++) {
+    pos_accel_out.buf[i+4] = t.bytes[i];
   }
-  can.fc->write(msg_out);
-}
-
-void velocity_request() {
-  for (int i = 0; i < 3; i++) {
-    msg_out.buf[0] = castFloatToInt(est.x[1]);
+  fc.write(pos_accel_out);
+  memcpy(t.bytes, est.x + 1, 4);
+  for(int i = 0; i < 4; i++) {
+    vel_out.buf[i] = t.bytes[i];
   }
-  can.fc->write(msg_out);
+
 }
-
-void acceleration_request() {
-  for (int i = 0; i < 3; i++) {
-    msg_out.buf[0] = castFloatToInt(est.x[2]);
-  }
-  can.fc->write(msg_out);
-}
-
-// float latLonToPostion(float lat, float lon){
-  
-// }
-
 
 void setup() {
-  responses[0] = recenter;
-  responses[1] = position_request;
-  responses[2] = velocity_request;
-  responses[3] = acceleration_request;
 
-  msg_out.ext = 0;
-  msg_out.id = 0;
-  msg_out.len = 1;
-  memset(msg_out.buf, 0, 8);
+  responses[4] = positionCallback;
+  responses[15] = recenterCallback;
+
+  pos_accel_out.ext = 0;
+  pos_accel_out.id = 0x01ffffff;
+  pos_accel_out.len = 8;
+  memset(pos_accel_out.buf, 0, 8);
+
+  vel_out.ext = 0;
+  vel_out.id = 0x03ffffff;
+  vel_out.len = 4;
+  memset(vel_out.buf, 0, 8);
+
+  recenter_ack_out.ext = 0;
+  recenter_ack_out.id = 0x02ffffff;
+  recenter_ack_out.len = 1;
+  memset(vel_out.buf, 0, 8);
+
   /* Initialize accelerometer */
   if( !bno.begin() )
   {
@@ -156,41 +125,36 @@ void setup() {
   digitalWrite(13,HIGH);
   // connect at 115200 so we can read the GPS fast enough and echo without dropping chars
   // also spit it out
-  Serial.begin(115200);
-  Serial.println("Adafruit GPS library basic test!");
-    // 9600 NMEA is the default baud rate for Adafruit MTK GPS's- some use 4800
-  GPS.begin(9600);
-  Serial1.begin(9600);
-    // uncomment this line to turn on RMC (recommended minimum) and GGA (fix data) including altitude
-  GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
-    // Set the update rate
-  GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);   // 1 Hz update rate
-    delay(1000);
+  Serial.begin(9600);
+
   interruptTimer.begin(timerCallback, ISR_INTERVAL);
-
-
+  fc.begin(mask);
 }
 
 void loop() {
   if(interrupt_flag) {
     switch (state) {
-      case (state0) : // 200 ms loop
-        // canbus_loop();
-
+      case (state0) : {// 200 ms loop
+        canbus_loop();
+        Serial.println("state0");
         break;
-      case (state1) : // 100 ms loop
+      }
+      case (state1) : {// 100 ms loop
         measurement_loop();
-        Serial.print(GPS.fix);
+          Serial.println("state1");
         break;
-      case (state2) : // wait
+      }
+      case (state2) : {// wait
+        Serial.println("state2");
         break;
-      case (state3) : // 100 ms loop
-        accel = bno.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
-        est.x[2] = (float)accel.x();
-
-        break;   
+      }
+      case (state3) : {// 100 ms loop
+        measurement_loop();
+        Serial.println("state3");
+        break;
+      }   
     }
-    if(state < state3) {
+    if(state < 3) {
       state = state + 1;
     } else {
       state = 0;

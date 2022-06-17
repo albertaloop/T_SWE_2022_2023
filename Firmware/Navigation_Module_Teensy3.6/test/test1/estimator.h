@@ -29,7 +29,6 @@ class estimator {
 
         arm_matrix_instance_f32 H;
         arm_matrix_instance_f32 H_T;
-
         arm_matrix_instance_f32 F;
         arm_matrix_instance_f32 F_T;
         arm_matrix_instance_f32 G;
