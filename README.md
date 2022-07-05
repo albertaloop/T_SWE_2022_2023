@@ -14,7 +14,14 @@ An initial mock-up of the electronics layout.
 # Setup
 We use pre-commit hooks to ensure code standardisation. These hooks will automatically make changes to staged code, based on the rules configured in _pre-commit-config.yaml_.
 
-You will have to install [pre-commit](https://pre-commit.com/) to make changes to the repository. To install pre-commit, follow the instructions on the website.
+You will have to install [pre-commit](https://pre-commit.com/) to make changes to the repository. To install pre-commit, follow the instructions on the website. The install would look something like this on Linux:
+0. open a terminal and change to the repository directory `cd T_SWE_2019_2020/`
+1. create a virtual Python environment `virtualenv venv`
+2. source the environment `source venv`
+3. add pre-commit package `pip install pre-commit`
+4. install git hooks script `pre-commit install`
+
+And that's it! You will not even need to source your environment each time you program. Just start programming!
 
 # Repository guidelines
 
