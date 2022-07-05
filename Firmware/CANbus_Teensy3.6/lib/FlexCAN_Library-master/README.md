@@ -36,7 +36,7 @@ Please add parts you are using successfully with Teensy 3.1 to this list.
 **FlexCAN(baud, id, txAlt, rxAlt)**
 Create the FlexCAN object. The table below describes each parameter together with allowed values. Defaults are marked **bold**. When a non-allowed value is used default will be taken instead.
 
-| Parameter | Description          | Allowed values 
+| Parameter | Description          | Allowed values
 |-----------|----------------------|----------------------------------------------------------------------------
 | baud      | baudrate [bps]       | Teensy 3.1/3.2/3.5/3.6: 50000, 100000, **125000**, 250000, 500000, 1000000
 | id        | FlexCAN interface ID | Teensy 3.1/3.2/3.5: **0** (CAN0)<br>Teensy 3.6: **0** (CAN0), 1 (CAN1)
@@ -80,4 +80,3 @@ The timeout monitoring mechanism calls **yield()** until a buffer is found or th
 
 ### In-order Transmission
 Caller blocking can be used to **write()** frames guaranteed in-order to the bus. When caller blocking is selected for **write()** (non-zero timeout specified), a single hardware transmit buffer is used.
-

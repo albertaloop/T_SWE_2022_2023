@@ -2,12 +2,13 @@ import socket
 import struct
 from enum import IntEnum
 
+
 class Command(IntEnum):
     Start = 0
     Stop = 1
 
-class CommandManager:
 
+class CommandManager:
     def __init__(self, ip_address, port):
         self.server = (ip_address, port)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

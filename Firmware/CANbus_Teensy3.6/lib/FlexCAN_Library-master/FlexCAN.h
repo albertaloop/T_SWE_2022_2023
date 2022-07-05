@@ -9,9 +9,9 @@
 #include <Arduino.h>
 
 typedef struct CAN_message_t {
-  uint32_t id; // can identifier
-  uint8_t ext; // identifier is extended
-  uint8_t len; // length of data
+  uint32_t id;      // can identifier
+  uint8_t ext;      // identifier is extended
+  uint8_t len;      // length of data
   uint16_t timeout; // milliseconds, zero will disable waiting
   uint8_t buf[8];
 } CAN_message_t;
@@ -23,25 +23,21 @@ typedef struct CAN_filter_t {
 } CAN_filter_t;
 
 // -------------------------------------------------------------
-class FlexCAN
-{
+class FlexCAN {
 private:
   struct CAN_filter_t defaultMask;
   uint32_t flexcanBase;
 
 public:
-  FlexCAN(uint32_t baud = 125000, uint8_t id = 0, uint8_t txAlt = 0, uint8_t rxAlt = 0);
+  FlexCAN(uint32_t baud = 125000, uint8_t id = 0, uint8_t txAlt = 0,
+          uint8_t rxAlt = 0);
   void begin(const CAN_filter_t &mask);
-  inline void begin()
-  {
-    begin(defaultMask);
-  }
+  inline void begin() { begin(defaultMask); }
   void setFilter(const CAN_filter_t &filter, uint8_t n);
   void end(void);
   int available(void);
   int write(const CAN_message_t &msg);
   int read(CAN_message_t &msg);
-
 };
 
 #endif // __FLEXCAN_H__

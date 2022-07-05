@@ -5,22 +5,16 @@ const int BMS_MAX_CURRENT = 3000;
 const int BMS_MIN_TEMP = 15; // Celcius
 const int BMS_MAX_TEMP = 40;
 
-enum nodes {
-	BMS,
-	NAV,
-	BRAKES,
-	MOTOR,
-	OBC
-};
+enum nodes { BMS, NAV, BRAKES, MOTOR, OBC };
 
 struct bms {
-	nodes node = BMS;
-	int voltage;
-	int current;
-	int temp;
+  nodes node = BMS;
+  int voltage;
+  int current;
+  int temp;
 };
 
-bool get_bounded_random_number(int lower, int upper, int* n);
-void update_bms(struct bms & _bms);
-int stringify_bms(uint8_t* buffer, struct bms &_bms);
+bool get_bounded_random_number(int lower, int upper, int *n);
+void update_bms(struct bms &_bms);
+int stringify_bms(uint8_t *buffer, struct bms &_bms);
 void seed_random(int seed);
