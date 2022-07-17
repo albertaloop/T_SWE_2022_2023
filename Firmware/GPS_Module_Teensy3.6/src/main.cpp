@@ -146,5 +146,5 @@ void setup()
 void loop()
 {
   gps_loop();
-  canbus_loop();
+  // canbus_loop();
 }
