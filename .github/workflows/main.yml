@@ -1,0 +1,32 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  pull_request:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  platformio:
+    runs-on: ubuntu-latest
+    container: infinitecoding/platformio-for-ci:latest
+
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+
+        - name: Build
+          run: platformio upgrade && platformio run -d ./Firmware/canbus_one_teensy_two_nodes/
+
+        - name: Test
+          run: echo "This is a test"
+
+        - name: Upload
+          uses: actions/upload-artifact@v2
+          with:
+            name: firmware.hex
+            path: Firmware/canbus_one_teensy_two_nodes/.pio/build/teensy40/firmware.hex

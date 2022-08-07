@@ -4,8 +4,8 @@ import socket
 import select
 from threading import Thread
 
-class TelemetryManager:
 
+class TelemetryManager:
     def __init__(self, ip_address, port):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind((ip_address, port))
@@ -45,7 +45,7 @@ class TelemetryManager:
 
     def get_battery_current(self):
         return self.battery_current
-    
+
     def get_battery_temperature(self):
         return self.battery_temperature
 
@@ -62,7 +62,18 @@ class TelemetryManager:
         if len(data) != struct.calcsize(self.packet_format):
             return
 
-        self.team_id, self.status, self.acceleration, self.position, self.velocity, self.battery_voltage, self.battery_current, self.battery_temperature, self.pod_temperature, self.stripe_count = struct.unpack(self.packet_format, data)
+        (
+            self.team_id,
+            self.status,
+            self.acceleration,
+            self.position,
+            self.velocity,
+            self.battery_voltage,
+            self.battery_current,
+            self.battery_temperature,
+            self.pod_temperature,
+            self.stripe_count,
+        ) = struct.unpack(self.packet_format, data)
         self.highest_velocity = max(self.highest_velocity, self.velocity)
 
     def run(self):
@@ -70,5 +81,7 @@ class TelemetryManager:
             ready_sockets, _, _ = select.select([self.socket], [], [], 0.1)
 
             if len(ready_sockets) > 0:
-                received_data = ready_sockets[0].recv(struct.calcsize(self.packet_format)+1)
+                received_data = ready_sockets[0].recv(
+                    struct.calcsize(self.packet_format) + 1
+                )
                 self.handle_packet(received_data)
