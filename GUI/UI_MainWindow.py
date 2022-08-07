@@ -2,19 +2,6 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 
 
-data = [
-        [8,1],
-        [4,8],
-        [4,8],
-        [4,8],
-        [4,8],
-        [4,8],
-        [4,8],
-        [4,8],
-        [4,8],
-        [4,8],
-]
-
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -106,11 +93,9 @@ class Ui_MainWindow(object):
         self.DataFrame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.DataFrame.setObjectName("DataFrame")
 
-        model = TableModel(data)
         self.healthChkTable = QtWidgets.QTableView(self.DataFrame)
         self.healthChkTable.setGeometry(QtCore.QRect(250, 0, 251, 291))
         self.healthChkTable.setObjectName("healthChkTable")
-        self.healthChkTable.setModel(model)
 
 
         self.gridLayoutWidget = QtWidgets.QWidget(self.DataFrame)
@@ -355,6 +340,10 @@ class Ui_MainWindow(object):
         self.simulation_button_2.setText(_translate("MainWindow", "ENTER SIMULATION"))
         self.simulation_button_3.setText(_translate("MainWindow", "ENTER SIMULATION"))
         self.simulation_button_4.setText(_translate("MainWindow", "ENTER SIMULATION"))
+        
+    def updateTelemetry(self, data):
+        model = TableModel(data)
+        self.healthChkTable.setModel(model)
 
 class TableModel(QtCore.QAbstractTableModel):
         def __init__(self, data):
