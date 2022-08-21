@@ -1,8 +1,9 @@
 from Command import Command
 
 class Crawl(Command):
-    def __init__(self, stateRequested):
+    def __init__(self, receiver):
+        self.receiver = receiver
         self.message = "Crawl"
-        self.stateRequested = stateRequested
     def execute(self):
+        self.receiver.printmessage(self.message)
         pass

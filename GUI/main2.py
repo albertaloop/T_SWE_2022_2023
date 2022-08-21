@@ -7,6 +7,15 @@ from PyQt5.QtQuickWidgets import QQuickWidget
 import sys
 from AlbertaLoop_UI2 import Ui_MainWindow
 import telemetry_module
+from TelemetryModel import TelemetryModel
+from Logic import Logic
+from HealthCheckReq import HealthCheckReq
+from HealthCheckModel import HealthCheckModel
+from Launch import Launch
+from PrepareLaunch import PrepareLaunch
+from EStop import EStop
+from Crawl import Crawl
+from HealthCheck import HealthCheck
 import time
 from threading import Thread
 from datetime import datetime
@@ -14,10 +23,17 @@ from argparse import ArgumentParser
 
 
 class MWindowWrapper(Ui_MainWindow):
+
+
+
     def __init__(self, window, ip, port):
         self.setupUi(window)
         self.ip = ip
         self.port = port
+
+        self.command = None
+        self.receivers = []
+
         # -----------------------------------------------------------------
         # Add functionality below!
         # User Added QML Widget for Speed Gauge
@@ -27,12 +43,51 @@ class MWindowWrapper(Ui_MainWindow):
         self.spedometerWidget.setSource(QUrl("Guage.qml"))
         self.speedGaugeLayout.addWidget(self.spedometerWidget)
 
+        # Connect clicked functions
+        self.launchBtn.clicked.connect(self.launchBtn_clicked)
+        self.healthChkBtn.clicked.connect(self.healthChkBtn_clicked)
+        self.crawlBtn.clicked.connect(self.crawlBtn_clicked)
+        self.prepLaunchBtn.clicked.connect(self.crawlBtn_clicked)
+        self.eStopBtn.clicked.connect(self.eStopBtn_clicked)
+
+
         # logo added
         pixmap = QtGui.QPixmap("img/Albertaloop_logo.png")
         self.albertaloopLogo.setPixmap(pixmap)
 
 
-    # functionality definitions
+    # Clicked function definitions
+    def launchBtn_clicked(self):
+        print("Launch button pressed")
+        self.setCommand(Launch(self.receivers[0]))
+        self.executeCommand()
+    def healthChkBtn_clicked(self):
+        print("Health check button pressed")
+        self.setCommand(HealthCheck(self.receivers[1]))
+        self.executeCommand()
+    def crawlBtn_clicked(self):
+        self.setCommand(Crawl(self.receivers[0]))
+        self.executeCommand()
+        print("Crawl button pressed")
+    def prepLaunchBtn_clicked(self):
+        self.setCommand(PrepareLaunch(self.receivers[0]))
+        self.executeCommand()
+        print("Prepare Launch button pressed")
+    def eStopBtn_clicked(self):
+        self.setCommand(EStop(self.receivers[0]))
+        self.executeCommand()
+        print("Estop button pressed")
+
+    # Command Pattern definitions
+    def setCommand(self, command):
+        self.command = command
+    def executeCommand(self):
+        self.command.execute()
+    def setReceivers(self, rcv1, rcv2):
+        # Receiver 1 is Logic
+        self.receivers.append(rcv1)
+        # Receiver 1 is HealthChkReq
+        self.receivers.append(rcv2)
 
     def command_button_clicked(self):
         # TODO send general command to pod
@@ -67,7 +122,20 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     app = QApplication(sys.argv)
+
+    # Model Classes
+    TelemetryModel = TelemetryModel()
+    HealthCheckModel = HealthCheckModel()
+
+    # Controller Classes
+    Logic = Logic(TelemetryModel)
+    #TemetryReceiver.setDataModel(TelemetryModel)
+    HealthCheckReq = HealthCheckReq(HealthCheckModel)
+
+    # View Classes
     MainWindow = QMainWindow()
     mWindowWrapper = MWindowWrapper(MainWindow, args.server_ip, args.server_port)
+    mWindowWrapper.setReceivers(Logic, HealthCheckReq)
+    #TelemetryModel.attach(mWindowWrapper)
     MainWindow.show()
     sys.exit(app.exec_())
