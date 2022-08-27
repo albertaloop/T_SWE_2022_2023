@@ -6,6 +6,9 @@
 #include <Adafruit_GPS.h>
 #include <Arduino.h>
 #include <FlexCAN.h>
+#include "SdFat.h"
+
+
 
 #define mySerial Serial1
 
@@ -34,8 +37,13 @@ CAN_filter_t vel_in;
 
 transforms tf;
 
+String str;
+
+SdFatSdio sd;
+File file;
+
+
 void gps_loop() {
-  GPS.read();
   // if a sentence is received, we can check the checksum, parse it...
   if (GPS.newNMEAreceived()) {
     // a tricky thing here is if we print the NMEA sentence, or data
@@ -56,21 +64,24 @@ void gps_loop() {
 
   // approximately every 2 seconds or so, print out the current stats
   // Main part to edit for GPS Configureations
-  if (millis() - timer > 2000) {
+  if (millis() - timer > 1000) {
     timer = millis(); // reset the timer
 
     Serial.print("Fix: ");
     Serial.println((int)GPS.fix);
     if (GPS.fix) {
-      Serial.print("Location: ");
-      Serial.print(GPS.latitudeDegrees, 6);
-      Serial.print(GPS.lat);
-      Serial.print(", ");
-      Serial.print((GPS.longitudeDegrees * -1), 6);
-      Serial.println(GPS.lon);
+      file.write("Location: ");
+      str = String(GPS.latitudeDegrees, 8);
+      file.write(str.c_str());
+      str = String((GPS.longitudeDegrees * -1), 8);
+      file.write(str.c_str());
 
       Serial.print("Satellites: ");
       Serial.println((int)GPS.satellites);
+
+      file.write("Satellites: ");
+      file.write((int)GPS.satellites);
+
       if (setOrigin) {
         tf.setPhi_naught(GPS.latitudeDegrees);
         pair = tf.equirectangular((GPS.longitudeDegrees * -1),
@@ -83,32 +94,39 @@ void gps_loop() {
         distance = tf.euclidean(origin, pair);
       }
 
-      Serial.print("Point x = ");
-      Serial.println(pair.getFirst());
-      Serial.print("Point y = ");
-      Serial.println(pair.getSecond());
-      Serial.print("Origin x = ");
-      Serial.println(origin.getFirst());
-      Serial.print("Origin y = ");
-      Serial.println(origin.getSecond());
-      Serial.print("Distance = ");
-      Serial.println(distance);
+
+      
+      file.write("Point x = ");
+      str = String(pair.getFirst(), 8);
+      file.write(str.c_str());
+
+      file.write("Point y = ");
+      str = String(pair.getSecond(), 8);
+      file.write(str.c_str());
+
+      file.write("Origin x = ");
+      str = String(origin.getFirst(), 8);
+      file.write(str.c_str());
+
+      file.write("Origin y = ");
+      str = String(origin.getSecond(), 8);
+      file.write(str.c_str());
+
+      file.write("Distance = ");
+      str = String(distance, 8);
+      file.write(str.c_str());
+      
+      file.write("\n");
+
+      file.sync();
     }
   }
 }
 
-void canbus_loop() {
-  // receive message
-  CAN_message_t msg_in;
-  msg_in.timeout = 1;
-  if (fc.read(msg_in)) {
-    // respond to message
-    Serial.println(msg_in.id);
-    Serial.println(msg_in.buf[0]);
-  }
-}
 
 void setup() {
+
+
   pinMode(13, OUTPUT);
   digitalWrite(13, HIGH);
   // connect at 115200 so we can read the GPS fast enough and echo without
@@ -131,29 +149,23 @@ void setup() {
   // Ask for firmware version
   mySerial.println(PMTK_Q_RELEASE);
 
-  pos_accel_in.rtr = 0;
-  pos_accel_in.ext = 0;
-  pos_accel_in.id = 0x1ff;
 
-  vel_in.rtr = 0;
-  vel_in.ext = 0;
-  vel_in.id = 0x2ff;
+  if (!sd.begin()) {
+    Serial.println("SdFatSdio begin() failed");
+  }
 
-  fc.begin();
+  if (!file.open("testresults3.txt", O_RDWR | O_CREAT)) {
+    Serial.println("file open failed");
+  }
+
   delay(20);
 
-  // All filters must be set, so duplicates are used
-  fc.setFilter(vel_in, 0);
-  fc.setFilter(pos_accel_in, 1);
-  fc.setFilter(pos_accel_in, 2);
-  fc.setFilter(pos_accel_in, 3);
-  fc.setFilter(pos_accel_in, 4);
-  fc.setFilter(pos_accel_in, 5);
-  fc.setFilter(pos_accel_in, 6);
-  fc.setFilter(pos_accel_in, 7);
+
 }
 
 void loop() {
+  GPS.read();
+
   gps_loop();
   // canbus_loop();
 }
