@@ -80,7 +80,8 @@ void gps_loop() {
       Serial.println((int)GPS.satellites);
 
       file.write("Satellites: ");
-      file.write((int)GPS.satellites);
+      str = String((int)GPS.satellites, 10);
+      file.write(str.c_str());
 
       if (setOrigin) {
         tf.setPhi_naught(GPS.latitudeDegrees);
@@ -154,7 +155,7 @@ void setup() {
     Serial.println("SdFatSdio begin() failed");
   }
 
-  if (!file.open("testresults3.txt", O_RDWR | O_CREAT)) {
+  if (!file.open("testresults4.txt", O_RDWR | O_CREAT)) {
     Serial.println("file open failed");
   }
 
