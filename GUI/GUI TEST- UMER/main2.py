@@ -108,71 +108,70 @@ class MWindowWrapper(Ui_MainWindow):
         # TODO luanch new window to start simulation testing on pod
         print("Entering simulation")
 
-    #updates label colors if state is not equal to current_state
-    def updateCurrentState(self, state):
-        current_state = "fault"
-        if state== current_state:
-            True
-        elif state!= current_state:
-            current_state=state
-            if state== 'fault':
-                self.label_12.Stylesheet("background-color: red")
-                self.label_11.setStylesheet("background-color: gray")
-                self.label_10.setStylesheet("background-color: gray")
-                self.label_9.setStylesheet("background-color: gray")
-                self.label_8.setStylesheet("background-color: gray")
-                self.label_7.setStylesheet("background-color: gray")
-                self.label_6.setStylesheet("background-color: gray")
-            if state== 'safe':
-                self.label_12.setStylesheet("background-color: gray")
-                self.label_11.setStylesheet("background-color: #89CFF0")
-                self.label_10.setStylesheet("background-color: gray")
-                self.label_9.setStylesheet("background-color: gray")
-                self.label_8.setStylesheet("background-color: gray")
-                self.label_7.setStylesheet("background-color: gray")
-                self.label_6.setStylesheet("background-color: gray")
-            if state== 'ready':
-                self.label_12.setStylesheet("background-color: gray")
-                self.label_11.setStylesheet("background-color: gray")
-                self.label_10.setStylesheet("background-color: green")
-                self.label_9.setStylesheet("background-color: gray")
-                self.label_8.setStylesheet("background-color: gray")
-                self.label_7.setStylesheet("background-color: gray")
-                self.label_6.setStylesheet("background-color: gray")
-            if state== 'launch':
-                self.label_12.setStylesheet("background-color: #89CFF0")
-                self.label_11.setStylesheet("background-color: gray")
-                self.label_10.setStylesheet("background-color: gray")
-                self.label_9.setStylesheet("background-color: green")
-                self.label_8.setStylesheet("background-color: gray")
-                self.label_7.setStylesheet("background-color: gray")
-                self.label_6.setStylesheet("background-color: gray")
-            if state== 'coast':
-                self.label_12.setStylesheet("background-color: gray")
-                self.label_11.setStylesheet("background-color: gray")
-                self.label_10.setStylesheet("background-color: gray")
-                self.label_9.setStylesheet("background-color: gray")
-                self.label_8.setStylesheet("background-color: green")
-                self.label_7.setStylesheet("background-color: gray")
-                self.label_6.setStylesheet("background-color: gray")
-            if state== 'break':
-                self.label_12.setStylesheet("background-color: gray")
-                self.label_11.setStylesheet("background-color: gray")
-                self.label_10.setStylesheet("background-color: gray")
-                self.label_9.setStylesheet("background-color: gray")
-                self.label_8.setStylesheet("background-color: gray")
-                self.label_7.setStylesheet("background-color: yellow")
-                self.label_6.setStylesheet("background-color: gray")
-            if state== 'crawl':
-                self.label_12.setStylesheet("background-color: gray")
-                self.label_11.setStylesheet("background-color: gray")
-                self.label_10.setStylesheet("background-color: gray")
-                self.label_9.setStylesheet("background-color: gray")
-                self.label_8.setStylesheet("background-color: gray")
-                self.label_7.setStylesheet("background-color: gray")
-                self.label_6.setStylesheet("background-color: yellow")
-    def notify(self, state):
-        self.updateCurrentState(state)
+        # updates label colors if state is not equal to current_state
+        def updateCurrentState(self, state):
+            current_state = "fault"
+            if state == current_state:
+                self.label_12.setStyleSheet("background-color: #ff0000")
+                self.label_11.setStyleSheet("background-color: gray")
+                self.label_10.setStyleSheet("background-color: gray")
+                self.label_9.setStyleSheet("background-color: gray")
+                self.label_8.setStyleSheet("background-color: gray")
+                self.label_7.setStyleSheet("background-color: gray")
+                self.label_6.setStyleSheet("background-color: gray")
+            elif state != current_state:
+                current_state = state
+                if state == 'safe':
+                    self.label_12.setStyleSheet("background-color: gray")
+                    self.label_11.setStyleSheet("background-color: #89CFF0")
+                    self.label_10.setStyleSheet("background-color: gray")
+                    self.label_9.setStyleSheet("background-color: gray")
+                    self.label_8.setStyleSheet("background-color: gray")
+                    self.label_7.setStyleSheet("background-color: gray")
+                    self.label_6.setStyleSheet("background-color: gray")
+                if state == 'ready':
+                    self.label_12.setStyleSheet("background-color: gray")
+                    self.label_11.setStyleSheet("background-color: gray")
+                    self.label_10.setStyleSheet("background-color: green")
+                    self.label_9.setStyleSheet("background-color: gray")
+                    self.label_8.setStyleSheet("background-color: gray")
+                    self.label_7.setStyleSheet("background-color: gray")
+                    self.label_6.setStyleSheet("background-color: gray")
+                if state == 'launch':
+                    self.label_12.setStyleSheet("background-color: gray")
+                    self.label_11.setStyleSheet("background-color: gray")
+                    self.label_10.setStyleSheet("background-color: gray")
+                    self.label_9.setStyleSheet("background-color: green")
+                    self.label_8.setStyleSheet("background-color: gray")
+                    self.label_7.setStyleSheet("background-color: gray")
+                    self.label_6.setStyleSheet("background-color: gray")
+                if state == 'coast':
+                    self.label_12.setStyleSheet("background-color: gray")
+                    self.label_11.setStyleSheet("background-color: gray")
+                    self.label_10.setStyleSheet("background-color: gray")
+                    self.label_9.setStyleSheet("background-color: gray")
+                    self.label_8.setStyleSheet("background-color: green")
+                    self.label_7.setStyleSheet("background-color: gray")
+                    self.label_6.setStyleSheet("background-color: gray")
+                if state == 'brake':
+                    self.label_12.setStyleSheet("background-color: gray")
+                    self.label_11.setStyleSheet("background-color: gray")
+                    self.label_10.setStyleSheet("background-color: gray")
+                    self.label_9.setStyleSheet("background-color: gray")
+                    self.label_8.setStyleSheet("background-color: gray")
+                    self.label_6.setStyleSheet("background-color: yellow")
+                    self.label_7.setStyleSheet("background-color: gray")
+                if state == 'crawl':
+                    self.label_12.setStyleSheet("background-color: gray")
+                    self.label_11.setStyleSheet("background-color: gray")
+                    self.label_10.setStyleSheet("background-color: gray")
+                    self.label_9.setStyleSheet("background-color: gray")
+                    self.label_8.setStyleSheet("background-color: gray")
+                    self.label_6.setStyleSheet("background-color: gray")
+                    self.label_7.setStyleSheet("background-color: yellow")
+
+        def notify(self, state):
+            self.updateCurrentState(state)
 
 if __name__ == "__main__":
     parser = ArgumentParser(description="Albertaloop GUI launch")
