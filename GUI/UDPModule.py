@@ -10,21 +10,15 @@ class UDPModule():
 
 
 
-class myThread (threading.Thread):
-    def __init__(self, threadID, name, counter):
-        threading.Thread.__init__(self)
-        self.threadID = threadID
-        self.name = name
-        self.counter = counter
+class ServerThread (Thread):
+    def __init__(self):
+        Thread.__init__(self)
     def run(self):
         Server().trysend()
 
-class myThread1 (threading.Thread):
-    def __init__(self, threadID, name, counter):
-        threading.Thread.__init__(self)
-        self.threadID = threadID
-        self.name = name
-        self.counter = counter
+class ClientThread (Thread):
+    def __init__(self):
+        Thread.__init__(self)
     def run(self):
         Client().tryreceive()
 
@@ -92,17 +86,12 @@ class Client():
         print(msg)
 
 
-# threadLock = threading.Lock()
-threads = []
 
 # New Threads
-thread1 = myThread(1, "Thread-1", 1)
-thread2 = myThread1(2, "Thread-2", 2)
+server = ServerThread()
+client = ClientThread()
 
 # Start new Threads
-thread1.start()
-thread2.start()
+server.start()
+client.start()
 
-# Add threads to thread list
-threads.append(thread1)
-threads.append(thread2)
