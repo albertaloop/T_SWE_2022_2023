@@ -1,6 +1,8 @@
-from PyQt5 import QtCore.QAbstractTableModel
+from PyQt5 import QtCore
+from PyQt5.QtCore import QAbstractTableModel
 
-class TabelModel(QAbstractTableModel):
+
+class TableModel(QAbstractTableModel):
     def __init__(self):
         self.num_cols = 2
         self.num_rows = 4
@@ -10,14 +12,13 @@ class TabelModel(QAbstractTableModel):
         self.items[2][0] = "Item 3"
         self.items[3][0] = "Item 4"
 
-    def rowCount():
+    def rowCount(self):
         return self.num_rows
 
-    def columnCount():
+    def columnCount(self):
         return self.num_cols
 
     def data(self, index, role):
         if role == Qt.DisplayRole:
-            text = self.item[index.row()][index.column()]
+            text = self.items[index.row()][index.column()]
             return text
-
