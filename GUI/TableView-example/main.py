@@ -3,14 +3,16 @@ from TableViewEx import Ui_MainWindow
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class TableWindow():
+class TableWindow(Ui_MainWindow):
     def __init__(self, window):
+        self.setupUi(window)
         self.MainWindow = window
         self.tableModel = TableModel()
-        self.tableView = QtWidgets.QTableView()
         self.tableView.setModel(self.tableModel)
-        self.MainWindow.setCentralWidget(self.tableView)
-        print(self.tableView.model)
+        self.addDataBtn.clicked.connect(self.addDataBtnHandler)
+
+    def addDataBtnHandler(self):
+        self.tableModel.incrementCell(1, 1.2364283)
 
 
 if __name__ == "__main__":
@@ -20,6 +22,4 @@ if __name__ == "__main__":
     tableModel = TableModel()
     tableWindow = TableWindow(MainWindow)
     MainWindow.show()
-    # print(TableWindow.tableModel.items[0][0])
-    # ui.tableModel.dataChanged.emit()
-    app.exec_()
+    sys.exit(app.exec_())

@@ -9,7 +9,7 @@ class TableModel(QAbstractTableModel):
         super(TableModel, self).__init__()
         # https://www.pythonpool.com/python-2d-list/
         self.items = [
-            ["Item 1", "item 1 val"],
+            ["Item 1", "0.00000"],
             ["Item 2", "item 2 val"],
             ["Item 3", "Item 3 val"],
             ["Item 4", "Item 4 val"],
@@ -30,17 +30,25 @@ class TableModel(QAbstractTableModel):
         if orientation == QtCore.Qt.Vertical:
             return "List " + str(section)
 
-    # def flags(self, index):
-    #     if not index.isValid():
-    #         return None
-    #     return Qt.ItemIsEnabled
-
     def data(self, index, role):
         print("getting data")
         if role == Qt.DisplayRole:
             text = self.items[index.row()][index.column()]
             print("display role")
             return text
+
+    def incrementCell(self, cell, amount):
+        value = float(self.items[cell-1][1])
+        value = value + amount
+        self.items[cell-1][1] = str(value)
+        index = self.createIndex(
+            cell-1, 1, QtCore.QModelIndex())
+        self.dataChanged.emit(index, index)
+
+    # def flags(self, index):
+    #     if not index.isValid():
+    #         return None
+    #     return Qt.ItemIsEnabled
 
     # def insertRow(self, row: int, parent: QModelIndex = ...) -> bool:
     #     Qt.beginInsertRows()

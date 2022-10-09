@@ -15,32 +15,50 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            MainWindow.sizePolicy().hasHeightForWidth())
+        MainWindow.setSizePolicy(sizePolicy)
+        MainWindow.setStyleSheet("background-color: rgb(33, 33, 33);")
+
         self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setStyleSheet("background: rgb(0, 85, 255)")
+        self.centralwidget.setStyleSheet("background: rgb(0, 0, 0)")
         self.centralwidget.setObjectName("centralwidget")
+
         self.main_frame = QtWidgets.QFrame(self.centralwidget)
         self.main_frame.setGeometry(QtCore.QRect(10, 10, 780, 580))
-        self.main_frame.setStyleSheet("background-color: rgb(36, 36, 36);")
+        self.main_frame.setStyleSheet("background-color: rgb(0, 0, 0);")
         self.main_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.main_frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.main_frame.setObjectName("main_frame")
+
         self.tableView = QtWidgets.QTableView(self.main_frame)
-        self.tableView.setGeometry(QtCore.QRect(85, 51, 571, 431))
+        self.tableView.setGeometry(QtCore.QRect(50, 50, 320, 250))
+        self.tableView.setStyleSheet("background: rgb(255, 255, 255);")
         self.tableView.setObjectName("tableView")
-        self.tableView.setRowHeight = 4
-        self.tableView.setColumnWidth = 2
+
+        self.addDataBtn = QtWidgets.QPushButton(self.main_frame)
+        self.addDataBtn.setGeometry(QtCore.QRect(400, 50, 200, 50))
+        self.addDataBtn.setText("Increment Row 1 Value")
+        self.addDataBtn.setStyleSheet("background: rgb(200, 156, 255);")
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 22))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
+
         font = QtGui.QFont()
-        font.setFamily("Arial")
+        font.setFamily("Times New Roman")
         font.setPointSize(9)
         font.setBold(False)
         font.setItalic(False)
         font.setWeight(7)
         self.tableView.setFont(font)
+
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
@@ -52,12 +70,3 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
 
-
-# if __name__ == "__main__":
-#     import sys
-#     app = QtWidgets.QApplication(sys.argv)
-#     MainWindow = QtWidgets.QMainWindow()
-#     ui = Ui_MainWindow()
-#     ui.setupUi(MainWindow)
-#     MainWindow.show()
-#     sys.exit(app.exec_())
