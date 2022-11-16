@@ -86,7 +86,7 @@ class MWindowWrapper(Ui_MainWindow):
     def setReceivers(self, rcv1, rcv2):
         # Receiver 1 is Logic
         self.receivers.append(rcv1)
-        # Receiver 1 is HealthChkReq
+        # Receiver 2 is HealthChkReq
         self.receivers.append(rcv2)
 
     def command_button_clicked(self):
