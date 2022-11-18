@@ -9,7 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from TableModel import TableModel
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -277,16 +277,35 @@ class Ui_MainWindow(object):
         self.dataFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.dataFrame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.dataFrame.setObjectName("dataFrame")
-        self.telemetryTable1 = QtWidgets.QTableWidget(self.dataFrame)
+        data = {
+            "team_id": 0,
+            "status": 0,
+            "acceleration": 0,
+            "position": 0,
+            "velocity": 0,
+            "battery_voltage": 0,
+            "battery_current": 0,
+            "battery_temperature": 0,
+            "pod_temperature":0,
+            "strip_count": 0,
+            "highest velocity": 0
+        }
+        self.model = TableModel(data)
+        
+        # self.telemetryTable1 = QtWidgets.QTableWidget(self.dataFrame)
+        self.telemetryTable1 = QtWidgets.QTableView(self.dataFrame)
         self.telemetryTable1.setGeometry(QtCore.QRect(0, 0, 270, 241))
         self.telemetryTable1.setObjectName("telemetryTable1")
-        self.telemetryTable1.setColumnCount(0)
-        self.telemetryTable1.setRowCount(0)
+        # self.telemetryTable1.setColumnCount(0)
+        # self.telemetryTable1.setRowCount(0)
+        self.telemetryTable1.setModel(self.model)
+
         self.telemetryTable1_2 = QtWidgets.QTableWidget(self.dataFrame)
         self.telemetryTable1_2.setGeometry(QtCore.QRect(281, 0, 270, 241))
         self.telemetryTable1_2.setObjectName("telemetryTable1_2")
         self.telemetryTable1_2.setColumnCount(0)
         self.telemetryTable1_2.setRowCount(5)
+
         self.eStopBtn.raise_()
         self.dashboardFrame.raise_()
         self.prepLaunchBtn.raise_()
@@ -378,4 +397,7 @@ class Ui_MainWindow(object):
         self.actionClose.setToolTip(_translate("MainWindow", "(PH) Closes application."))
 
     def updateTelemetry(self,data):
+        # model = TableModel(data)
+        self.model.update(data)
+        # self.telemetryTable1.setModel(model)
         pass

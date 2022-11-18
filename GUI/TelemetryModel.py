@@ -6,6 +6,15 @@ TODO:
     call self.notify() within recieveData, should I?
     query: what's the difference between update and recieveData functions?
     self-talk lol: do I really need to initialise the self.data to default telemetry
+    delete the comment lines (self.telemetryTable1.setColumnCount(0)) in AlbertaLoop_UI2.py
+    set port to self.port in the receiver function
+    define headerData in the TableModel
+    Hmm.. what are flags, should I implement it? # Source: https://www.pythonguis.com/faq/qtableview-cell-edit/
+        def flags(self, index):
+            if not index.isValid():
+                return Qt.ItemIsEnabled
+
+            return super().flags(index) | Qt.ItemIsEditable  # add editable flag.
 """
 class TelemetryModel():
 
@@ -36,7 +45,7 @@ class TelemetryModel():
 
 
     def update(self,data):
-        print(data)
+        # print(data)
         self.telemetryPacket = data
         self.data = data
         self.notifyObservers()
@@ -46,4 +55,4 @@ class TelemetryModel():
 
     def notifyObservers(self):
         for observe in self.observers:
-            observe.updateTelemetry(self)
+            observe.updateTelemetry(self.data)
