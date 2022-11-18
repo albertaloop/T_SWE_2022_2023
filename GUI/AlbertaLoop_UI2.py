@@ -286,7 +286,7 @@ class Ui_MainWindow(object):
         self.telemetryTable1_2.setGeometry(QtCore.QRect(281, 0, 270, 241))
         self.telemetryTable1_2.setObjectName("telemetryTable1_2")
         self.telemetryTable1_2.setColumnCount(0)
-        self.telemetryTable1_2.setRowCount(0)
+        self.telemetryTable1_2.setRowCount(5)
         self.eStopBtn.raise_()
         self.dashboardFrame.raise_()
         self.prepLaunchBtn.raise_()
@@ -376,3 +376,6 @@ class Ui_MainWindow(object):
         self.actionPacket_Logger.setToolTip(_translate("MainWindow", "(PH) Opens packet logger."))
         self.actionClose.setText(_translate("MainWindow", "Close"))
         self.actionClose.setToolTip(_translate("MainWindow", "(PH) Closes application."))
+
+    def updateTelemetry(self,data):
+        pass

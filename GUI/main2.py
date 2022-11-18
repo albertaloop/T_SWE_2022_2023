@@ -20,7 +20,7 @@ import time
 from threading import Thread
 from datetime import datetime
 from argparse import ArgumentParser
-
+from TelemetryReceiver import TelemetryReceiver
 
 class MWindowWrapper(Ui_MainWindow):
 
@@ -108,7 +108,6 @@ class MWindowWrapper(Ui_MainWindow):
     def simulation_button_clicked(self):
         # TODO luanch new window to start simulation testing on pod
         print("Entering simulation")
-
     #updates label colors if state is not equal to current_state
     def updateCurrentState(state):
         current_state = "fault"
@@ -192,16 +191,25 @@ if __name__ == "__main__":
     # Model Classes
     TelemetryModel = TelemetryModel()
     HealthCheckModel = HealthCheckModel()
-
+    TelemetryReceiver = TelemetryReceiver(args.server_ip, args.server_port)
     # Controller Classes
     Logic = Logic(TelemetryModel)
-    #TemetryReceiver.setDataModel(TelemetryModel)
+    TelemetryReceiver.setDataModel(TelemetryModel)
     HealthCheckReq = HealthCheckReq(HealthCheckModel)
 
+    TelemetryReceiver.start()
     # View Classes
     MainWindow = QMainWindow()
     mWindowWrapper = MWindowWrapper(MainWindow, args.server_ip, args.server_port)
     mWindowWrapper.setReceivers(Logic, HealthCheckReq)
-    #TelemetryModel.attach(mWindowWrapper)
+    TelemetryModel.attach(mWindowWrapper)
+    
+
+    # TelemetryModel.recieveData([9]*10)
+    # TelemetryModel.notify()
+    # TelemetryModel.update([0.123]*10)
+    
+    
+    
     MainWindow.show()
     sys.exit(app.exec_())

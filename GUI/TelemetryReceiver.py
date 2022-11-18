@@ -4,11 +4,11 @@ import socket
 import select
 from threading import Thread
 
-class TelemetryReciever:
+class TelemetryReceiver:
 
     def __init__(self, host, port):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind((host, port))
+        self.socket.bind((host, 8000))
         self.team_id = 0
         self.status = 0
         self.acceleration = 0
@@ -22,11 +22,33 @@ class TelemetryReciever:
         self.highest_velocity = 0
         self.packet_format = ">BB7iI"
 
+        self.telemetry_model = None
+
+    def setDataModel(self, model):
+        self.telemetry_model = model
+
     def checkForPackets(self):
         while True:
             data, addr = self.socket.recvfrom(8192)
+            print(data)
             self.handlePacket(data)
     
     def handlePacket(self, data):
-        self.team_id, self.status, self.acceleration, self.position, self.velocity, self.battery_voltage, self.battery_current, 
-        self.battery_temperature, self.pod_temperature, self.stripe_count = struct.unpack(self.packet_format, data)
+        rdata = {}
+        (
+            rdata["team_id"],
+            rdata["status"],
+            rdata["acceleration"],
+            rdata["position"],
+            rdata["velocity"],
+            rdata["battery_voltage"],
+            rdata["battery_current"],
+            rdata["battery_temperature"],
+            rdata["pod_temperature"],
+            rdata["stripe_count"],
+        ) = struct.unpack(self.packet_format, data)
+        
+        self.telemetry_model.update(rdata)
+    def start(self):
+        thread = Thread(target=self.checkForPackets)
+        thread.start()
