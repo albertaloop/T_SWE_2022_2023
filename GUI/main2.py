@@ -21,7 +21,8 @@ from threading import Thread
 from datetime import datetime
 from argparse import ArgumentParser
 from TelemetryReceiver import TelemetryReceiver
-
+from NetworkComms.udp_module import UDPModule
+from NetworkComms.cmd_transmitter import CmdTransmitter
 class MWindowWrapper(Ui_MainWindow):
 
 
@@ -191,20 +192,24 @@ if __name__ == "__main__":
     # Model Classes
     TelemetryModel = TelemetryModel()
     HealthCheckModel = HealthCheckModel()
-    TelemetryReceiver = TelemetryReceiver(args.server_ip, args.server_port)
+    TelemetryReceiver = TelemetryReceiver()
+    CmdTransmitter = CmdTransmitter()
+
+
     # Controller Classes
     Logic = Logic(TelemetryModel)
     TelemetryReceiver.setDataModel(TelemetryModel)
     HealthCheckReq = HealthCheckReq(HealthCheckModel)
 
-    TelemetryReceiver.start()
+    # TelemetryReceiver.start()
     # View Classes
     MainWindow = QMainWindow()
     mWindowWrapper = MWindowWrapper(MainWindow, args.server_ip, args.server_port)
     mWindowWrapper.setReceivers(Logic, HealthCheckReq)
     TelemetryModel.attach(mWindowWrapper)
     
-
+    UDPModule = UDPModule("127.0.0.1", 4000, 3000,
+                          TelemetryReceiver, CmdTransmitter)
     # TelemetryModel.recieveData([9]*10)
     # TelemetryModel.notify()
     # TelemetryModel.update([0.123]*10)

@@ -6,9 +6,9 @@ from threading import Thread
 
 class TelemetryReceiver:
 
-    def __init__(self, host, port):
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind((host, 8000))
+    def __init__(self):
+        # self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        # self.socket.bind((host, 8000))
         self.team_id = 0
         self.status = 0
         self.acceleration = 0
@@ -23,6 +23,12 @@ class TelemetryReceiver:
         self.packet_format = ">BB7iI"
 
         self.telemetry_model = None
+
+    def setSocket(self, ip, port, socket):
+        self.socket = socket
+        self.ip = ip
+        self.port = port
+        self.socket.bind((self.ip, self.port))
 
     def setDataModel(self, model):
         self.telemetry_model = model
@@ -50,5 +56,6 @@ class TelemetryReceiver:
         
         self.telemetry_model.update(rdata)
     def start(self):
+        print("We are started!!")
         thread = Thread(target=self.checkForPackets)
         thread.start()
