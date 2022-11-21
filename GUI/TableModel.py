@@ -18,9 +18,9 @@ class TableModel(QtCore.QAbstractTableModel):
                 return list(self._data.keys())[index.row()]
             elif index.column() == 1:
                 return list(self._data.values())[index.row()]
-            print("Yo, this ain't working!!")
     def setData(self, index, value, role):
-        print(role,"WTH"*10)
+        # Note: This function gets triggered when TabelModel is manually edited from the GUI
+        pass
     def update(self,new_data):
         self._data = new_data
         index1 = self.createIndex(

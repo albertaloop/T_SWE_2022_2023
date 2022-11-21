@@ -6,7 +6,7 @@ from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlEngine
 from PyQt5.QtQuickWidgets import QQuickWidget
 import sys
 from AlbertaLoop_UI2 import Ui_MainWindow
-import telemetry_module
+# import telemetry_module
 from TelemetryModel import TelemetryModel
 from Logic import Logic
 from HealthCheckReq import HealthCheckReq

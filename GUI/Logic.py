@@ -3,4 +3,5 @@ class Logic():
         self.model = model
 
     def printmessage(self, message):
+        print("The universe is a small place.")
         print(message)
