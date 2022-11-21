@@ -197,7 +197,7 @@ if __name__ == "__main__":
 
 
     # Controller Classes
-    Logic = Logic(TelemetryModel)
+    Logic = Logic(TelemetryModel,CmdTransmitter)
     TelemetryReceiver.setDataModel(TelemetryModel)
     HealthCheckReq = HealthCheckReq(HealthCheckModel)
 

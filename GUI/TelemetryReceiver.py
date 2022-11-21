@@ -36,7 +36,7 @@ class TelemetryReceiver:
     def checkForPackets(self):
         while True:
             data, addr = self.socket.recvfrom(8192)
-            print(data)
+            # print(data)
             self.handlePacket(data)
     
     def handlePacket(self, data):

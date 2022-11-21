@@ -15,7 +15,7 @@ class TelemetryReceiver(Thread):
         self.receiveSocket.bind((self.ip, self.port))
 
     def run(self):
-        while (1):
+        while True:
             self.checkForPackets()
         # handlePackets()
 
