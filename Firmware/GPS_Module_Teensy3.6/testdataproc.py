@@ -1,13 +1,13 @@
 #! python3
 
-import matplotlib as mplib
 import numpy as np
+import matplotlib.pyplot as plt
 import pandas as pd 
 import re 
 
 # Set up pattern recognition
 pointXPatt = r'Point x = (\d{7}.\d{8})'
-pointYPatt = r'Point y = (\d{8}.\d{8})'
+pointYPatt = r'Point y = (\d{7}.\d{8})'
 satPatt = r'Satellites: (\d?)'
 distPatt = r'Distance = (\d+.\d{8})'
 
@@ -17,13 +17,13 @@ satRegex = re.compile(satPatt)
 distRegex = re.compile(distPatt)
 
 # Read the file 
-test3 = open('T_SWE_2022_2023/Firmware/GPS_Module_Teensy3.6/testresults3.txt', "r")   # open file from T_SWE_2022_2023 Directory
-test4 = open('T_SWE_2022_2023/Firmware/GPS_Module_Teensy3.6/testresults4.txt', "r")
+test3 = open('Firmware/GPS_Module_Teensy3.6/testresults3.txt', "r")   # open file from T_SWE_2022_2023 Directory
+test4 = open('Firmware/GPS_Module_Teensy3.6/testresults4.txt', "r")
 
 strTest3 = test3.read()
 strTest4 = test4.read()
 
-# print(strTest3) #Sanity Check
+# print(strTest3) # Sanity Check
 
 # Collect pattern strings 
 # Test 3 results
@@ -38,29 +38,28 @@ strPointY_t4 = pointYRegex.findall(strTest4)
 strSatellites_t4 = satRegex.findall(strTest4)
 strDist_t4 = distRegex.findall(strTest4)
 
-# print(strDist_t4) #Sanity Check 
+# print(strDist_t4) # Sanity Check 
+# print(strPointX_t3)
 
-# Collect data from pattern strings
-    # Collecting point data
+# Converting data from string to float
+X_t3 = [float(i) for i in strPointX_t3]
+Y_t3 = [float(i) for i in strPointY_t3]
+# sat_t3 = [int(i) for i in strSatellites_t3]
+dist_t3 = [float(i) for i in strDist_t3]
 
-    # Collecting satellite data
+X_t4 = [float(i) for i in strPointX_t4]
+Y_t4 = [float(i) for i in strPointY_t4]
+sat_t4 = [int(i) for i in strSatellites_t4]
+dist_t4 = [float(i) for i in strDist_t4]
 
-    # Collecting distance data
-
-# Converting the data
-pointX_t3 = int(strPointX_t3)
-pointY_t3 = int(strPointX_t3)
-sat_t3 = int(strSatellites_t3)
-dist_t3 = int(strDist_t3)
-
-pointX_t4 = int(strPointX_t4)
-pointY_t4 = int(strPointX_t4)
-sat_t4 = int(strSatellites_t4)
-dist_t4 = int(strDist_t4)
-
-# print(pointX_t3)
+# print(pointX_t3) # Sanity Check
 
 # Plot the data
+# Figure out mplib rq
+# Plotting x v. y 
+fig, ax = plt.subplots()
+ax.plot(X_t3, Y_t3)
+fig.show()
 
 
 # Old Crap 🤢
