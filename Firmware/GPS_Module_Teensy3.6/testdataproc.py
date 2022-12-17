@@ -89,9 +89,13 @@ posX_t4 = list(posX_t4_arr)
 posY_t4 = list(posY_t4_arr)
 
 # Plotting test data against each other
-fig, (ax1, ax2) = plt.subplots(2,1)
+fig, (ax1, ax2, ax3) = plt.subplots(3,1)
 ax1.plot(posX_t3, posY_t3, 'r', posX_t4, posY_t4, 'b')
+ax1.set_title('Postion')
 ax2.plot(dist_t3, 'r', dist_t4, 'b')
+ax2.set_title('Distance')
+ax3.plot(sat_t4)
+ax3.set_title('Satellites (Test 4)')
 plt.show()
 
 # Closing files
