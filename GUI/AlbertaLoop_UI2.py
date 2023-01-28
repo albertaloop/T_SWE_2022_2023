@@ -339,9 +339,327 @@ class Ui_MainWindow(object):
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionClose)
         self.menubar_RENAMETOSPEC.addAction(self.menuFile.menuAction())
-
+        #MainWindow.resize(1500, 900)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def reformat(self, MainWindow, new_width, new_height):
+        #screenShape = QtGui.QDesktopWidget().screenGeometry()
+
+        inital_width = MainWindow.frameGeometry().width()
+        inital_height = MainWindow.frameGeometry().height()
+        MainWindow.resize(new_width, new_height)
+
+        incriment_factor_width = (MainWindow.frameGeometry().width()/inital_width) - 1
+        incriment_factor_height = (MainWindow.frameGeometry().height()/inital_height) - 1
+        #here figure out what to scale and add or subtract
+        #wont print outside of the inital boundaries, there is issues with layering here
+        #this solved the above issue
+        MainWindow.setStyleSheet("background-color: rgb(33, 33, 33);")
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.main_frame = QtWidgets.QFrame(self.centralwidget)
+        self.main_frame.setGeometry(QtCore.QRect(0, -40, 2290, 1574))
+
+        #this segment here is whats essencial to the program for it to reformat
+        #there is still the issue with the old buttons still existing,
+        #____________________________________________________________________________
+        self.healthChkBtn = QtWidgets.QPushButton(self.main_frame)
+        self.healthChkBtn.move(920+920*incriment_factor_width, 90+90*incriment_factor_height);
+        self.healthChkBtn.setStyleSheet("background-color: rgb(170, 85, 255);\n"
+                                        "color: rgb(0, 0. 0);\n"
+                                        "font: 75 9pt \"Arial\";\n"
+                                        "")
+        #____________________________________________________________________________
+
+
+        self.eStopBtn = QtWidgets.QPushButton(self.main_frame)
+        self.eStopBtn.move(20+20*incriment_factor_width, 90+90*incriment_factor_height)
+        self.eStopBtn.setStyleSheet("background-color: rgb(170, 0, 0);\n"
+                                    "color: rgb(0, 0. 0);\n"
+                                    "font: 63 9pt \"Arial\";\n"
+                                    "")
+        self.dashboardFrame = QtWidgets.QFrame(self.main_frame)
+        self.dashboardFrame.setGeometry(QtCore.QRect(20+20*incriment_factor_width, 160+160*incriment_factor_height, 551+551*incriment_factor_width, 601+601*incriment_factor_height*0.5))
+        #self.dashboardFrame.move(20+20*incriment_factor_width, 160+160*incriment_factor_height)
+        self.dashboardFrame.setStyleSheet("background-color: rgb(0, 0, 0);")
+        self.dashboardFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.dashboardFrame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.dashboardFrame.setObjectName("dashboardFrame")
+
+        #for this may need to scale it to be bigger?
+        self.verticalLayoutWidget = QtWidgets.QWidget(self.dashboardFrame)
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(0, 0, 311, 291))
+        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+        self.speedGaugeLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
+        self.speedGaugeLayout.setContentsMargins(0, 0, 0, 0)
+        self.speedGaugeLayout.setObjectName("speedGaugeLayout")
+        self.estimated_progress_title_label = QtWidgets.QLabel(self.dashboardFrame)
+        self.estimated_progress_title_label.setGeometry(QtCore.QRect(80, 450, 161, 21))
+        #self.estimated_progress_title_label.move(80+80*incriment_factor_width, 450+450*incriment_factor_height)
+        self.estimated_progress_title_label.setStyleSheet("font: 75 10pt \"Microsoft YaHei UI\";\n"
+                                                          "color: rgb(255, 255, 255);")
+        self.estimated_progress_title_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.estimated_progress_title_label.setObjectName("estimated_progress_title_label")
+
+
+        self.verticalLayoutWidget_2 = QtWidgets.QWidget(self.dashboardFrame)
+        self.verticalLayoutWidget_2.setGeometry(QtCore.QRect(40, 480, 241, 59))
+        #self.verticalLayoutWidget_2.move(40+40*incriment_factor_width, 480+480*incriment_factor_height)
+        self.verticalLayoutWidget_2.setObjectName("verticalLayoutWidget_2")
+        self.progressbarLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_2)
+        self.progressbarLayout.setContentsMargins(0, 0, 0, 0)
+        self.progressbarLayout.setObjectName("progressbarLayout")
+        self.progressBar = QtWidgets.QProgressBar(self.verticalLayoutWidget_2)
+        self.progressBar.setEnabled(True)
+        self.progressBar.setAutoFillBackground(False)
+        self.progressBar.setStyleSheet("color: rgb(255, 255, 255);")
+        self.progressBar.setInputMethodHints(QtCore.Qt.ImhNone)
+        self.progressBar.setMaximum(500)
+        self.progressBar.setProperty("value", 115)
+        self.progressBar.setTextVisible(True)
+        self.progressBar.setInvertedAppearance(False)
+        self.progressBar.setTextDirection(QtWidgets.QProgressBar.TopToBottom)
+        self.progressBar.setObjectName("progressBar")
+        self.progressbarLayout.addWidget(self.progressBar)
+        self.horizontalLayoutWidget = QtWidgets.QWidget(self.dashboardFrame)
+        #self.horizontalLayoutWidget.setGeometry(QtCore.QRect(20, 310, 271, 31))
+        self.horizontalLayoutWidget.move(20+20*incriment_factor_width, 310+310*incriment_factor_height)
+        self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
+        self.positionLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)
+        self.positionLayout.setContentsMargins(0, 0, 0, 0)
+        self.positionLayout.setObjectName("positionLayout")
+        self.positionTxt = QtWidgets.QLabel(self.horizontalLayoutWidget)
+        self.positionTxt.setEnabled(True)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.positionTxt.sizePolicy().hasHeightForWidth())
+        self.positionTxt.setSizePolicy(sizePolicy)
+        self.positionTxt.setStyleSheet("font: 12pt \"Arial\";\n"
+                                       "color: rgb(218, 218, 218);")
+        self.positionTxt.setObjectName("positionTxt")
+        self.positionLayout.addWidget(self.positionTxt)
+        self.positionVal = QtWidgets.QLabel(self.horizontalLayoutWidget)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(14)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(50)
+        self.positionVal.setFont(font)
+        self.positionVal.setStyleSheet("font: 14pt \"Arial\";\n"
+                                       "color: rgb(255, 255, 255);")
+        self.positionVal.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+        self.positionVal.setObjectName("positionVal")
+        self.positionLayout.addWidget(self.positionVal)
+
+
+        self.horizontalLayoutWidget_2 = QtWidgets.QWidget(self.dashboardFrame)
+        #self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(20, 360, 271, 31))
+        self.horizontalLayoutWidget_2.move(20+20*incriment_factor_width, 360+360*incriment_factor_height)
+        self.horizontalLayoutWidget_2.setObjectName("horizontalLayoutWidget_2")
+        self.timeElapsedLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_2)
+        self.timeElapsedLayout.setContentsMargins(0, 0, 0, 0)
+        self.timeElapsedLayout.setObjectName("timeElapsedLayout")
+        self.timeElapsedTxt = QtWidgets.QLabel(self.horizontalLayoutWidget_2)
+        self.timeElapsedTxt.setEnabled(True)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.timeElapsedTxt.sizePolicy().hasHeightForWidth())
+        self.timeElapsedTxt.setSizePolicy(sizePolicy)
+        self.timeElapsedTxt.setStyleSheet("font: 12pt \"Arial\";\n"
+                                          "color: rgb(218, 218, 218);")
+        self.timeElapsedTxt.setAlignment(QtCore.Qt.AlignJustify | QtCore.Qt.AlignVCenter)
+        self.timeElapsedTxt.setObjectName("timeElapsedTxt")
+        self.timeElapsedLayout.addWidget(self.timeElapsedTxt)
+        self.timeElapsedVal = QtWidgets.QLabel(self.horizontalLayoutWidget_2)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(14)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(50)
+        self.timeElapsedVal.setFont(font)
+        self.timeElapsedVal.setStyleSheet("font: 14pt \"Arial\";\n"
+                                          "color: rgb(255, 255, 255);")
+        self.timeElapsedVal.setAlignment(QtCore.Qt.AlignJustify | QtCore.Qt.AlignVCenter)
+        self.timeElapsedVal.setObjectName("timeElapsedVal")
+        self.timeElapsedLayout.addWidget(self.timeElapsedVal)
+
+
+
+        self.verticalLayoutWidget_3 = QtWidgets.QWidget(self.dashboardFrame)
+        #self.verticalLayoutWidget_3.setGeometry(QtCore.QRect(340, 20, 187, 61))
+        self.verticalLayoutWidget_3.move(340+340*incriment_factor_width, 20+20*incriment_factor_height)
+        self.verticalLayoutWidget_3.setObjectName("verticalLayoutWidget_3")
+        self.connectLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_3)
+        self.connectLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
+        self.connectLayout.setContentsMargins(0, 0, 0, 0)
+        self.connectLayout.setObjectName("connectLayout")
+        self.connectionTxt = QtWidgets.QLabel(self.verticalLayoutWidget_3)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(14)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(7)
+        self.connectionTxt.setFont(font)
+        self.connectionTxt.setStyleSheet("font: 63 14pt \"Arial\";\n"
+                                         "color: rgb(255, 255, 255);")
+        self.connectionTxt.setObjectName("connectionTxt")
+        self.connectLayout.addWidget(self.connectionTxt, 0, QtCore.Qt.AlignHCenter | QtCore.Qt.AlignTop)
+        self.connectionStatus = QtWidgets.QLabel(self.verticalLayoutWidget_3)
+        self.connectionStatus.setStyleSheet("font: 63 12pt \"Arial\";\n"
+                                            "color: rgb(255, 255, 255);")
+        self.connectionStatus.setTextFormat(QtCore.Qt.AutoText)
+        self.connectionStatus.setAlignment(QtCore.Qt.AlignCenter)
+        self.connectionStatus.setObjectName("connectionStatus")
+        self.connectLayout.addWidget(self.connectionStatus)
+        self.stateFrame = QtWidgets.QFrame(self.dashboardFrame)
+
+        #self.stateFrame.setGeometry(QtCore.QRect(330, 100, 211, 491))
+        self.stateFrame.move(330+330*incriment_factor_width,100)
+        self.stateFrame.setAutoFillBackground(False)
+        self.stateFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.stateFrame.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.stateFrame.setObjectName("stateFrame")
+
+        self.label_6 = QtWidgets.QLabel(self.stateFrame)
+        #self.label_6.setGeometry(QtCore.QRect(70, 390, 130, 40))
+        self.label_6.move(70+70*incriment_factor_width,390)
+        self.label_6.setStyleSheet("background: rgb(214, 214, 214)")
+        self.label_6.setObjectName("label_6")
+        self.label_7 = QtWidgets.QLabel(self.stateFrame)
+        #self.label_7.setGeometry(QtCore.QRect(70, 440, 130, 40))
+        self.label_7.move(70 + 70 * incriment_factor_width,440)
+        self.label_7.setStyleSheet("background: rgb(214, 214, 214)")
+        self.label_7.setObjectName("label_7")
+        self.label_8 = QtWidgets.QLabel(self.stateFrame)
+        #self.label_8.setGeometry(QtCore.QRect(70, 340, 130, 40))
+        self.label_8.move(70 + 70 * incriment_factor_width,340)
+        self.label_8.setStyleSheet("background: rgb(214, 214, 214)")
+        self.label_8.setObjectName("label_8")
+        self.label_9 = QtWidgets.QLabel(self.stateFrame)
+        #self.label_9.setGeometry(QtCore.QRect(70, 290, 130, 40))
+        self.label_9.move(70 + 70 * incriment_factor_width,290)
+        self.label_9.setStyleSheet("background: rgb(214, 214, 214)")
+        self.label_9.setObjectName("label_9")
+        self.label_10 = QtWidgets.QLabel(self.stateFrame)
+        #self.label_10.setGeometry(QtCore.QRect(70, 240, 130, 40))
+        self.label_10.move(70 + 70 * incriment_factor_width,240)
+        self.label_10.setStyleSheet("background: rgb(214, 214, 214)")
+        self.label_10.setObjectName("label_10")
+        self.label_11 = QtWidgets.QLabel(self.stateFrame)
+        #self.label_11.setGeometry(QtCore.QRect(70, 190, 130, 40))
+        self.label_11.move(70 + 70 * incriment_factor_width,190)
+        self.label_11.setStyleSheet("background: rgb(214, 214, 214)")
+        self.label_11.setObjectName("label_11")
+        self.label_12 = QtWidgets.QLabel(self.stateFrame)
+        #self.label_12.setGeometry(QtCore.QRect(70, 140, 130, 40))
+        self.label_12.move(70 + 70 * incriment_factor_width,140)
+        self.label_12.setStyleSheet("background: rgb(214, 214, 214)")
+        self.label_12.setObjectName("label_12")
+        self.label = QtWidgets.QLabel(self.stateFrame)
+        #self.label.setGeometry(QtCore.QRect(90, 100, 91, 31))
+        self.label.move(90 + 90 * incriment_factor_width,100)
+        self.label.setStyleSheet("color: rgb(255, 255, 255)")
+        self.label.setObjectName("label")
+        self.label_2 = QtWidgets.QLabel(self.stateFrame)
+        #self.label_2.setGeometry(QtCore.QRect(80, 10, 111, 31))
+        self.label_2.move(80 + 80 * incriment_factor_width,10)
+        self.label_2.setStyleSheet("color: rgb(255, 255, 255)")
+        self.label_2.setObjectName("label_2")
+        self.label_13 = QtWidgets.QLabel(self.stateFrame)
+        #self.label_13.setGeometry(QtCore.QRect(70, 40, 130, 40))
+        self.label_13.move(70 + 70 * incriment_factor_width,40)
+        self.label_13.setStyleSheet("background: rgb(214, 214, 214)")
+        self.label_13.setObjectName("label_13")
+
+        self.prepLaunchBtn = QtWidgets.QPushButton(self.main_frame)
+        self.prepLaunchBtn.move(245+245*incriment_factor_width, 90+90*incriment_factor_height)
+        self.prepLaunchBtn.setStyleSheet("background-color: rgb(255, 170, 0);\n"
+                                         "color: rgb(0, 0. 0);\n"
+                                         "font: 63 9pt \"Arial\";\n"
+                                         "")
+        self.launchBtn = QtWidgets.QPushButton(self.main_frame)
+        self.launchBtn.move(470+470*incriment_factor_width, 90+90*incriment_factor_height)
+        self.launchBtn.setStyleSheet("background-color: rgb(0, 255, 127);\n"
+                                     "color: rgb(0, 0. 0);\n"
+                                     "font: 63 9pt \"Arial\";\n"
+                                     "")
+        self.crawlBtn = QtWidgets.QPushButton(self.main_frame)
+        self.crawlBtn.move(695+695*incriment_factor_width, 90+90*incriment_factor_height)
+        self.crawlBtn.setStyleSheet("background-color: rgb(85, 85, 255);\n"
+                                    "color: rgb(0, 0. 0);\n"
+                                    "font: 63 9pt \"Arial\";\n"
+                                    "")
+        self.healthChkBtn = QtWidgets.QPushButton(self.main_frame)
+        self.healthChkBtn.move(920+920*incriment_factor_width, 90+90*incriment_factor_width)
+        self.healthChkBtn.setStyleSheet("background-color: rgb(170, 85, 255);\n"
+                                        "color: rgb(0, 0. 0);\n"
+                                        "font: 75 9pt \"Arial\";\n"
+                                        "")
+        self.albertaloopLogo = QtWidgets.QLabel(self.main_frame)
+        self.albertaloopLogo.move(927+927*incriment_factor_width, 40+40*incriment_factor_height)
+        self.albertaloopLogo.setText("")
+        self.albertaloopLogo.setPixmap(QtGui.QPixmap("img/Albertaloop_logo.png"))
+        self.albertaloopLogo.setObjectName("albertaloopLogo")
+        self.dataFrame = QtWidgets.QFrame(self.main_frame)
+        #self.dataFrame.move(592+592*incriment_factor_width, 160+160*incriment_factor_height)
+        self.dataFrame.setGeometry(QtCore.QRect(592+592*incriment_factor_width, 160+160*incriment_factor_height,
+                                                533+533*incriment_factor_width*0.5, 551+551*incriment_factor_height*0.5))
+        self.dataFrame.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+                                     "border-color: rgb(217, 217, 217);\n"
+                                     "")
+        self.dataFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.dataFrame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.dataFrame.setObjectName("dataFrame")
+        self.telemetryTable1 = QtWidgets.QTableWidget(self.dataFrame)
+        self.telemetryTable1.setGeometry(QtCore.QRect(0, 0, 270+270*incriment_factor_width*0.5, 241+241*incriment_factor_height*0.5))
+        self.telemetryTable1.setObjectName("telemetryTable1")
+        self.telemetryTable1.setColumnCount(0)
+        self.telemetryTable1.setRowCount(0)
+        self.telemetryTable1_2 = QtWidgets.QTableWidget(self.dataFrame)
+        self.telemetryTable1_2.setGeometry(QtCore.QRect(281+270*incriment_factor_width*0.5, 0, 270+270*incriment_factor_width*0.5,
+                                                        241+241*incriment_factor_height*0.5))
+        #self.telemetryTable1_2.move(281+281*incriment_factor_width, 0)
+        self.telemetryTable1_2.setObjectName("telemetryTable1_2")
+        self.telemetryTable1_2.setColumnCount(0)
+        self.telemetryTable1_2.setRowCount(0)
+        self.eStopBtn.raise_()
+        self.dashboardFrame.raise_()
+        self.prepLaunchBtn.raise_()
+        self.launchBtn.raise_()
+        self.crawlBtn.raise_()
+        self.healthChkBtn.raise_()
+        self.dataFrame.raise_()
+        self.albertaloopLogo.raise_()
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+        self.menubar_RENAMETOSPEC = QtWidgets.QMenuBar(MainWindow)
+        self.menubar_RENAMETOSPEC.setGeometry(QtCore.QRect(0, 0, 1145, 29))
+        self.menubar_RENAMETOSPEC.setStyleSheet("font: 12pt \"Arial\";\n"
+                                                "color: rgb(0, 0, 0);\n"
+                                                "background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(146, 146, 146, 255), stop:0.047 rgba(146, 146, 146, 255), stop:0.048 rgba(36, 36, 36, 255));\n"
+                                                "selection-background-color: rgb(197, 197, 197);")
+        self.menuFile.setStyleSheet("font: 10pt \"Arial\";\n"
+                                    "color: rgb(0, 0, 0);\n"
+                                    "background-color: rgb(217, 217, 217);\n"
+                                    "selection-background-color: rgb(197, 197, 197);")
+
+
+
+
+
+
+
+        # This can reshape to the screen, but its only for the widget
+        #
+        #
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
