@@ -24,14 +24,17 @@ import time
 from threading import Thread
 from datetime import datetime
 from argparse import ArgumentParser
-from TelemetryReceiver import TelemetryReceiver
+
 from NetworkComms.udp_module import UDPModule
+from NetworkComms.telemetry_receiver import TelemetryReceiver
 from NetworkComms.cmd_transmitter import CmdTransmitter
+
+import signal # Make Ctrl+C work with PyQt5 Applications
+signal.signal(signal.SIGINT, signal.SIG_DFL)
+
 class MWindowWrapper(Ui_MainWindow):
 
-
-
-    def __init__(self, window, ip, port):
+    def __init__(self, window, ip, port, telemetry_model):
         self.setupUi(window)
         self.ip = ip
         self.port = port
@@ -60,6 +63,7 @@ class MWindowWrapper(Ui_MainWindow):
         pixmap = QtGui.QPixmap("img/Albertaloop_logo.png")
         self.albertaloopLogo.setPixmap(pixmap)
 
+        self.telemetryTable1.setModel(telemetry_model)
 
     # Clicked function definitions
     def launchBtn_clicked(self):
@@ -179,14 +183,21 @@ class MWindowWrapper(Ui_MainWindow):
 
         def notify(state):
             updateCurrentstate(state)
-
+    def updateTelemetry(telemetry_model):
+        # if(not self.telemetryTable1.model):
+        self.telemetryTable1.update(data)
+        # observer.update(data)
+        
 if __name__ == "__main__":
     parser = ArgumentParser(description="Albertaloop GUI launch")
     parser.add_argument(
-        "--server_ip", default="192.168.0.1", help="The ip to send the packets to"
+        "--server_ip", default="127.0.0.1", help="The ip to send the packets to"
     )
     parser.add_argument(
-        "--server_port", type=int, default=3000, help="The UDP port to send packets to"
+        "--server_port", type=int, default=4000, help="The UDP port to get updates from the pod"
+    )
+    parser.add_argument(
+        "--client_port", type=int, default=3000, help="The UDP port to send packets to"
     )
 
     args = parser.parse_args()
@@ -205,15 +216,18 @@ if __name__ == "__main__":
     TelemetryReceiver.setDataModel(TelemetryModel)
     HealthCheckReq = HealthCheckReq(HealthCheckModel)
 
-    # TelemetryReceiver.start()
     # View Classes
     MainWindow = QMainWindow()
-    mWindowWrapper = MWindowWrapper(MainWindow, args.server_ip, args.server_port)
+    mWindowWrapper = MWindowWrapper(MainWindow, args.server_ip, args.server_port,TelemetryModel)
     mWindowWrapper.setReceivers(Logic, HealthCheckReq)
+
     TelemetryModel.attach(mWindowWrapper)
     
-    UDPModule = UDPModule("127.0.0.1", 4000, 3000,
+
+    UDPModule = UDPModule(args.server_ip, args.server_port, args.client_port,
                           TelemetryReceiver, CmdTransmitter)
+    TelemetryReceiver.start()
+    
     # TelemetryModel.recieveData([9]*10)
     # TelemetryModel.notify()
     # TelemetryModel.update([0.123]*10)
@@ -221,4 +235,5 @@ if __name__ == "__main__":
     
     
     MainWindow.show()
+    print("HELLO")
     sys.exit(app.exec_())

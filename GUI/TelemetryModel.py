@@ -1,28 +1,26 @@
 
 import struct
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import Qt
+
 """
 TODO:
     get function for each telemetry value
-    call self.notify() within recieveData, should I?
-    query: what's the difference between update and recieveData functions?
-    self-talk lol: do I really need to initialise the self.data to default telemetry
-    delete the comment lines (self.telemetryTable1.setColumnCount(0)) in AlbertaLoop_UI2.py
+    call self.notify() within recieve_data, should I?
+    query: what's the difference between update and recieve_data functions?
     set port to self.port in the receiver function
-    define headerData in the TableModel
-    Hmm.. what are flags, should I implement it? # Source: https://www.pythonguis.com/faq/qtableview-cell-edit/
-        def flags(self, index):
-            if not index.isValid():
-                return Qt.ItemIsEnabled
-
-            return super().flags(index) | Qt.ItemIsEditable  # add editable flag.
+    define header_data in the TableModel
+    
 """
-class TelemetryModel():
+class TelemetryModel(QtCore.QAbstractTableModel):
 
     def __init__(self):
+        super(TelemetryModel, self).__init__()
+
         self.observers = []
         self.telemetryPacket = []
         self.packet_format = ">BB7iI"
-        self.data = {
+        self._data = {
             "team_id": 0,
             "status": 0,
             "acceleration": 0,
@@ -36,23 +34,41 @@ class TelemetryModel():
             "highest velocity": 0
         }
 
+    def rowCount(self, index):
+        return len(self._data)
+    def columnCount(self, index):
+        return (2) # a Key and Value
+    def flags(self, index):
+        return QtCore.Qt.ItemIsEnabled|QtCore.Qt.ItemIsEditable|QtCore.Qt.ItemIsSelectable      
+    
     def attach(self, subscriber):
         print('Subscribed:',subscriber)
         self.observers.append(subscriber)
-
+    
     def detach(self, subscriber):
         self.observers.remove(subscriber)
 
-
-    def update(self,data):
-        # print(data)
-        self.telemetryPacket = data
-        self.data = data
-        self.notifyObservers()
-    
+    def update(self,_data):
+        # print(_data)
+        self.telemetryPacket = _data
+        self._data = _data
+        # print(self._data)
+        # self.notifyObservers()
+        index1 = self.createIndex(
+            0, 0, QtCore.QModelIndex())
+        index2 = self.createIndex(
+            self.rowCount(0), self.columnCount(0), QtCore.QModelIndex())
+        self.dataChanged.emit(index1,index2)
     def getState(self):
-        return self.data
+        return self._data
 
+    def data(self, index, role):
+        if role == Qt.DisplayRole:
+            if index.column() == 0:
+                return list(self._data.keys())[index.row()]
+            elif index.column() == 1:
+                return list(self._data.values())[index.row()]
     def notifyObservers(self):
-        for observe in self.observers:
-            observe.updateTelemetry(self.data)
+        for observer in self.observers:
+            observer.updateTelemetry(self._data)
+            # observe.updateTelemetry(self._data)

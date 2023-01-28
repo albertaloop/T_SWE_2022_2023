@@ -1,35 +1,51 @@
+from enum import IntEnum
+import struct
 import socket
+import select
 from threading import Thread
 
+class TelemetryReceiver:
 
-class TelemetryReceiver(Thread):
+    def __init__(self):
+        # self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        # self.socket.bind((host, 8000))
 
-    def __init__(self, bufferSize):
-        self.bufferSize = bufferSize
-        Thread.__init__(self)
+        self.packet_format = ">BB7iI"
+
+        self.telemetry_model = None
 
     def setSocket(self, ip, port, socket):
-        self.receiveSocket = socket
+        self.socket = socket
         self.ip = ip
         self.port = port
-        self.receiveSocket.bind((self.ip, self.port))
+        self.socket.bind((self.ip, self.port))
 
-    def run(self):
-        while True:
-            self.checkForPackets()
-        # handlePackets()
+    def setDataModel(self, model):
+        self.telemetry_model = model
 
     def checkForPackets(self):
-
-        bytesAddressPair = self.receiveSocket.recvfrom(self.bufferSize)
-        message = bytesAddressPair[0]
-
-        address = bytesAddressPair[1]
-
-        clientMsg = "Message from Client:{}".format(message)
-        clientIP = "Client IP Address:{}".format(address)
-
-        print(clientMsg)
-        print(clientIP)
-
-    # def handlePackets():
+        while True:
+            data, addr = self.socket.recvfrom(8192)
+            # print(data)
+            self.handlePacket(data)
+    
+    def handlePacket(self, data):
+        rdata = {}
+        (
+            rdata["team_id"],
+            rdata["status"],
+            rdata["acceleration"],
+            rdata["position"],
+            rdata["velocity"],
+            rdata["battery_voltage"],
+            rdata["battery_current"],
+            rdata["battery_temperature"],
+            rdata["pod_temperature"],
+            rdata["stripe_count"],
+        ) = struct.unpack(self.packet_format, data)
+        
+        self.telemetry_model.update(rdata)
+    def start(self):
+        print("We are started!!")
+        thread = Thread(target=self.checkForPackets)
+        thread.start()

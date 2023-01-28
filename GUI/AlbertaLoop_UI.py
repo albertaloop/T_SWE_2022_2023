@@ -9,7 +9,8 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from TableModel import TableModel
+# from TableModel import TableModel
+# from TelemetryModel import TelemetryModel
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -290,7 +291,8 @@ class Ui_MainWindow(object):
             "strip_count": 0,
             "highest velocity": 0
         }
-        self.model = TableModel(data)
+        # self.model = TableModel(data)
+        # self.model = TelemetryModel(data)
         
         # self.telemetryTable1 = QtWidgets.QTableWidget(self.dataFrame)
         self.telemetryTable1 = QtWidgets.QTableView(self.dataFrame)
@@ -298,7 +300,7 @@ class Ui_MainWindow(object):
         self.telemetryTable1.setObjectName("telemetryTable1")
         # self.telemetryTable1.setColumnCount(0)
         # self.telemetryTable1.setRowCount(0)
-        self.telemetryTable1.setModel(self.model)
+        # self.telemetryTable1.setModel(self.model)
 
         self.telemetryTable1_2 = QtWidgets.QTableWidget(self.dataFrame)
         self.telemetryTable1_2.setGeometry(QtCore.QRect(281, 0, 270, 241))
@@ -396,8 +398,8 @@ class Ui_MainWindow(object):
         self.actionClose.setText(_translate("MainWindow", "Close"))
         self.actionClose.setToolTip(_translate("MainWindow", "(PH) Closes application."))
 
-    def updateTelemetry(self,data):
-        # model = TableModel(data)
-        self.model.update(data)
-        # self.telemetryTable1.setModel(model)
-        pass
+#     def updateTelemetry(self,data):
+#         # model = TableModel(data)
+#         self.model.update(data)
+#         # self.telemetryTable1.setModel(model)
+#         pass
