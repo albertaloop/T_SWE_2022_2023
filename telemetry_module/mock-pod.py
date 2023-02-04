@@ -84,7 +84,8 @@ def get_stripe_count(seconds, initial_stripe_count):
     else:
         return initial_stripe_count - math.sin(seconds) / seconds
 
-
+def get_random_int():
+    return random.randint(0,5000)
 if __name__ == "__main__":
     parser = ArgumentParser(
         description="Mock the run of a pod to test the Hyperloop system"
@@ -222,6 +223,19 @@ if __name__ == "__main__":
             0,
             0,
             0,
+            int(position) // 3048,
+        )
+        packet = struct.pack(
+            ">BB7iI",
+            team_id,
+            status,
+            get_random_int(),
+            get_random_int(),
+            get_random_int(),
+            get_random_int(),
+            get_random_int(),
+            get_random_int(),
+            get_random_int(),
             int(position) // 3048,
         )
         print(packet)

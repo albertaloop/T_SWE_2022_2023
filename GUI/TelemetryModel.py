@@ -1,28 +1,74 @@
-class TelemetryModel:
+
+import struct
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import Qt
+
+"""
+TODO:
+    get function for each telemetry value
+    call self.notify() within recieve_data, should I?
+    query: what's the difference between update and recieve_data functions?
+    set port to self.port in the receiver function
+    define header_data in the TableModel
+    
+"""
+class TelemetryModel(QtCore.QAbstractTableModel):
 
     def __init__(self):
+        super(TelemetryModel, self).__init__()
+
         self.observers = []
         self.telemetryPacket = []
-        self.team_id = 0
-        self.status = 0
-        self.acceleration = 0
-        self.position = 0
-        self.velocity = 0
-        self.battery_voltage = 0
-        self.battery_current = 0
-        self.battery_temperature = 0
-        self.pod_temperature = 0
-        self.stripe_count = 0
+        self.packet_format = ">BB7iI"
+        self._data = {
+            "team_id": 0,
+            "status": 0,
+            "acceleration": 0,
+            "position": 0,
+            "velocity": 0,
+            "battery_voltage": 0,
+            "battery_current": 0,
+            "battery_temperature": 0,
+            "pod_temperature":0,
+            "strip_count": 0,
+            "highest velocity": 0
+        }
 
-    def recieveData(self, data):
-        self.telemetryPacket = data
-
+    def rowCount(self, index):
+        return len(self._data)
+    def columnCount(self, index):
+        return (2) # a Key and Value
+    def flags(self, index):
+        return QtCore.Qt.ItemIsEnabled|QtCore.Qt.ItemIsEditable|QtCore.Qt.ItemIsSelectable      
+    
     def attach(self, subscriber):
+        print('Subscribed:',subscriber)
         self.observers.append(subscriber)
-
+    
     def detach(self, subscriber):
         self.observers.remove(subscriber)
 
-    def notify(self):
-        for observe in self.observer:
-            observe.updateTelemetry(self)
+    def update(self,_data):
+        # print(_data)
+        self.telemetryPacket = _data
+        self._data = _data
+        # print(self._data)
+        # self.notifyObservers()
+        index1 = self.createIndex(
+            0, 0, QtCore.QModelIndex())
+        index2 = self.createIndex(
+            self.rowCount(0), self.columnCount(0), QtCore.QModelIndex())
+        self.dataChanged.emit(index1,index2)
+    def getState(self):
+        return self._data
+
+    def data(self, index, role):
+        if role == Qt.DisplayRole:
+            if index.column() == 0:
+                return list(self._data.keys())[index.row()]
+            elif index.column() == 1:
+                return list(self._data.values())[index.row()]
+    def notifyObservers(self):
+        for observer in self.observers:
+            observer.updateTelemetry(self._data)
+            # observe.updateTelemetry(self._data)

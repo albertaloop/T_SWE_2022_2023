@@ -39,6 +39,20 @@ This GUI was written in PyQT using QT Editor in Python and QtQuick2 in C++ with 
 
 IF you are openning the code in VSCode, right click ui.py and hit _Run Current File in Python Interactive Window_ otherwise the QML widget will not show
 
+_11/18/2022:_ Debugging notes when messing with TelemetryModel and its sockets or both
+
+Not so often you might notice socket error messages, something like
+```
+Traceback (most recent call last):
+  File "/home/test/Desktop/Projects/T_SWE_2022_2023/GUI/main2.py", line 194, in <module>
+    TelemetryReceiver = TelemetryReceiver(args.server_ip, args.server_port)
+  File "/home/test/Desktop/Projects/T_SWE_2022_2023/GUI/TelemetryReceiver.py", line 11, in __init__
+    self.socket.bind((host, 8000))
+OSError: [Errno 98] Address already in use
+```
+This often occurs when another instance of your code is running in the background. You resolve this issue by nuking all of this processes by using a shell script.
+Try `sh killPythonSessions.sh`
+
 ## Features
 
 ### July 7th, 2020
