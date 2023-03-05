@@ -7,8 +7,7 @@ from threading import Thread
 class TelemetryReceiver:
 
     def __init__(self):
-        # self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        # self.socket.bind((host, 8000))
+
 
         self.packet_format = ">BB7iI"
 
@@ -18,6 +17,7 @@ class TelemetryReceiver:
         self.socket = socket
         self.ip = ip
         self.port = port
+        print("port",port,"ip:",ip)
         self.socket.bind((self.ip, self.port))
 
     def setDataModel(self, model):
@@ -26,7 +26,7 @@ class TelemetryReceiver:
     def checkForPackets(self):
         while True:
             data, addr = self.socket.recvfrom(8192)
-            # print(data)
+            print(data)
             self.handlePacket(data)
     
     def handlePacket(self, data):

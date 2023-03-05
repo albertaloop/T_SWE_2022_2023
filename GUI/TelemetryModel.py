@@ -41,12 +41,6 @@ class TelemetryModel(QtCore.QAbstractTableModel):
     def flags(self, index):
         return QtCore.Qt.ItemIsEnabled|QtCore.Qt.ItemIsEditable|QtCore.Qt.ItemIsSelectable      
     
-    def attach(self, subscriber):
-        print('Subscribed:',subscriber)
-        self.observers.append(subscriber)
-    
-    def detach(self, subscriber):
-        self.observers.remove(subscriber)
 
     def update(self,_data):
         # print(_data)
@@ -68,7 +62,3 @@ class TelemetryModel(QtCore.QAbstractTableModel):
                 return list(self._data.keys())[index.row()]
             elif index.column() == 1:
                 return list(self._data.values())[index.row()]
-    def notifyObservers(self):
-        for observer in self.observers:
-            observer.updateTelemetry(self._data)
-            # observe.updateTelemetry(self._data)

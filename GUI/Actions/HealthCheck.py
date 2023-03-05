@@ -1,4 +1,4 @@
-from Command import Command
+from Actions.Command import Command
 
 class HealthCheck(Command):
     def __init__(self, receiver):
