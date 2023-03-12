@@ -1,5 +1,5 @@
 class Command:
-    def __init__(self, message):
+    def __init__(self, message, receiver):
         self.message = message
     def execute(self):
         self.receiver.printmessage(self.message)

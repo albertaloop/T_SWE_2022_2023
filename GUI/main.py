@@ -33,13 +33,13 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 class MWindowWrapper(Ui_MainWindow):
 
-    def __init__(self, window, ip, port, telemetry_model):
+    def __init__(self, window, ip, port, telemetry_model, udp_module):
         self.setupUi(window)
         self.ip = ip
         self.port = port
 
         self.command = None
-        self.receivers = []
+        self.udp_module = udp_module
         self.current_state = "fault"
         self.command_requested = "none"
 
@@ -73,7 +73,7 @@ class MWindowWrapper(Ui_MainWindow):
         else :
             if current_state == "ready_to_launch" :
                 command_requested = "launch"
-                self.executeCommand(Launch(self.receivers[0]))
+                self.executeCommand(Launch(self.udp_module))
             else :
                 print("Not ready to launch")
 
@@ -84,32 +84,24 @@ class MWindowWrapper(Ui_MainWindow):
         else :
             if current_state == "ready_to_launch" :
                 command_requested = "launch"
-                self.executeCommand(HealthCheck(self.receivers[1]))
+                self.executeCommand(HealthCheck(self.udp_module))
             else :
                 print("Not ready to launch")
 
     def crawlBtn_clicked(self):
-        self.setCommand(Crawl(self.receivers[0]))
-        self.executeCommand()
+        self.executeCommand(Crawl(self.udp_module))
         print("Crawl button pressed")
     def prepLaunchBtn_clicked(self):
-        self.setCommand(PrepareLaunch(self.receivers[0]))
-        self.executeCommand()
+        self.executeCommand(PrepareLaunch(self.udp_module))
         print("Prepare Launch button pressed")
     def eStopBtn_clicked(self):
-        self.setCommand(EStop(self.receivers[0]))
-        self.executeCommand()
+        self.executeCommand(EStop(self.udp_module))
         print("Estop button pressed")
 
     # Command Pattern definitions
     def executeCommand(self, command):
         self.command = command
         self.command.execute()
-    def setReceivers(self, rcv1, rcv2):
-        # Receiver 1 is Logic
-        self.receivers.append(rcv1)
-        # Receiver 2 is HealthChkReq
-        self.receivers.append(rcv2)
 
     def command_input(self):
         text = self.command_line.text()
@@ -147,12 +139,15 @@ if __name__ == "__main__":
     TelemetryReceiver.setDataModel(TelemetryModel)
     # HealthCheckReq = HealthCheckReq(HealthCheckModel)
 
-    # View Classes
-    MainWindow = QMainWindow()
-    mWindowWrapper = MWindowWrapper(MainWindow, args.server_ip, args.server_port,TelemetryModel)
-    
     UDPModule = UDPModule(args.server_ip, args.server_port, args.client_port,
                           TelemetryReceiver, CmdTransmitter)
+
+    # View Classes
+    MainWindow = QMainWindow()
+    mWindowWrapper = MWindowWrapper(MainWindow, args.server_ip, args.server_port,TelemetryModel,
+        UDPModule)
+    
+
     TelemetryReceiver.start()
     
     MainWindow.show()
