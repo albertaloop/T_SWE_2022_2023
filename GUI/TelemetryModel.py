@@ -17,8 +17,6 @@ class TelemetryModel(QtCore.QAbstractTableModel):
     def __init__(self):
         super(TelemetryModel, self).__init__()
 
-        self.observers = []
-        self.telemetryPacket = []
         self.packet_format = ">BB7iI"
         self._data = {
             "team_id": 0,
@@ -43,16 +41,13 @@ class TelemetryModel(QtCore.QAbstractTableModel):
     
 
     def update(self,_data):
-        # print(_data)
-        self.telemetryPacket = _data
         self._data = _data
-        # print(self._data)
-        # self.notifyObservers()
         index1 = self.createIndex(
             0, 0, QtCore.QModelIndex())
         index2 = self.createIndex(
             self.rowCount(0), self.columnCount(0), QtCore.QModelIndex())
         self.dataChanged.emit(index1,index2)
+
     def getState(self):
         return self._data
 

@@ -7,11 +7,9 @@ from threading import Thread
 class TelemetryReceiver:
 
     def __init__(self):
-
-
         self.packet_format = ">BB7iI"
-
         self.telemetry_model = None
+        self.packetModel = None
 
     def setSocket(self, ip, port, socket):
         self.socket = socket

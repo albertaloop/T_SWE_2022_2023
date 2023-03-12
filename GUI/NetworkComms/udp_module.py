@@ -10,8 +10,6 @@ class UDPModule:
         
         self.receiver = receiver
         self.transmitter = transmitter
-        # self.UDPSocket.bind(address, port)
         self.transmitter.setSocket(address, port_transmitter, self.TransmitterSocket)
         self.receiver.setSocket(address, port_receiver, self.ReceiverSocket)
         self.receiver.start()
-        # self.transmitter.start()
