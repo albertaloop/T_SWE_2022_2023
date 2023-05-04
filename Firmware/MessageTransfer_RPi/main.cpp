@@ -1,4 +1,12 @@
 #include <termios.h>
+#include <poll.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <string.h>
+
+#include "messages.h"
+
 
 int serial_fd;
 
@@ -21,8 +29,9 @@ int main() {
         perror("Problem opening termios fd");
     }
 
-    // Flush the port buffer
-    usleep(250000);               
+    // Need to flush the port buffer before setting the UART settings
+    usleep(250000);
+    // TCIOFLUSH -> clear input buffer   
     tcflush(serial_fd, TCIOFLUSH); 
 
     // Configure serial port for 8N1, no parity, no breaks
@@ -30,6 +39,9 @@ int main() {
     struct termios serialSet;
     memset(&serialSet, 0, sizeof(serialSet));
     serialSet.c_iflag = IGNBRK;
+    // seerialSet.c_iflag = IGNPAR;
+    // CS8 -> 8 bits, CREAD -> Enable receiver, CLOCAL -> Ignore modem status
+    // Could also set BAUD rate here eg. B9600
     serialSet.c_cflag = CS8 | CREAD | CLOCAL;
     memset(serialSet.c_cc, _POSIX_VDISABLE, NCCS);
     serialSet.c_cc[VMIN] = 0;
@@ -40,10 +52,17 @@ int main() {
     cfsetispeed(&serialSet, baudRate);
     cfsetospeed(&serialSet, baudRate);
 
+    tcgetattr(serial_fd, &serialSet);
+
+    // TCSANOW -> apply the settings immediately
     if (tcsetattr(serial_fd, TCSANOW, &serialSet) == -1) {
         perror("Problem setting termios attributes");
     }
 
+
+    char text[255];
+
+    strcpy(text, TLMTRY);
 
     return 0;
 }
