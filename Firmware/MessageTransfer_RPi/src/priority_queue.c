@@ -73,9 +73,9 @@ bool insert_front(struct prio_queue *pq, struct msg m) {
     }
 }
 
-bool queue_sr(struct queue *q) {
+bool queue_sl(struct queue *q) {
     if(!is_empty(q)) {
-        for(int i=0; i < q->count; i++) {
+        for(int i=0; i < q->count-1; i++) {
             q->msg_arr[i] = q->msg_arr[i+1];
         }
         q->count++;
@@ -84,13 +84,17 @@ bool queue_sr(struct queue *q) {
     return false;
 }
 
-bool queue_sl(struct queue *q) {
+bool queue_sr(struct queue *q) {
     if(!is_full(q)) {
-        for(int i=0; i < q->count; i++) {
+        for(int i=0; i < q->count-1; i++) {
             q->msg_arr[i+1] = q->msg_arr[i];
         }
         q->count--;
         return true;
     }
     return false;
+}
+
+void msg_complete(struct prio_queue *pq, int prio) {
+    pq->queue_arr[prio].msg_in_prog = false;
 }

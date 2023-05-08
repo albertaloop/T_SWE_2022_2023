@@ -25,6 +25,22 @@ typedef struct prio_queue {
     struct queue queue_arr[NUM_PRIO];
 } prio_queue;
 
+bool is_empty(struct queue *q);
 
+bool is_full(struct queue *q);
+
+bool push_msg(struct prio_queue *pq, struct msg m);
+
+bool pop_msg(struct prio_queue *pq, struct msg *m);
+
+bool check_prempt(struct prio_queue *pq, struct msg m);
+
+bool insert_front(struct prio_queue *pq, struct msg m);
+
+bool queue_sl(struct queue *q);
+
+bool queue_sr(struct queue *q);
+
+void msg_complete(struct prio_queue *pq, int prio);
 
 #endif
