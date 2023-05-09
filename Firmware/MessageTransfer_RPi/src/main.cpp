@@ -4,9 +4,10 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
-
+#include <stdlib.h>
 #include "messages.h"
 
+#define UART_TIMEOUT 100
 
 int serial_fd;
 
@@ -20,11 +21,11 @@ void pollUart() {
 }
 
 static int read_uart(int uart_fd, void *data, size_t count) {
-    return read(uart_fd, data, count);
+    return 
 }
 
 static int write_uart(int uart_fd, void *data, size_t count) {
-    return write(uart_fd, data, count)
+    return write(uart_fd, data, count);
 }
 
 static int init_uart() {
@@ -73,12 +74,45 @@ static int init_uart() {
 
 
 int main() {
+    init_uart();
     
+    struct pollfd src;
+    src.fd = serial_fd;
+    src.events = POLLIN;
+    src.revents = 0;
 
+    while(1) {
+        // Send a message
+        write(serial_fd, "TLMTRY", strlen("TLMTRY"));
+        // Wait UART_TIMEOUT ms for acknowledgement
+        // Resend message if timeout
+        bool success = false;
+        // https://stackoverflow.com/questions/67644306/how-can-we-determine-whether-a-socket-is-ready-to-read-write
+        while(!success) {
+            if(poll(&src, 1, UART_TIMEOUT) < 0) {
+                perror("Poll error");
+                exit(1);
+            }
+            if(src.revents != 0) {
+                if(src.revents & POLLIN) {
+                    success = true;
+                } else {
+                    printf("UART error");
+                }
+            }
+        }
+        char text[255];
+        read(serial_fd, text, 255);
+        printf("%.*s\n", text, 255);
+        // Read message
+        // delay
+        usleep(250);
 
-    char text[255];
+    }
 
-    strcpy(text, TLMTRY);
+    // 
+
+    // strcpy(text, TLMTRY);
 
 
     close(serial_fd);
