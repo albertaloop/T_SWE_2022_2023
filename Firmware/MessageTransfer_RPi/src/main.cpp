@@ -152,10 +152,6 @@ int main() {
 
     }
 
-    // 
-
-    // strcpy(text, TLMTRY);
-
 
     close(serial_fd);
     return 0;
