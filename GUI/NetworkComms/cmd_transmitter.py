@@ -21,7 +21,6 @@ class CmdTransmitter:
         self.commandSocket.settimeout(timeout)
         try:
             data = self.commandSocket.recvfrom(self.ack_msg.size)
-
         except self.commandSocket.error as e:
             print(e)
             sys.exit(1)
