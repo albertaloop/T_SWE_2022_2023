@@ -14,11 +14,24 @@ class CmdTransmitter:
         print(message)
         bytesToSend = str.encode(message)
         self.commandSocket.sendto(bytesToSend, (self.ip, self.port))
-        packetModel.update(message)
+        # packetModel.update(message)
         self.last_message = message
 
     def recvAck(self, timeout, ack_msg):
-        sucess = self.commandSocket.recv_from()
-        if success:
-            packetModel.update(self.last_message, "acked")
-        return success
+        self.commandSocket.settimeout(timeout)
+        try:
+            data = self.commandSocket.recvfrom(self.ack_msg.size)
+
+        except self.commandSocket.error as e:
+            print(e)
+            sys.exit(1)
+        else:
+            if data[0] is "ACK" and message[1] is ack_msg:
+                packetModel.update(self.last_message, "acked")
+                self.commandSocket.settimeout(0)
+                return True
+            else:
+                print(f"Invalid message response {message=}, expected ")
+                return False
+
+

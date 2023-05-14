@@ -1,8 +1,14 @@
 class Command:
     def __init__(self, message, receiver):
         self.message = message
+        self.receiver = receiver
     def execute(self):
-        self.receiver.printmessage(self.message)
+        print(self.message)
+        while True:
+            self.receiver.cmdTransmit.sendCommand(self.message)
+            status = self.receiver.cmdTransmit.recvAck(10, "cmd_ack")
+            if (status):
+                break
         pass
 
 class Crawl(Command):
