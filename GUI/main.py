@@ -56,7 +56,7 @@ class MWindowWrapper(Ui_MainWindow):
         self.launchBtn.clicked.connect(self.launchBtn_clicked)
         self.healthChkBtn.clicked.connect(self.healthChkBtn_clicked)
         self.crawlBtn.clicked.connect(self.crawlBtn_clicked)
-        self.prepLaunchBtn.clicked.connect(self.crawlBtn_clicked)
+        self.prepLaunchBtn.clicked.connect(self.prepLaunchBtn_clicked)
         self.eStopBtn.clicked.connect(self.eStopBtn_clicked)
 
         # logo added
@@ -68,22 +68,22 @@ class MWindowWrapper(Ui_MainWindow):
     # Clicked function definitions
     def launchBtn_clicked(self):
         print("Launch button pressed")
-        if commanded_requested == "launch":
+        if self.commanded_requested == "launch":
             print("Launch command already requested")
         else :
-            if current_state == "ready_to_launch" :
-                command_requested = "launch"
+            if self.current_state == "ready_to_launch" :
+                self.command_requested = "launch"
                 self.executeCommand(Launch(self.udp_module))
             else :
                 print("Not ready to launch")
 
     def healthChkBtn_clicked(self):
         print("Health check button pressed")
-        if commanded_requested == "health_check":
+        if self.commanded_requested == "health_check":
             print("Health check already requested")
         else :
-            if current_state == "ready_to_launch" :
-                command_requested = "launch"
+            if self.current_state == "ready_to_launch" :
+                self.command_requested = "launch"
                 self.executeCommand(HealthCheck(self.udp_module))
             else :
                 print("Not ready to launch")
@@ -91,17 +91,42 @@ class MWindowWrapper(Ui_MainWindow):
     def crawlBtn_clicked(self):
         self.executeCommand(Crawl(self.udp_module))
         print("Crawl button pressed")
+        if self.commanded_requested == "health_check":
+            print("Health check already requested")
+        else :
+            if self.current_state == "ready_to_launch" :
+                self.command_requested = "launch"
+                self.executeCommand(HealthCheck(self.udp_module))
+            else :
+                print("Not ready to launch")
+
     def prepLaunchBtn_clicked(self):
-        self.executeCommand(PrepareLaunch(self.udp_module))
         print("Prepare Launch button pressed")
+        if self.commanded_requested == "health_check":
+            print("Health check already requested")
+        else :
+            if self.current_state == "ready_to_launch" :
+                self.command_requested = "launch"
+                self.executeCommand(PrepareLaunch(self.udp_module))
+            else :
+                print("Not ready to launch")
+
     def eStopBtn_clicked(self):
-        self.executeCommand(EStop(self.udp_module))
         print("Estop button pressed")
+        if self.commanded_requested == "health_check":
+            print("Health check already requested")
+        else :
+            if self.current_state == "ready_to_launch" :
+                self.command_requested = "launch"
+                self.executeCommand(EStop(self.udp_module))
+            else :
+                print("Not ready to launch")
 
     # Command Pattern definitions
     def executeCommand(self, command):
         self.command = command
-        self.command.execute()
+        self.cmd_thread = Thread(target=self.command.execute)
+        
 
     def command_input(self):
         text = self.command_line.text()
