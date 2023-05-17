@@ -4,7 +4,23 @@
 #include "MessageBuilders.h"
 #include "circular_buffer.h"
 
+#define CMD_MSG           0xC0
+#define CMD_ESTOP         0xC0
+#define CMD_PREP          0xC2
+#define CMD_LAUNCH        0xC4
+#define CMD_CRAWL         0xC6
+#define CMD_HEALTHCHK     0xC8
+
+#define ACK_MSG           0xA0
+#define ACK_ESTOP         0xA0
+#define ACK_PREP          0xA2
+#define ACK_LAUNCH        0xA4
+#define ACK_CRAWL         0xA6
+#define ACK_HEALTHCHK     0xA8
+
 #define total_responses 255
+
+#define USART1 Serial1
 
 bool state_changed = false;
 bool led_on = false;
@@ -21,6 +37,7 @@ bool motor_coast = false;
 
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> can1;
 
+CircularBuffer<int, 10> usart_recv_cbuf;
 
 
 
@@ -34,9 +51,108 @@ uint8_t team_id = 0;
 
 void (*responses[255])( void );
 
-// bool systemsCheck() {
-//   return true;
-// }
+bool systemsCheck() {
+  // Sound off CAN nodes
+  // Check for valid ranges of sensor data
+  return true;
+}
+
+int get_cmd_ack(int cmd) {
+  if(cmd == CMD_ESTOP) {
+    return ACK_ESTOP;
+  } else if (cmd == CMD_PREP) {
+    return ACK_PREP;
+  } else if (cmd == CMD_LAUNCH) {
+    return CMD_LAUNCH;
+  } else if (cmd == CMD_CRAWL) {
+    return ACK_CRAWL;
+  } else if (cmd == CMD_HEALTHCHK) {
+    return ACK_HEALTHCHK;
+  } else {
+    Serial.println("Invalid CMD");
+    return -1;
+  }
+}
+
+// USART functions
+void receive_cmds(int * acked_cmd) {
+  int recv_buf[2];
+  for(int i = 0; i < 10; i++) {
+    if(USART1.available() > 0) {
+      recv_buf[0] = USART1.read();
+      recv_buf[1] = USART1.read();
+      if(recv_buf[0] != -1 && recv_buf[1] != -1) {
+        if(recv_buf[0] == CMD_MSG) {
+          // Command received
+          if(*acked_cmd != recv_buf[1]) {
+            *acked_cmd = recv_buf[1];
+            usart_recv_cbuf.Write(recv_buf[1]);
+            int cmd_ack = get_cmd_ack(recv_buf[1]);
+            USART1.print(ACK_MSG);
+            USART1.print(cmd_ack);
+          }
+        }
+      }
+    }
+    else {
+      break;
+    }
+  }
+}
+void send_telemetry() {
+
+}
+
+
+// State functions
+void state_fn(void(*fn)(int i)) {
+  int cmd_msg;
+  while(!usart_recv_cbuf.isEmpty()) {
+    cmd_msg = usart_recv_cbuf.Read();
+    fn(cmd_msg);
+  }
+}
+void fault_state(int cmd_msg) {
+  if(systemsCheck()) {
+    status = Status::SafeToApproach;
+    state_changed = true;
+  }
+}
+void safe_to_approach(int cmd_msg) {
+  if(state_changed) {
+      // CAN_message_t msg_out;
+      // msg_out.id = (uint32_t)0x0fffffff;
+      // msg_out.len = (uint8_t)1;
+      // output_buffer.Write(msg_out);
+      // state_changed = false;
+  }
+  if(cmd_msg == CMD_PREP) {
+    status = Status::ReadyToLaunch;
+    state_changed = true;
+  } else if (cmd_msg == CMD_ESTOP) {
+    status = Status::Fault;
+    state_changed = true;
+  }
+}
+void ready_to_launch(int cmd_msg) {
+  if(gui_launch_commanded && brake_ready && motor_ready) {
+    status = Status::Launching;
+  } else if (fault) {
+    status = Status::Fault;
+  }
+}
+void launching(int cmd_msg) {
+  if(motor_coast) {
+    status = Status::Coasting;
+  } else if (fault) {
+    status = Status::Fault;
+  } else if (gui_stop) {
+    status = Status::Braking;
+  }
+}
+void coasting(int cmd_msg) {
+
+}
 
 THD_WORKING_AREA(waThread1, 128);
 
@@ -72,13 +188,15 @@ static THD_FUNCTION(Thread1, arg) {
 
 THD_WORKING_AREA(waThread2, 128);
 
-// UDP communications thread
+// UART communications thread
 static THD_FUNCTION(Thread2, arg) {
   (void)arg;
-  chRegSetThreadName("UDP thread");
+  chRegSetThreadName("UART thread");
+  int acked_cmd;
   while (1) {
-    Serial.println("UDP thread");
-
+    Serial.println("UART thread");
+    receive_cmds(&acked_cmd);
+    send_telemetry();
 
     delay(wait_time);
     delay(100);
@@ -92,60 +210,36 @@ THD_WORKING_AREA(waThread3, 128);
 static THD_FUNCTION(Thread3, arg) {
   (void)arg;
   chRegSetThreadName("State thread");
+  Serial.print("Status = ");
+  Serial.println(status);
   while (1) {
     Serial.print("State thread");
-    // switch (status) {
-    //     case Fault: {
-    //         if(systemsCheck()) {
-    //           status = Status::SafeToApproach;
-    //           state_changed = true;
-    //         }
-    //         break;
-    //     }
-    //     case SafeToApproach: {
-    //         if(state_changed) {
-    //             CAN_message_t msg_out;
-    //             msg_out.id = (uint32_t)0x0fffffff;
-    //             msg_out.len = (uint8_t)1;
-    //             output_buffer.Write(msg_out);
-    //             // state_changed = false;
-    //         }
-    //         if(gui_prepare_launch) {
-    //           status = Status::ReadyToLaunch;
-    //           state_changed = true;
-    //         } else if (fault) {
-    //           status = Status::Fault;
-    //           state_changed = true;
-    //         }
-    //         break;
-    //     }
-    //     case ReadyToLaunch: {
-    //         if(gui_launch_commanded && brake_ready && motor_ready) {
-    //           status = Status::Launching;
-    //         } else if (fault) {
-    //           status = Status::Fault;
-    //         }
-    //         break;
-    //     }
-    //     case Launching: {
-    //         if(motor_coast) {
-    //           status = Status::Coasting;
-    //         } else if (fault) {
-    //           status = Status::Fault;
-    //         } else if (gui_stop) {
-    //           status = Status::Braking;
-    //         }
-    //         break;
-    //     }
-    //     case Coasting: {
-      
-    //       break;
-    //     }
-    //     default:
-    //         break;
-    // }
-    Serial.print("Status = ");
-    Serial.println(status);
+    switch (status) {
+        case Fault: {
+            state_fn(fault_state);
+            break;
+        }
+        case SafeToApproach: {
+            state_fn(safe_to_approach);
+            break;
+        }
+        case ReadyToLaunch: {
+            state_fn(ready_to_launch);
+            break;
+        }
+        case Launching: {
+            state_fn(launching);
+            break;
+        }
+        case Coasting: {
+            state_fn(coasting);
+            break;
+        }
+        default:
+            break;
+    }
+    
+
 
     delay(1);
     chThdYield();
@@ -168,6 +262,7 @@ void setup() {
   // init_CAN_messages();
 
   Serial.begin(9600);
+  USART1.begin(115200);
   delay(400);
   can1.begin();
   can1.setBaudRate(1000000);
