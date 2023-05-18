@@ -163,7 +163,6 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-
     app = QApplication(sys.argv)
 
     # Model Classes
@@ -188,5 +187,4 @@ if __name__ == "__main__":
     TelemetryReceiver.start()
     
     MainWindow.show()
-    print("HELLO")
     sys.exit(app.exec_())
