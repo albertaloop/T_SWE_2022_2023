@@ -20,7 +20,7 @@ from Actions.HealthCheck import HealthCheck
 
 
 import time
-from threading import Thread
+import threading
 from datetime import datetime
 from argparse import ArgumentParser
 
@@ -41,7 +41,10 @@ class MWindowWrapper(Ui_MainWindow):
         self.command = None
         self.udp_module = udp_module
         self.current_state = "fault"
-        self.command_requested = "none"
+        self.command_requested = ["none"]
+        self.healthchk_requested = ["none"]
+        self.estop_requested = ["none"]
+        self.cmd_lock = threading.Lock()
 
         # -----------------------------------------------------------------
         # Add functionality below!
@@ -68,69 +71,78 @@ class MWindowWrapper(Ui_MainWindow):
     # Clicked function definitions
     def launchBtn_clicked(self):
         print("Launch button pressed")
-        if self.commanded_requested == "launch":
-            print("Launch command already requested")
-        else :
-            if self.current_state == "ready_to_launch" :
-                self.command_requested = "launch"
-                self.executeCommand(Launch(self.udp_module))
+        if self.command_requested == ["none"]:
+            if self.current_state == ["ready_to_launch"] :
+                self.command_requested = ["launch"]
+                self.executeCommand(Launch(self.udp_module), self.command_requested)
             else :
                 print("Not ready to launch")
+        else:
+            print("Waiting for another command: ")
+            print(self.command_requested)
+            print("\n")
+
 
     def healthChkBtn_clicked(self):
         print("Health check button pressed")
-        if self.commanded_requested == "health_check":
-            print("Health check already requested")
+        if self.healthchk_requested == ["none"]:
+            self.healthchk_requested = ["yes"]
+            self.executeCommand(HealthCheck(self.udp_module), self.healthchk_requested)
+            print("Health check requested")
         else :
-            if self.current_state == "ready_to_launch" :
-                self.command_requested = "launch"
-                self.executeCommand(HealthCheck(self.udp_module))
-            else :
-                print("Not ready to launch")
+            print("Health check already requested")
 
     def crawlBtn_clicked(self):
-        self.executeCommand(Crawl(self.udp_module))
         print("Crawl button pressed")
-        if self.commanded_requested == "health_check":
-            print("Health check already requested")
-        else :
-            if self.current_state == "ready_to_launch" :
-                self.command_requested = "launch"
-                self.executeCommand(HealthCheck(self.udp_module))
+        if self.command_requested == ["none"]:
+            if self.current_state == ["idle"]:
+                self.command_requested = ["crawl"]
+                self.executeCommand(Crawl(self.udp_module), self.command_requested)
+                print("Crawl requested")
             else :
-                print("Not ready to launch")
+                print("Not ready to crawl, pod must be idle")
+        else:
+            print("Waiting for another command: ")
+            print(self.command_requested)
+            print("\n")
 
     def prepLaunchBtn_clicked(self):
         print("Prepare Launch button pressed")
-        if self.commanded_requested == "health_check":
-            print("Health check already requested")
-        else :
-            if self.current_state == "ready_to_launch" :
-                self.command_requested = "launch"
-                self.executeCommand(PrepareLaunch(self.udp_module))
+        if self.command_requested == ["none"]:
+            if self.current_state == ["idle"] :
+                self.command_requested = ["prep_launch"]
+                self.executeCommand(PrepareLaunch(self.udp_module), self.command_requested)
+                print("Prepare to launch requested")
             else :
-                print("Not ready to launch")
+                print("Not ready for prepare to launch, pod must be idle")
+        else:
+            print("Waiting for another command: ")
+            print(self.command_requested)
+            print("\n")
 
     def eStopBtn_clicked(self):
         print("Estop button pressed")
-        if self.commanded_requested == "health_check":
-            print("Health check already requested")
+        self.cmd_lock.acquire()
+        if self.estop_requested == ["none"]:
+            self.estop_requested = ["yes"]
+            self.cmd_lock.release()
+            self.executeCommand(EStop(self.udp_module), self.estop_requested)
+            print("Emegency stop requested")
         else :
-            if self.current_state == "ready_to_launch" :
-                self.command_requested = "launch"
-                self.executeCommand(EStop(self.udp_module))
-            else :
-                print("Not ready to launch")
+            print(self.estop_requested)
+            self.cmd_lock.release()
+            print("EStop already sending")
+
 
     # Command Pattern definitions
-    def executeCommand(self, command):
+    def executeCommand(self, command, cmd_state):
         self.command = command
-        self.cmd_thread = Thread(target=self.command.execute)
+        self.cmd_thread = threading.Thread(target=self.command.execute, args=[cmd_state, self.cmd_lock])
+        self.cmd_thread.run()
         
 
     def command_input(self):
         text = self.command_line.text()
-
         # exits program TODO (remove later plz)
         if text.lower() == "exit":
             sys.exit()
