@@ -31,6 +31,7 @@ bool brake_ready = false;
 bool motor_ready = false;
 bool fault = false;
 bool motor_coast = false;
+uint32_t node_status;
 
 #define NUM_TX_MAILBOXES 2
 #define NUM_RX_MAILBOXES 6
