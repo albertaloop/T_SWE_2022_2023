@@ -14,8 +14,8 @@
 #include "../include/udp_messages.h"
 #include "../include/data_model.h"
 
-#define TLM_BCAST_DELAY 200
-#define CMD_PACKET_LEN 3
+#define TLM_BCAST_DELAY 2000
+#define CMD_PACKET_LEN 1024
 
 extern int errno;
 int cmd_fd;
@@ -25,15 +25,15 @@ int current_cmd;
 
 
 static int is_valid_cmd(char read[CMD_PACKET_LEN]) {
-    if(read[0] == CMD_MSG) {
-        if(read[1] == CMD_ESTOP || CMD_PREP || CMD_CRAWL || CMD_LAUNCH || CMD_HEALTHCHK) {
+    if((uint8_t)read[0] == CMD_MSG) {
+        if((uint8_t)read[1] == CMD_ESTOP || CMD_PREP || CMD_CRAWL || CMD_LAUNCH || CMD_HEALTHCHK) {
             return 1;
         }
     }
     return 0;
 }
 
-static int cmd_ack(int cmd) {
+static int cmd_ack(uint8_t cmd) {
     if(cmd == CMD_ESTOP) {
         return ACK_ESTOP;
     } else if(cmd == CMD_CRAWL) {
@@ -58,18 +58,31 @@ static void init_socket() {
         perror("Getaddrinfo error");
     }
 
-    cmd_fd = socket(server_addr->ai_family, server_addr->ai_socktype, 0);
+    cmd_fd = socket(server_addr->ai_family, server_addr->ai_socktype, server_addr->ai_protocol);
 
     if(bind(cmd_fd, server_addr->ai_addr, server_addr->ai_addrlen) != 0) {
         perror("Bind error");
     }
 
-    if(getaddrinfo(0, "4000", &hints, &tlm_addr) < 0) {
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_DGRAM;
+    if(getaddrinfo("127.0.0.1", "4000", &hints, &tlm_addr) < 0) {
         perror("Getaddrinfo error");
     }
 
-    tlm_fd = socket(tlm_addr->ai_family, server_addr->ai_socktype, 0);
+    tlm_fd = socket(tlm_addr->ai_family, tlm_addr->ai_socktype, 0);
+//     struct sockaddr_in sin;
+//     socklen_t len = sizeof(sin);
+//     if (getsockname(cmd_fd, (struct sockaddr *)&sin, &len) == -1)
+//         perror("getsockname");
+//     else
+//         printf("port number %d\n", ntohs(sin.sin_port));
 
+//     if (getsockname(tlm_fd, (struct sockaddr *)&sin, &len) == -1)
+//         perror("getsockname");
+//     else
+//         printf("port number %d\n", ntohs(sin.sin_port));
 }
 
 static void udp_cmd_thread_fn() {
@@ -82,16 +95,23 @@ static void udp_cmd_thread_fn() {
     socklen_t client_len = sizeof(client_addr);
     while(1) {
         reads = master;
-        if(select(max_socket+1, &reads, 0, 0, 0) < 0) {
+        if(select(max_socket+1, &reads, 0, 0, NULL) < 0) {
             perror("Select error");
         }
+        printf("select ready\n");
         if(FD_ISSET(cmd_fd, &reads)) {
+            printf("reading cmd socket\n");
             char read[CMD_PACKET_LEN];
+            memset(read, 0, sizeof(read));
             int bytes;
             if((bytes = recvfrom(cmd_fd, read, CMD_PACKET_LEN, 0, (struct sockaddr *)&client_addr, &client_len)) < 1) {
                 perror("recvfrom error");
             }
+            printf("bytes = %d\n", bytes);
+            printf("read %d\n", (uint8_t)read[0]);
+            printf("read %d\n", (uint8_t)read[1]);
             if(is_valid_cmd(read)) {
+                printf("cmd valid\n");
                 char reply[CMD_PACKET_LEN];
                 reply[0] = ACK_MSG;
                 reply[1] = cmd_ack(read[1]);
@@ -105,7 +125,8 @@ static void udp_tlm_thread_fn() {
     printf("telem size: %d\n", sizeof(telemetry));
     memset(&telemetry, 1, sizeof(telemetry));
     while(1) {
-        sendto(tlm_fd, &telemetry, sizeof(telemetry), 0, server_addr->ai_addr, server_addr->ai_addrlen);
+        // printf("broadcasting telemetry\n");
+        sendto(tlm_fd, &telemetry, 30, 0, tlm_addr->ai_addr, tlm_addr->ai_addrlen);
         std::this_thread::sleep_for(std::chrono::milliseconds(TLM_BCAST_DELAY));
     }
 
