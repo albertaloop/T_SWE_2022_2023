@@ -7,11 +7,8 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <netdb.h>
 
 #include <thread>
-#include <chrono>
 // #include "../include/messages.h"
 
 #define UART_TIMEOUT 100
@@ -19,9 +16,7 @@
 int serial_fd;
 int errnum;
 extern int errno;
-int cmd_fd;
-int tlm_fd;
-struct addrinfo *server_addr, *tlm_addr, hints;
+
 
 
 static void init_uart() {
@@ -73,34 +68,9 @@ static void init_uart() {
 }
 
 
-static void init_socket() {
-    memset(&hints, 0, sizeof(hints));
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_DGRAM;
-    hints.ai_flags = AI_PASSIVE;
+int main() {
+    init_uart();
     
-    if(getaddrinfo(0, "3000", &hints, &server_addr) < 0) {
-        perror("Getaddrinfo error");
-    }
-
-    cmd_fd = socket(server_addr->ai_family, server_addr->ai_socktype, 0);
-
-    if(bind(cmd_fd, server_addr->ai_addr, server_addr->ai_addrlen) != 0) {
-        perror("Bind error");
-    }
-
-    if(getaddrinfo(0, "4000", &hints, &tlm_addr) < 0) {
-        perror("Getaddrinfo error");
-    }
-
-    tlm_fd = socket(tlm_addr->ai_family, server_addr->ai_socktype, 0);
-
-
-
-
-}
-
-static void uart_thread_fn() {
     struct pollfd src;
     src.fd = serial_fd;
     src.events = POLLIN;
@@ -175,51 +145,87 @@ static void uart_thread_fn() {
         usleep(250);
 
     }
-}
 
-static void udp_cmd_thread_fn() {
-    fd_set reads;
-    fd_set master;
-    FD_ZERO(&master);
-    FD_SET(cmd_fd, &master);
-    int max_socket = cmd_fd;
-    while(1) {
-        reads = master;
-        if(select(max_socket+1, &reads, 0, 0, 0) < 0) {
-            perror("Select error");
-        }
-        if(FD_ISSET(cmd_fd, &reads)) {
-            char read[1024];
-            int bytes;
-            if((bytes = recvfrom(cmd_fd, read, 1024, 0, (struct sockaddr *)&client_addr, &client_len)) < 1) {
-                perror("recvfrom error");
-            }
-            
-        }
-    }
-}
+    // 
 
-static void udp_tlm_thread_fn() {
-    sendto(tlm_fd, tlm_buf, 1024, 0, (struct sockaddr *)tlm_addr, &tlm_addr_len)
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    // strcpy(text, TLMTRY);
 
-}
 
-int main() {
-    init_uart();
-    init_socket();
-
-    std::thread uart_thread(uart_thread_fn);
-    std::thread udp_cmd_thread(udp_cmd_thread_fn);
-    std::thread udp_tlm_thread(udp_tlm_thread_fn);
-    
-    uart_thread.join();
-    udp_cmd_thread.join();
-    udp_tlm_thread.join();
-
-    close(cmd_fd);
-    close(tlm_fd);
     close(serial_fd);
     return 0;
 }
 
+/*
+#include <termios.h>
+
+#define NUM_FDS         1
+#define SERIAL_FD_POS   0
+#define UDP_FD_POS      1
+
+static int serial_fd;
+// static int udp_fd;
+
+static struct termios serialSet;
+
+static struct pollfd fds[NUM_FDS];
+
+
+
+void setup_uart() {
+    //https://raspberrypi.stackexchange.com/questions/57906/uart-interrupt-in-raspberry-pi-with-c-or-c
+    // Open a file descriptor for the UART, use NDELAY for nonblocking file descriptor,
+    // use O_NOCTTY to ensure this terminal device does not become the controlling terminal for
+    // this process.
+    serial_fd = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);
+    if(serial_fd < 0 || !isatty(serial_fd)) {
+        perror("Problem opening termios fd");
+    }
+
+    // Flush the port buffer
+    usleep(250000);               
+    tcflush(serial_fd, TCIOFLUSH); 
+
+    // Configure serial port for 8N1, no parity, no breaks
+    // VMIN and VTIME are necessary for nonblocking reads
+    memset(&serialSet, 0, sizeof(serialSet));
+    serialSet.c_iflag = IGNBRK;
+    serialSet.c_cflag = CS8 | CREAD | CLOCAL;
+    memset(serialSet.c_cc, _POSIX_VDISABLE, NCCS);
+    serialSet.c_cc[VMIN] = 0;
+    serialSet.c_cc[VTIME] = 0;
+
+    // Set BAUD rate
+    speed_t baudRate = B115200;
+    cfsetispeed(&serialSet, baudRate);
+    cfsetospeed(&serialSet, baudRate);
+
+    if (tcsetattr(serial_fd, TCSANOW, &serialSet) == -1) {
+        perror("Problem setting termios attributes");
+    }
+
+    // Register serial file descriptor to be polled
+    fds[SERIAL_FD_POS].fd = serial_fd;
+    fds[SERIAL_FD_POS].events = POLLIN;
+    fds[SERIAL_FD_POS].revents = 0;
+
+}
+
+void setup_udp() {
+
+}
+
+int main() {
+    
+    setup_uart();
+    setup_udp();
+
+
+    while(1) {
+        if(poll(fds, NUM_FDS, -1) == 1) {
+
+
+        }
+    }
+
+    return 0;
+}*/
