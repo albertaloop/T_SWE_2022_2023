@@ -17,7 +17,7 @@ class TelemetryModel(QtCore.QAbstractTableModel):
     def __init__(self):
         super(TelemetryModel, self).__init__()
 
-        self.packet_format = ">BB7iI"
+        self.packet_format = ">BB7i"
         self._data = {
             "team_id": 0,
             "status": 0,
@@ -28,8 +28,6 @@ class TelemetryModel(QtCore.QAbstractTableModel):
             "battery_current": 0,
             "battery_temperature": 0,
             "pod_temperature":0,
-            "strip_count": 0,
-            "highest velocity": 0
         }
 
     def rowCount(self, index):
