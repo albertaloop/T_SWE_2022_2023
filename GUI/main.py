@@ -33,10 +33,8 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 class MWindowWrapper(Ui_MainWindow):
 
-    def __init__(self, window, ip, port, telemetry_model, udp_module):
+    def __init__(self, window, telemetry_model, udp_module):
         self.setupUi(window)
-        self.ip = ip
-        self.port = port
 
         self.command = None
         self.udp_module = udp_module
@@ -153,7 +151,10 @@ class MWindowWrapper(Ui_MainWindow):
 if __name__ == "__main__":
     parser = ArgumentParser(description="Albertaloop GUI launch")
     parser.add_argument(
-        "--server_ip", default="127.0.0.1", help="The ip to send the packets to"
+        "--gui_addr", default="192.168.1.11", help="The ip of the GUI host machine"
+    )
+    parser.add_argument(
+        "--remote_addr", default="192.168.1.10", help="The ip to send packets to"
     )
     parser.add_argument(
         "--server_port", type=int, default=4000, help="The UDP port to get updates from the pod"
@@ -175,12 +176,12 @@ if __name__ == "__main__":
     TelemetryReceiver.setDataModel(TelemetryModel)
     # HealthCheckReq = HealthCheckReq(HealthCheckModel)
 
-    UDPModule = UDPModule(args.server_ip, args.server_port, args.client_port,
+    UDPModule = UDPModule(args.gui_addr, args.remote_addr, args.server_port, args.client_port,
                           TelemetryReceiver, CmdTransmitter)
 
     # View Classes
     MainWindow = QMainWindow()
-    mWindowWrapper = MWindowWrapper(MainWindow, args.server_ip, args.server_port,TelemetryModel,
+    mWindowWrapper = MWindowWrapper(MainWindow, TelemetryModel,
         UDPModule)
     
 
