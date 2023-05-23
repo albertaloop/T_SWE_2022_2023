@@ -85,6 +85,8 @@ void receive_cmds(int * acked_cmd) {
       if(recv_buf[0] != -1 && recv_buf[1] != -1) {
         if(recv_buf[0] == CMD_MSG) {
           // Command received
+          Serial.println("Command received");
+          Serial.println(recv_buf[1]);
           if(*acked_cmd != recv_buf[1]) {
             *acked_cmd = recv_buf[1];
             usart_recv_cbuf.Write(recv_buf[1]);
@@ -257,8 +259,10 @@ void chSetup() {
 }
 
 void setup() {
+  Serial.println("hi");
   chSysInit();
   chBegin(chSetup);
+  Serial.println("hi");
   status = Status::Fault;
   // init_CAN_messages();
 
