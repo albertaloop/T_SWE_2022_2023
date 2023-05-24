@@ -31,6 +31,7 @@ int recv_buf[2] = {0, 0};
 
 
 THD_WORKING_AREA(waThread1, 128);
+int recv_buf[2] = {0, 0};
 
 // CANbus communications
 static THD_FUNCTION(Thread1, arg) {
