@@ -53,7 +53,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_ll_exti.h \
  ../Core/Inc/app_threadx.h ../Middlewares/ST/threadx/common/inc/tx_api.h \
  ../Middlewares/ST/threadx/ports/cortex_m33/gnu/inc/tx_port.h \
- ../Core/Inc/tx_user.h
+ ../Core/Inc/tx_user.h ../AZURE_RTOS/App/app_azure_rtos_config.h \
+ ../Core/Inc/peripheral_if.h
 ../Core/Inc/main.h:
 ../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_hal.h:
 ../Core/Inc/stm32l5xx_hal_conf.h:
@@ -111,3 +112,5 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Middlewares/ST/threadx/common/inc/tx_api.h:
 ../Middlewares/ST/threadx/ports/cortex_m33/gnu/inc/tx_port.h:
 ../Core/Inc/tx_user.h:
+../AZURE_RTOS/App/app_azure_rtos_config.h:
+../Core/Inc/peripheral_if.h:

@@ -1,0 +1,2 @@
+tx_port.h:294:28:_get_ipsr	1
+txe_semaphore_delete.c:76:7:_txe_semaphore_delete	6

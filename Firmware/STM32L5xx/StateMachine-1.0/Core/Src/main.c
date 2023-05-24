@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "peripheral_if.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,6 +45,7 @@ ADC_HandleTypeDef hadc1;
 FDCAN_HandleTypeDef hfdcan1;
 
 UART_HandleTypeDef hlpuart1;
+
 UART_HandleTypeDef huart3;
 
 RTC_HandleTypeDef hrtc;
@@ -112,6 +113,8 @@ int main(void)
   MX_USB_PCD_Init();
   MX_ICACHE_Init();
   /* USER CODE BEGIN 2 */
+
+  init_uart((void*)&huart3);
 
   /* USER CODE END 2 */
 

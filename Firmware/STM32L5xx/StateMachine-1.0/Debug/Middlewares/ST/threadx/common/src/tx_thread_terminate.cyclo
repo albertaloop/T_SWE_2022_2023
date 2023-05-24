@@ -1,0 +1,4 @@
+tx_port.h:294:28:_get_ipsr	1
+tx_port.h:318:28:_get_control	1
+tx_port.h:326:20:_set_control	1
+tx_thread_terminate.c:80:7:_tx_thread_terminate	14

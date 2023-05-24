@@ -43,6 +43,9 @@ extern "C" {
 
 /* USER CODE BEGIN EC */
 
+#define CAN_SEND_QUEUE_SIZE						   10
+#define CMD_QUEUE_SIZE							   10
+
 #define STATEM_THRD_STACK_SIZE				 	 1024
 #define UART_THRD_STACK_SIZE				 	 1024
 #define CAN_THRD_STACK_SIZE						 1024

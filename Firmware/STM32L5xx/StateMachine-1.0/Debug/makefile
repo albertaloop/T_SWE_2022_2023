@@ -65,8 +65,8 @@ all: main-build
 main-build: StateMachine-1.0.elf secondary-outputs
 
 # Tool invocations
-StateMachine-1.0.elf StateMachine-1.0.map: $(OBJS) $(USER_OBJS) C:\Users\ianyu\OneDrive\BSc\ Eng\STM32\STM32L5xx\abloop\StateMachine-1.0\STM32L552ZETXQ_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "StateMachine-1.0.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m33 -T"C:\Users\ianyu\OneDrive\BSc Eng\STM32\STM32L5xx\abloop\StateMachine-1.0\STM32L552ZETXQ_FLASH.ld" --specs=nosys.specs -Wl,-Map="StateMachine-1.0.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+StateMachine-1.0.elf StateMachine-1.0.map: $(OBJS) $(USER_OBJS) C:\Github\T_SWE_2022_2023\Firmware\STM32L5xx\StateMachine-1.0\STM32L552ZETXQ_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "StateMachine-1.0.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m33 -T"C:\Github\T_SWE_2022_2023\Firmware\STM32L5xx\StateMachine-1.0\STM32L552ZETXQ_FLASH.ld" --specs=nosys.specs -Wl,-Map="StateMachine-1.0.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

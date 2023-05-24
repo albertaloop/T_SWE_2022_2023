@@ -1,0 +1,11 @@
+stm32l5xx_ll_gpio.h:278:22:LL_GPIO_SetPinMode	3
+stm32l5xx_ll_gpio.h:347:22:LL_GPIO_SetPinOutputType	1
+stm32l5xx_ll_gpio.h:418:22:LL_GPIO_SetPinSpeed	3
+stm32l5xx_ll_gpio.h:489:22:LL_GPIO_SetPinPull	3
+stm32l5xx_ll_gpio.h:561:22:LL_GPIO_SetAFPin_0_7	3
+stm32l5xx_ll_gpio.h:638:22:LL_GPIO_SetAFPin_8_15	3
+stm32l5xx_ll_bus.h:567:22:LL_AHB2_GRP1_ForceReset	1
+stm32l5xx_ll_bus.h:610:22:LL_AHB2_GRP1_ReleaseReset	1
+stm32l5xx_ll_gpio.c:104:13:LL_GPIO_DeInit	9
+stm32l5xx_ll_gpio.c:179:13:LL_GPIO_Init	8
+stm32l5xx_ll_gpio.c:252:6:LL_GPIO_StructInit	1

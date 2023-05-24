@@ -23,7 +23,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "data_model.h"
+#include "peripheral_if.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -34,6 +35,8 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define NUM_QS		2
+#define CMD_Q		0
+#define CMD_SEND_Q  1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -45,11 +48,19 @@
 /* USER CODE BEGIN PV */
  TX_QUEUE qs[NUM_QS];
 
+ TX_THREAD state_thrd;
+ TX_THREAD uart_thrd;
+ TX_THREAD can_thrd;
+
+ static uint16_t timeout = 25;   // milliseconds
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
-
+ void state_thrd_fn(ULONG arg);
+ void uart_thrd_fn(ULONG arg);
+ void can_thrd_fn(ULONG arg);
 /* USER CODE END PFP */
 
 /**
@@ -60,6 +71,7 @@
 UINT App_ThreadX_Init(VOID *memory_ptr)
 {
   UINT ret = TX_SUCCESS;
+//  UINT status;
   TX_BYTE_POOL *byte_pool = (TX_BYTE_POOL*)memory_ptr;
 
   /* USER CODE BEGIN App_ThreadX_MEM_POOL */
@@ -68,25 +80,22 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
 
   /* USER CODE BEGIN App_ThreadX_Init */
 
-
-  TX_THREAD state_thrd;
-  TX_THREAD uart_thrd;
-  TX_THREAD can_thrd;
-
+  tx_byte_allocate(byte_pool, (VOID **) &memory_ptr, CMD_QUEUE_SIZE*sizeof(UINT), TX_NO_WAIT);
   tx_queue_create(&qs[CMD_Q], "Command Queue", TX_1_ULONG, memory_ptr, CMD_QUEUE_SIZE*sizeof(UINT));
 
+  tx_byte_allocate(byte_pool, (VOID **) &memory_ptr, CAN_SEND_QUEUE_SIZE*sizeof(UINT), TX_NO_WAIT);
   tx_queue_create(&qs[CMD_SEND_Q], "CAN Send Queue", TX_1_ULONG, memory_ptr, CAN_SEND_QUEUE_SIZE*sizeof(UINT));
 
-  tx_byte_allocate(byte_pool, (VOID **) &memory_ptr, STATEM_STACK_SIZE, TX_NO_WAIT);
-  tx_thread_create(&state_thrd, "State Machine Thread", state_thrd_fn, (ULONG)qs, memory_ptr, STATEM_THRD_STACK_SIZE,
+  tx_byte_allocate(byte_pool, (VOID **) &memory_ptr, STATEM_THRD_STACK_SIZE, TX_NO_WAIT);
+  tx_thread_create(&state_thrd, "State Machine Thread", state_thrd_fn, 0, memory_ptr, STATEM_THRD_STACK_SIZE,
 		 STATEM_THRD_PRIO, STATEM_THRD_PRIO, TX_NO_TIME_SLICE, TX_AUTO_START);
 
-  tx_byte_allocate(byte_pool, (VOID **) &memory_ptr, UART_STACK_SIZE, TX_NO_WAIT);
-  tx_thread_create(&uart_thrd, "UART Thread", uart_thrd_fn, (ULONG)&qs[CMD_Q], memory_ptr, UART_THRD_STACK_SIZE,
+  tx_byte_allocate(byte_pool, (VOID **) &memory_ptr, UART_THRD_STACK_SIZE, TX_NO_WAIT);
+  tx_thread_create(&uart_thrd, "UART Thread", uart_thrd_fn, 0, memory_ptr, UART_THRD_STACK_SIZE,
 		 UART_THRD_PRIO, UART_THRD_PRIO, TX_NO_TIME_SLICE, TX_AUTO_START);
 
-  tx_byte_allocate(byte_pool, (VOID **) &memory_ptr, STATEM_STACK_SIZE, TX_NO_WAIT);
-  tx_thread_create(&can_thrd, "CAN Thread", can_thrd_fn, (ULONG)&qs[CMD_SEND_Q], memory_ptr, CAN_THRD_STACK_SIZE,
+  tx_byte_allocate(byte_pool, (VOID **) &memory_ptr, CAN_THRD_STACK_SIZE, TX_NO_WAIT);
+  tx_thread_create(&can_thrd, "CAN Thread", can_thrd_fn, 0, memory_ptr, CAN_THRD_STACK_SIZE,
 		 CAN_THRD_PRIO, CAN_THRD_PRIO, TX_NO_TIME_SLICE, TX_AUTO_START);
 
   /* USER CODE END App_ThreadX_Init */
@@ -138,10 +147,10 @@ void MX_ThreadX_Init(void)
 
 /* USER CODE BEGIN 1 */
 
-bool systemsCheck() {
+int systemsCheck() {
   // Sound off CAN nodes
   // Check for valid ranges of sensor data
-  return true;
+  return 1;
 }
 
 int get_cmd_ack(int cmd) {
@@ -156,36 +165,35 @@ int get_cmd_ack(int cmd) {
   } else if (cmd == CMD_HEALTHCHK) {
     return ACK_HEALTHCHK;
   } else {
-    Serial.println("Invalid CMD");
+	  // INVALID COMMAND
     return -1;
   }
 }
 
 // USART functions
 void receive_cmds(int * acked_cmd) {
-  int recv_buf[2];
+  uint8_t recv_buf[2];
+  uint8_t send_buf[2];
   for(int i = 0; i < 10; i++) {
-    if(USART1.available() > 0) {
-      recv_buf[0] = USART1.read();
-      recv_buf[1] = USART1.read();
-      if(recv_buf[0] != -1 && recv_buf[1] != -1) {
-        if(recv_buf[0] == CMD_MSG) {
-          // Command received
-          if(*acked_cmd != recv_buf[1]) {
-            *acked_cmd = recv_buf[1];
-            usart_recv_cbuf.Write(recv_buf[1]);
-            int cmd_ack = get_cmd_ack(recv_buf[1]);
-            USART1.print(ACK_MSG);
-            USART1.print(cmd_ack);
-          }
-        }
-      }
-    }
-    else {
+	recv_buf[0] = -1;
+	recv_buf[1] = -1;
+	read_uart(recv_buf, 2, timeout);
+	if(recv_buf[0] != -1 && recv_buf[1] != -1) {
+	  if(recv_buf[0] == CMD_MSG) {
+		// Command received
+		if(*acked_cmd != recv_buf[1]) {
+		  *acked_cmd = recv_buf[1];
+		  send_buf[0] = ACK_MSG;
+		  send_buf[1] = get_cmd_ack(recv_buf[1]);
+		  write_uart(send_buf, 2, timeout);
+		}
+	  }
+	} else {
       break;
-    }
+	}
   }
 }
+
 void send_telemetry() {
 
 }
@@ -193,90 +201,93 @@ void send_telemetry() {
 
 // State functions
 void state_fn(void(*fn)(int i)) {
-  int cmd_msg;
-  while(!usart_recv_cbuf.isEmpty()) {
-    cmd_msg = usart_recv_cbuf.Read();
-    fn(cmd_msg);
-  }
+//  int cmd_msg;
+//  while(!usart_recv_cbuf.isEmpty()) {
+//    cmd_msg = usart_recv_cbuf.Read();
+//    fn(cmd_msg);
+//  }
 }
 void fault_state(int cmd_msg) {
-  if(systemsCheck()) {
-    status = Status::SafeToApproach;
-    state_changed = true;
-  }
+//  if(systemsCheck()) {
+//    status = Status::SafeToApproach;
+//    state_changed = true;
+//  }
 }
 void safe_to_approach(int cmd_msg) {
-  if(state_changed) {
-      // CAN_message_t msg_out;
-      // msg_out.id = (uint32_t)0x0fffffff;
-      // msg_out.len = (uint8_t)1;
-      // output_buffer.Write(msg_out);
-      // state_changed = false;
-  }
-  if(cmd_msg == CMD_PREP) {
-    status = Status::ReadyToLaunch;
-    state_changed = true;
-  } else if (cmd_msg == CMD_ESTOP) {
-    status = Status::Fault;
-    state_changed = true;
-  }
+//  if(state_changed) {
+//      // CAN_message_t msg_out;
+//      // msg_out.id = (uint32_t)0x0fffffff;
+//      // msg_out.len = (uint8_t)1;
+//      // output_buffer.Write(msg_out);
+//      // state_changed = false;
+//  }
+//  if(cmd_msg == CMD_PREP) {
+//    status = Status::ReadyToLaunch;
+//    state_changed = true;
+//  } else if (cmd_msg == CMD_ESTOP) {
+//    status = Status::Fault;
+//    state_changed = true;
+//  }
 }
 void ready_to_launch(int cmd_msg) {
-  if(gui_launch_commanded && brake_ready && motor_ready) {
-    status = Status::Launching;
-  } else if (fault) {
-    status = Status::Fault;
-  }
+//  if(gui_launch_commanded && brake_ready && motor_ready) {
+//    status = Status::Launching;
+//  } else if (fault) {
+//    status = Status::Fault;
+//  }
 }
 void launching(int cmd_msg) {
-  if(motor_coast) {
-    status = Status::Coasting;
-  } else if (fault) {
-    status = Status::Fault;
-  } else if (gui_stop) {
-    status = Status::Braking;
-  }
+//  if(motor_coast) {
+//    status = Status::Coasting;
+//  } else if (fault) {
+//    status = Status::Fault;
+//  } else if (gui_stop) {
+//    status = Status::Braking;
+//  }
 }
 void coasting(int cmd_msg) {
 
 }
 
-void state_thrd_fn(ULONG) {
+void state_thrd_fn(ULONG arg) {
 	while(1) {
-		switch (status) {
-			case Fault: {
-				state_fn(fault_state);
-				break;
-			}
-			case SafeToApproach: {
-				state_fn(safe_to_approach);
-				break;
-			}
-			case ReadyToLaunch: {
-				state_fn(ready_to_launch);
-				break;
-			}
-			case Launching: {
-				state_fn(launching);
-				break;
-			}
-			case Coasting: {
-				state_fn(coasting);
-				break;
-			}
-			default:
-				break;
-		}
+//		switch (status) {
+//			case Fault: {
+//				state_fn(fault_state);
+//				break;
+//			}
+//			case SafeToApproach: {
+//				state_fn(safe_to_approach);
+//				break;
+//			}
+//			case ReadyToLaunch: {
+//				state_fn(ready_to_launch);
+//				break;
+//			}
+//			case Launching: {
+//				state_fn(launching);
+//				break;
+//			}
+//			case Coasting: {
+//				state_fn(coasting);
+//				break;
+//			}
+//			default:
+//				break;
+//		}
 	}
 }
 
-void uart_thrd_fn(void) {
+void uart_thrd_fn(ULONG arg) {
+	int acked_cmd = 0;
 	while(1) {
-
+		receive_cmds(&acked_cmd);
+		acked_cmd = 0;
+//		send_telemetry();
 	}
 }
 
-void can_thrd_fn(void) {
+void can_thrd_fn(ULONG arg) {
 
 }
 

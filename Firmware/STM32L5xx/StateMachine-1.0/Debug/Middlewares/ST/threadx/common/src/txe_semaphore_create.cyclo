@@ -1,0 +1,2 @@
+tx_port.h:294:28:_get_ipsr	1
+txe_semaphore_create.c:81:7:_txe_semaphore_create	11

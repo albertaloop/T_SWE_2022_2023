@@ -1,0 +1,3 @@
+../Core/Src/peripheral_if.c:6:6:init_uart	16	static
+../Core/Src/peripheral_if.c:10:5:read_uart	24	static
+../Core/Src/peripheral_if.c:15:5:write_uart	24	static

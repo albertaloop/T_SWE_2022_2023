@@ -3,7 +3,7 @@ AZURE_RTOS/App/app_azure_rtos.o: ../AZURE_RTOS/App/app_azure_rtos.c \
  ../AZURE_RTOS/App/app_azure_rtos_config.h ../Core/Inc/app_threadx.h \
  ../Middlewares/ST/threadx/common/inc/tx_api.h \
  ../Middlewares/ST/threadx/ports/cortex_m33/gnu/inc/tx_port.h \
- ../Core/Inc/tx_user.h \
+ ../Core/Inc/tx_user.h ../AZURE_RTOS/App/app_azure_rtos_config.h \
  ../Drivers/CMSIS/Device/ST/STM32L5xx/Include/stm32l5xx.h \
  ../Drivers/CMSIS/Device/ST/STM32L5xx/Include/stm32l552xx.h \
  ../Drivers/CMSIS/Include/core_cm33.h \
@@ -51,6 +51,7 @@ AZURE_RTOS/App/app_azure_rtos.o: ../AZURE_RTOS/App/app_azure_rtos.c \
 ../Middlewares/ST/threadx/common/inc/tx_api.h:
 ../Middlewares/ST/threadx/ports/cortex_m33/gnu/inc/tx_port.h:
 ../Core/Inc/tx_user.h:
+../AZURE_RTOS/App/app_azure_rtos_config.h:
 ../Drivers/CMSIS/Device/ST/STM32L5xx/Include/stm32l5xx.h:
 ../Drivers/CMSIS/Device/ST/STM32L5xx/Include/stm32l552xx.h:
 ../Drivers/CMSIS/Include/core_cm33.h:

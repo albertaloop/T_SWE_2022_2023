@@ -57,7 +57,7 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-
+#define UART3 huart3;
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/

@@ -1,0 +1,17 @@
+app_threadx.c:71:6:App_ThreadX_Init	1
+app_threadx.c:111:6:App_ThreadX_LowPower_Enter	1
+app_threadx.c:123:6:App_ThreadX_LowPower_Exit	1
+app_threadx.c:135:6:MX_ThreadX_Init	1
+app_threadx.c:150:5:systemsCheck	1
+app_threadx.c:156:5:get_cmd_ack	6
+app_threadx.c:174:6:receive_cmds	4
+app_threadx.c:197:6:send_telemetry	1
+app_threadx.c:203:6:state_fn	1
+app_threadx.c:210:6:fault_state	1
+app_threadx.c:216:6:safe_to_approach	1
+app_threadx.c:232:6:ready_to_launch	1
+app_threadx.c:239:6:launching	1
+app_threadx.c:248:6:coasting	1
+app_threadx.c:252:6:state_thrd_fn	1
+app_threadx.c:281:6:uart_thrd_fn	1
+app_threadx.c:290:6:can_thrd_fn	1
