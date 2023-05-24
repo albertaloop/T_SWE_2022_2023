@@ -27,6 +27,7 @@
 
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> can1;
 
+int recv_buf[2] = {0, 0};
 
 
 THD_WORKING_AREA(waThread1, 128);
@@ -42,30 +43,7 @@ static THD_FUNCTION(Thread1, arg) {
   }
 }
 
-THD_WORKING_AREA(waThread2, 128);
 
-// UART communications thread
-static THD_FUNCTION(Thread2, arg) {
-  (void)arg;
-  chRegSetThreadName("UART thread");
-  int recv_buf[2] = {0, 0};
-  while (1) {
-    Serial.println("UART thread");
-    USART1.write(ACK_MSG);
-    USART1.write(CMD_ESTOP);
-    delay(1000);
-    // while(USART1.available() == 0);
-    recv_buf[0] = USART1.read();
-    // while(USART1.available() == 0);
-    recv_buf[1] = USART1.read();   
-    Serial.println(recv_buf[0], HEX);
-    Serial.println(recv_buf[1], HEX);
-  
-    // delay(wait_time);
-    delay(1000);
-    chThdYield();
-  }
-}
 
 THD_WORKING_AREA(waThread3, 128);
 
@@ -83,15 +61,13 @@ static THD_FUNCTION(Thread3, arg) {
 void chSetup() {
   chThdCreateStatic(waThread1, sizeof(waThread1),
     NORMALPRIO, Thread1, NULL);
-  chThdCreateStatic(waThread2, sizeof(waThread2),
-    NORMALPRIO, Thread2, NULL);
   chThdCreateStatic(waThread3, sizeof(waThread3),
     NORMALPRIO, Thread3, NULL);
 }
 
 void setup() {
-  chSysInit();
-  chBegin(chSetup);
+  // chSysInit();
+  // chBegin(chSetup);
   Serial.begin(9600);
   USART1.begin(9600);
   delay(400);
@@ -109,6 +85,17 @@ void setup() {
 
 void loop() {
   Serial.println("Main thread");
+  USART1.write(ACK_MSG);
+  USART1.write(CMD_ESTOP);
+  delay(1000);
+  // while(USART1.available() == 0);
+  recv_buf[0] = USART1.read();
+  // while(USART1.available() == 0);
+  recv_buf[1] = USART1.read();   
+  Serial.println(recv_buf[0], HEX);
+  Serial.println(recv_buf[1], HEX);
 
-  chThdYield();
+  // delay(wait_time);
+  delay(1000);
+  // chThdYield();
 }     

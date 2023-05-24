@@ -1,0 +1,8 @@
+../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_ll_ucpd.h:352:22:LL_UCPD_Disable	16	static
+../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_ll_bus.h:916:22:LL_APB1_GRP2_EnableClock	24	static
+../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_ll_bus.h:1078:22:LL_APB1_GRP2_DisableClock	16	static
+../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_ll_bus.h:1156:22:LL_APB1_GRP2_ForceReset	16	static
+../Drivers/STM32L5xx_HAL_Driver/Inc/stm32l5xx_ll_bus.h:1234:22:LL_APB1_GRP2_ReleaseReset	16	static
+../Drivers/STM32L5xx_HAL_Driver/Src/stm32l5xx_ll_ucpd.c:80:13:LL_UCPD_DeInit	24	static
+../Drivers/STM32L5xx_HAL_Driver/Src/stm32l5xx_ll_ucpd.c:115:13:LL_UCPD_Init	16	static
+../Drivers/STM32L5xx_HAL_Driver/Src/stm32l5xx_ll_ucpd.c:143:6:LL_UCPD_StructInit	16	static
