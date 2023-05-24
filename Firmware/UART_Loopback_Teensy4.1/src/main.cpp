@@ -30,6 +30,7 @@ FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> can1;
 
 
 THD_WORKING_AREA(waThread1, 128);
+int recv_buf[2] = {0, 0};
 
 // CANbus communications
 static THD_FUNCTION(Thread1, arg) {
@@ -90,8 +91,8 @@ void chSetup() {
 }
 
 void setup() {
-  chSysInit();
-  chBegin(chSetup);
+  // chSysInit();
+  // chBegin(chSetup);
   Serial.begin(9600);
   USART1.begin(9600);
   delay(400);
@@ -109,6 +110,17 @@ void setup() {
 
 void loop() {
   Serial.println("Main thread");
+  USART1.write(ACK_MSG);
+  USART1.write(CMD_ESTOP);
+  delay(1000);
+  // while(USART1.available() == 0);
+  recv_buf[0] = USART1.read();
+  // while(USART1.available() == 0);
+  recv_buf[1] = USART1.read();   
+  Serial.println(recv_buf[0], HEX);
+  Serial.println(recv_buf[1], HEX);
 
-  chThdYield();
+  // delay(wait_time);
+  delay(1000);
+  // chThdYield();
 }     
