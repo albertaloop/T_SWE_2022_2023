@@ -1,3 +1,0 @@
-tx_port.h:318:28:_get_control	1
-tx_port.h:326:20:_set_control	1
-tx_thread_shell_entry.c:76:7:_tx_thread_shell_entry	2

@@ -8,12 +8,12 @@ void init_uart(void * uh) {
 }
 
 int read_uart(uint8_t *buf, uint16_t size, uint32_t timeout) {
-	HAL_UART_Receive(uart_handle, buf, size, timeout);
+	return HAL_UART_Receive(uart_handle, buf, size, timeout);
 
 }
 
 int write_uart(uint8_t *buf, uint16_t size, uint32_t timeout) {
-	  HAL_UART_Transmit(uart_handle, buf, size, timeout);
+	  return HAL_UART_Transmit(uart_handle, buf, size, timeout);
 
 }
 

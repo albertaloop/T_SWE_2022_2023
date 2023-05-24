@@ -1,8 +1,0 @@
-stm32l5xx_ll_ucpd.h:352:22:LL_UCPD_Disable	1
-stm32l5xx_ll_bus.h:916:22:LL_APB1_GRP2_EnableClock	1
-stm32l5xx_ll_bus.h:1078:22:LL_APB1_GRP2_DisableClock	1
-stm32l5xx_ll_bus.h:1156:22:LL_APB1_GRP2_ForceReset	1
-stm32l5xx_ll_bus.h:1234:22:LL_APB1_GRP2_ReleaseReset	1
-stm32l5xx_ll_ucpd.c:80:13:LL_UCPD_DeInit	2
-stm32l5xx_ll_ucpd.c:115:13:LL_UCPD_Init	2
-stm32l5xx_ll_ucpd.c:143:6:LL_UCPD_StructInit	1
