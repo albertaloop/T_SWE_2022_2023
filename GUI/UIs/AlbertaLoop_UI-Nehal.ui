@@ -1,0 +1,653 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1145</width>
+    <height>798</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(33, 33, 33);</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QFrame" name="main_frame">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>-10</y>
+      <width>1121</width>
+      <height>731</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(36, 36, 36);</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QPushButton" name="estop_button">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>40</y>
+       <width>151</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(170, 0, 0);
+color: rgb(255, 255, 255);
+font: 63 8pt &quot;Segoe UI Semibold&quot;;</string>
+     </property>
+     <property name="text">
+      <string>EMERGENCY STOP</string>
+     </property>
+    </widget>
+    <widget class="QFrame" name="left_frame">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>100</y>
+       <width>311</width>
+       <height>581</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(0, 0, 0);</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <widget class="QWidget" name="verticalLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>311</width>
+        <height>291</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="speed_guage_layout"/>
+     </widget>
+     <widget class="QLabel" name="time_elapsed_label">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>400</y>
+        <width>171</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 75 10pt &quot;Microsoft YaHei UI&quot;;
+color: rgb(255, 255, 255);</string>
+      </property>
+      <property name="text">
+       <string>Time Elapsed: 0:26:35</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="estimated_progress_title_label">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>450</y>
+        <width>161</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 75 10pt &quot;Microsoft YaHei UI&quot;;
+color: rgb(255, 255, 255);</string>
+      </property>
+      <property name="text">
+       <string>Estimated Progress</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QWidget" name="verticalLayoutWidget_2">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>480</y>
+        <width>241</width>
+        <height>59</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="progress_bar_layout">
+       <item>
+        <widget class="QProgressBar" name="progressBar">
+         <property name="styleSheet">
+          <string notr="true">color: rgb(255, 255, 255);</string>
+         </property>
+         <property name="maximum">
+          <number>500</number>
+         </property>
+         <property name="value">
+          <number>115</number>
+         </property>
+         <property name="textVisible">
+          <bool>true</bool>
+         </property>
+         <property name="invertedAppearance">
+          <bool>false</bool>
+         </property>
+         <property name="textDirection">
+          <enum>QProgressBar::TopToBottom</enum>
+         </property>
+         <property name="format">
+          <string>%v / 400 m</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="horizontalLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>310</y>
+        <width>141</width>
+        <height>80</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="position_layout">
+       <item>
+        <widget class="QLabel" name="position_label">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">font: 75 9pt &quot;Microsoft YaHei&quot;;
+color: rgb(218, 218, 218);</string>
+         </property>
+         <property name="text">
+          <string>Position: </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="position_ind">
+         <property name="styleSheet">
+          <string notr="true">font: 75 14pt &quot;Microsoft YaHei&quot;;
+color: rgb(255, 255, 255);</string>
+         </property>
+         <property name="text">
+          <string>115 m</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <widget class="QFrame" name="DataFrame">
+     <property name="geometry">
+      <rect>
+       <x>600</x>
+       <y>100</y>
+       <width>501</width>
+       <height>581</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(66, 66, 66);</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <widget class="QTableView" name="healthChkTable">
+      <property name="geometry">
+       <rect>
+        <x>250</x>
+        <y>0</y>
+        <width>251</width>
+        <height>291</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QWidget" name="gridLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>300</y>
+        <width>241</width>
+        <height>281</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="1" column="0">
+        <widget class="QLabel" name="Voltage_Label">
+         <property name="text">
+          <string>Voltage</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="Current_label">
+         <property name="text">
+          <string>Cuurent</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QLabel" name="Cell_4_label">
+         <property name="text">
+          <string>4</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="Cell_2_label">
+         <property name="text">
+          <string>2</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="Temperature_label">
+         <property name="text">
+          <string>Temperature</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="Cell_1_label">
+         <property name="text">
+          <string>1</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QLabel" name="Cell_3_label">
+         <property name="text">
+          <string>3</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="Cell_label">
+         <property name="text">
+          <string>Cell</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QTableWidget" name="telemetryTable">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>251</width>
+        <height>581</height>
+       </rect>
+      </property>
+      <row>
+       <property name="text">
+        <string>Team ID</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Status</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Acceleration</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Velocity</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Position</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Pod Temperture</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Battery 1 Current</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Battery1 Current</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Battery2 Current</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Battery4 Current</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Battery1 Voltage</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Battery2 Voltage</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Battery3 Voltage</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Battery4 Voltage</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Battery1 Temperature</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Battery2 Temperature</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Battery3 Temperature</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Battery4 Temperature</string>
+       </property>
+      </row>
+      <column>
+       <property name="text">
+        <string/>
+       </property>
+      </column>
+     </widget>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>700</x>
+       <y>40</y>
+       <width>81</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="simulation_button">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>40</y>
+       <width>151</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(240, 165, 0);
+color: rgb(255, 255, 255);
+font: 63 8pt &quot;Segoe UI Semibold&quot;;</string>
+     </property>
+     <property name="text">
+      <string>ENTER SIMULATION</string>
+     </property>
+    </widget>
+    <widget class="QFrame" name="StateFrame">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>100</y>
+       <width>241</width>
+       <height>581</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>MS Shell Dlg 2</family>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(0, 0, 0);</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <widget class="QWidget" name="verticalLayoutWidget_3">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>480</y>
+        <width>160</width>
+        <height>80</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="current_state_layout">
+       <property name="spacing">
+        <number>6</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>1</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="current_state_title">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">font: 75 10pt &quot;Microsoft YaHei&quot;;
+color: rgb(255, 255, 255);</string>
+         </property>
+         <property name="text">
+          <string>Current State</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="current_state_ind">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(255, 85, 0);
+font: 75 8pt &quot;Microsoft YaHei&quot;;</string>
+         </property>
+         <property name="text">
+          <string>Acceleration</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="verticalLayoutWidget_4">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>10</y>
+        <width>168</width>
+        <height>80</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="telemetry_connection_layout">
+       <property name="spacing">
+        <number>6</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>1</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="current_state_title_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">font: 75 10pt &quot;Microsoft YaHei&quot;;
+color: rgb(255, 255, 255);</string>
+         </property>
+         <property name="text">
+          <string>Telemetry Connection</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="current_state_ind_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: rgb(255, 255, 255);
+font: 75 8pt &quot;Microsoft YaHei&quot;;</string>
+         </property>
+         <property name="text">
+          <string>No Connection</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <widget class="QPushButton" name="simulation_button_2">
+     <property name="geometry">
+      <rect>
+       <x>360</x>
+       <y>40</y>
+       <width>151</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(240, 165, 0);
+color: rgb(255, 255, 255);
+font: 63 8pt &quot;Segoe UI Semibold&quot;;</string>
+     </property>
+     <property name="text">
+      <string>ENTER SIMULATION</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="simulation_button_3">
+     <property name="geometry">
+      <rect>
+       <x>530</x>
+       <y>40</y>
+       <width>151</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(240, 165, 0);
+color: rgb(255, 255, 255);
+font: 63 8pt &quot;Segoe UI Semibold&quot;;</string>
+     </property>
+     <property name="text">
+      <string>ENTER SIMULATION</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="simulation_button_4">
+     <property name="geometry">
+      <rect>
+       <x>700</x>
+       <y>40</y>
+       <width>151</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(240, 165, 0);
+color: rgb(255, 255, 255);
+font: 63 8pt &quot;Segoe UI Semibold&quot;;</string>
+     </property>
+     <property name="text">
+      <string>ENTER SIMULATION</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1145</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

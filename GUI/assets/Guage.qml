@@ -25,7 +25,7 @@ CircularGauge {
 
             Image {
                 anchors.fill: parent
-                source: "img/background.svg"
+                source: "../img/background.svg"
                 asynchronous: true
                 sourceSize {
                     width: width
@@ -63,7 +63,7 @@ CircularGauge {
             height: outerRadius * 0.27
             Image {
                 id: needle
-                source: "img/needle.svg"
+                source: "../img/needle.svg"
                 height: parent.height
                 width: height * 0.1
                 asynchronous: true
@@ -98,7 +98,7 @@ CircularGauge {
         }
 
         tickmark: Image {
-            source: "img/tickmark.svg"
+            source: "../img/tickmark.svg"
             width: outerRadius * 0.018
             height: outerRadius * 0.15
             antialiasing: true

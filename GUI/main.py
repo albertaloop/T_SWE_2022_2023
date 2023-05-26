@@ -6,145 +6,186 @@ from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlEngine
 from PyQt5.QtQuickWidgets import QQuickWidget
 import sys
 from AlbertaLoop_UI import Ui_MainWindow
-import telemetry_module
+# import telemetry_module
+from TelemetryModel import TelemetryModel
+
+from HealthCheckModel import HealthCheckModel
+
+
+from Actions.Command import Launch
+from Actions.Command import PrepareLaunch
+from Actions.Command import EStop
+from Actions.Command import Crawl
+from Actions.HealthCheck import HealthCheck
+
+
 import time
-from threading import Thread
+import threading
 from datetime import datetime
 from argparse import ArgumentParser
 
+from NetworkComms.udp_module import UDPModule
+from NetworkComms.telemetry_receiver import TelemetryReceiver
+from NetworkComms.cmd_transmitter import CmdTransmitter
 
-class Logic(Ui_MainWindow):
-    def __init__(self, window, ip, port):
+import signal # Make Ctrl+C work with PyQt5 Applications
+signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+class MWindowWrapper(Ui_MainWindow):
+
+    def __init__(self, window, telemetry_model, udp_module):
         self.setupUi(window)
-        self.ip = ip
-        self.port = port
+
+        self.command = None
+        self.udp_module = udp_module
+        self.current_state = "fault"
+        self.command_requested = ["none"]
+        self.healthchk_requested = ["none"]
+        self.estop_requested = ["none"]
+        self.cmd_lock = threading.Lock()
+
         # -----------------------------------------------------------------
         # Add functionality below!
         # User Added QML Widget for Speed Gauge
         self.spedometerWidget = QQuickWidget()
         self.spedometerWidget.setClearColor(QtCore.Qt.transparent)
         self.spedometerWidget.setResizeMode(QQuickWidget.SizeRootObjectToView)
-        self.spedometerWidget.setSource(QUrl("Guage.qml"))
-        self.speed_guage_layout.addWidget(self.spedometerWidget)
+        self.spedometerWidget.setSource(QUrl("assets/Guage.qml"))
+        self.speedGaugeLayout.addWidget(self.spedometerWidget)
+
+        # Connect clicked functions
+        self.launchBtn.clicked.connect(self.launchBtn_clicked)
+        self.healthChkBtn.clicked.connect(self.healthChkBtn_clicked)
+        self.crawlBtn.clicked.connect(self.crawlBtn_clicked)
+        self.prepLaunchBtn.clicked.connect(self.prepLaunchBtn_clicked)
+        self.eStopBtn.clicked.connect(self.eStopBtn_clicked)
 
         # logo added
         pixmap = QtGui.QPixmap("img/Albertaloop_logo.png")
-        self.albertaloop_logo.setPixmap(pixmap)
+        self.albertaloopLogo.setPixmap(pixmap)
 
-        # command button connects
-        self.send_command_button.clicked.connect(self.command_button_clicked)
-        self.send_command_button.clicked.connect(self.command_button_input)
+        self.telemetryTable1.setModel(telemetry_model)
 
-        # Emergency button and Simulation button connects
-        self.estop_button.clicked.connect(self.e_stop_button_clicked)
-        self.simulation_button.clicked.connect(self.simulation_button_clicked)
-
-        thread = Thread(target=self.getTelemetryData)
-        thread.start()
-
-    def getTelemetryData(self):
-        telemetry_manager = telemetry_module.TelemetryManager(self.ip, self.port)
-        start_time = time.time()
-        self.current_state_ind_2.setText("Active Connection")
-        self.pod_connect_ind.setText("Active Connection")
-        self.thing_2_label.setText("Stripe Count")
-
-        while True:
-            print("Team ID: ", telemetry_manager.get_team_id())
-            print("Status: ", telemetry_manager.get_status())
-            print("Acceleration: ", telemetry_manager.get_acceleration())
-            print("Velocity: ", telemetry_manager.get_velocity())
-            print("Position: ", telemetry_manager.get_position())
-            print("Battery Voltage: ", telemetry_manager.get_battery_voltage())
-            print("Battery Current: ", telemetry_manager.get_battery_current())
-            print("Battery Temperature: ", telemetry_manager.get_battery_temperature())
-            print("Pod Temperature: ", telemetry_manager.get_pod_temperature())
-            print("Stripe Count: ", telemetry_manager.get_stripe_count())
-            print("Highest Velocity: ", telemetry_manager.get_highest_velocity())
+    # Clicked function definitions
+    def launchBtn_clicked(self):
+        print("Launch button pressed")
+        if self.command_requested == ["none"]:
+            if self.current_state == ["ready_to_launch"] :
+                self.command_requested = ["launch"]
+                self.executeCommand(Launch(self.udp_module), self.command_requested)
+            else :
+                print("Not ready to launch")
+        else:
+            print("Waiting for another command: ")
+            print(self.command_requested)
             print("\n")
 
-            self.packetTextBrowser.append(
-                "Team ID: " + str(telemetry_manager.get_team_id())
-            )
-            self.packetTextBrowser.append(
-                "Status: " + str(telemetry_manager.get_status())
-            )
-            self.packetTextBrowser.append(
-                "Acceleration: " + str(telemetry_manager.get_acceleration())
-            )
-            self.packetTextBrowser.append(
-                "Velocity: " + str(telemetry_manager.get_velocity())
-            )
-            self.packetTextBrowser.append(
-                "Position: " + str(telemetry_manager.get_position())
-            )
-            self.packetTextBrowser.append(
-                "Battery Voltage: " + str(telemetry_manager.get_battery_voltage())
-            )
-            self.packetTextBrowser.append(
-                "Battery Current: " + str(telemetry_manager.get_battery_current())
-            )
-            self.packetTextBrowser.append(
-                "Battery Temperature: "
-                + str(telemetry_manager.get_battery_temperature())
-            )
-            self.packetTextBrowser.append(
-                "Pod Temperature: " + str(telemetry_manager.get_pod_temperature())
-            )
-            self.packetTextBrowser.append(
-                "Stripe Count: " + str(telemetry_manager.get_stripe_count())
-            )
-            self.packetTextBrowser.append(
-                "Highest Velocity: " + str(telemetry_manager.get_highest_velocity())
-            )
-            self.packetTextBrowser.append("\n")
-            self.packetTextBrowser.moveCursor(QtGui.QTextCursor.End)
 
-            self.battery_1_temp.setText(str(telemetry_manager.get_battery_voltage()))
-            self.position_ind.setText(str(telemetry_manager.get_position()))
-            self.bat_1_volt.setText(str(telemetry_manager.get_battery_voltage()))
-            # self.progressBar.setProperty("value", telemetry_manager.get_position())
-            elapsed_time = time.time() - start_time
-            self.time_elapsed_label.setText("Time Elapsed: %.2f" % elapsed_time)
-            # self.self.spedometerWidget.engine().setContextProperty('gauge_value', telemetry_manager.get_velocity())
-            time.sleep(1)
+    def healthChkBtn_clicked(self):
+        print("Health check button pressed")
+        if self.healthchk_requested == ["none"]:
+            self.healthchk_requested = ["yes"]
+            self.executeCommand(HealthCheck(self.udp_module), self.healthchk_requested)
+            print("Health check requested")
+        else :
+            print("Health check already requested")
 
-    # functionality definitions
+    def crawlBtn_clicked(self):
+        print("Crawl button pressed")
+        if self.command_requested == ["none"]:
+            if self.current_state == ["idle"]:
+                self.command_requested = ["crawl"]
+                self.executeCommand(Crawl(self.udp_module), self.command_requested)
+                print("Crawl requested")
+            else :
+                print("Not ready to crawl, pod must be idle")
+        else:
+            print("Waiting for another command: ")
+            print(self.command_requested)
+            print("\n")
 
-    def command_button_clicked(self):
-        # TODO send general command to pod
-        print("Command button pressed")
+    def prepLaunchBtn_clicked(self):
+        print("Prepare Launch button pressed")
+        if self.command_requested == ["none"]:
+            if self.current_state == ["idle"] :
+                self.command_requested = ["prep_launch"]
+                self.executeCommand(PrepareLaunch(self.udp_module), self.command_requested)
+                print("Prepare to launch requested")
+            else :
+                print("Not ready for prepare to launch, pod must be idle")
+        else:
+            print("Waiting for another command: ")
+            print(self.command_requested)
+            print("\n")
 
-    def command_button_input(self):
+    def eStopBtn_clicked(self):
+        print("Estop button pressed")
+        self.cmd_lock.acquire()
+        if self.estop_requested == ["none"]:
+            self.estop_requested = ["yes"]
+            self.cmd_lock.release()
+            self.executeCommand(EStop(self.udp_module), self.estop_requested)
+            print("Emegency stop requested")
+        else :
+            print(self.estop_requested)
+            self.cmd_lock.release()
+            print("EStop already sending")
+
+
+    # Command Pattern definitions
+    def executeCommand(self, command, cmd_state):
+        self.command = command
+        self.cmd_thread = threading.Thread(target=self.command.execute, args=[cmd_state, self.cmd_lock])
+        self.cmd_thread.run()
+        
+
+    def command_input(self):
         text = self.command_line.text()
-
         # exits program TODO (remove later plz)
         if text.lower() == "exit":
             sys.exit()
         print("command >> ", text)
 
-    def e_stop_button_clicked(self):
-        # TODO send stop packet to pod
-        print("EMERGENCY STOP BUTTON HAS BEEN PUSHED")
-
-    def simulation_button_clicked(self):
-        # TODO luanch new window to start simulation testing on pod
-        print("Entering simulation")
-
-
+    
+        
 if __name__ == "__main__":
     parser = ArgumentParser(description="Albertaloop GUI launch")
     parser.add_argument(
-        "--server_ip", default="192.168.0.1", help="The ip to send the packets to"
+        "--gui_addr", default="192.168.1.11", help="The ip of the GUI host machine"
     )
     parser.add_argument(
-        "--server_port", type=int, default=3000, help="The UDP port to send packets to"
+        "--remote_addr", default="192.168.1.10", help="The ip to send packets to"
+    )
+    parser.add_argument(
+        "--server_port", type=int, default=4000, help="The UDP port to get updates from the pod"
+    )
+    parser.add_argument(
+        "--client_port", type=int, default=3000, help="The UDP port to send packets to"
     )
 
     args = parser.parse_args()
-
     app = QApplication(sys.argv)
+
+    # Model Classes
+    TelemetryModel = TelemetryModel()
+    HealthCheckModel = HealthCheckModel()
+    TelemetryReceiver = TelemetryReceiver()
+    CmdTransmitter = CmdTransmitter()
+
+    # Controller Classes
+    TelemetryReceiver.setDataModel(TelemetryModel)
+    # HealthCheckReq = HealthCheckReq(HealthCheckModel)
+
+    UDPModule = UDPModule(args.gui_addr, args.remote_addr, args.server_port, args.client_port,
+                          TelemetryReceiver, CmdTransmitter)
+
+    # View Classes
     MainWindow = QMainWindow()
-    ui = Logic(MainWindow, args.server_ip, args.server_port)
+    mWindowWrapper = MWindowWrapper(MainWindow, TelemetryModel,
+        UDPModule)
+    
+
+    TelemetryReceiver.start()
+    
     MainWindow.show()
     sys.exit(app.exec_())
