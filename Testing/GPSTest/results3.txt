@@ -1,0 +1,7 @@
+results1, iphone maps my location 53.52840, -113.52876
+
+
+results2, iphone 
+compass   53.3139 N		113.3142 W
+
+maps my location 53.52717, -113.5279
